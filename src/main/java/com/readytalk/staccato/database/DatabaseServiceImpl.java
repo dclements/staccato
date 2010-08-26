@@ -22,6 +22,9 @@ public class DatabaseServiceImpl implements DatabaseService {
     context.setJdbcUri(jdbcUri);
     context.setDbName(dbName);
 
+    DatabaseType databaseType = DatabaseType.getTypeFromJDBCUri(jdbcUri);
+    context.setDatabaseType(databaseType);
+
     return context;
   }
 
@@ -31,9 +34,8 @@ public class DatabaseServiceImpl implements DatabaseService {
     URI jdbcUri = context.getJdbcUri();
 
     try {
-      DatabaseType databaseType = DatabaseType.getTypeFromJDBCUri(jdbcUri);
 
-      Class.forName(databaseType.getDriver());
+      Class.forName(context.getDatabaseType().getDriver());
 
       logger.info("Connecting to database: " + jdbcUri.toString());
 
@@ -48,6 +50,28 @@ public class DatabaseServiceImpl implements DatabaseService {
       throw new DatabaseException("SQL driver not found", e);
     } catch (SQLException e) {
       throw new DatabaseException("SQL exception occurred when establishing connection to database: " + jdbcUri, e);
+    }
+  }
+
+  @Override
+  public void disconnect(DatabaseContext context) {
+
+    logger.info("Disconnecting database connection: " + context.getJdbcUri().toString());
+
+    Connection connection = context.getConnection();
+    try {
+      if (connection != null && connection.isValid(30)) {
+        connection.close();
+      }
+    } catch (SQLException e1) {
+      logger.warning("Unable to close database connection to: " + context.getJdbcUri() + ".  Retrying...");
+      try {
+        if (!connection.isClosed()) {
+          connection.close();
+        }
+      } catch (SQLException e2) {
+        logger.severe("Unable to close database connection to: " + context.getJdbcUri());
+      }
     }
   }
 }

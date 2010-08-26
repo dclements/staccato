@@ -27,6 +27,7 @@ public class DatabaseServiceImplTest {
       Assert.assertEquals(context.getPassword(), password);
       Assert.assertEquals(context.getDbName(), dbName);
       service.connect(context);
+      service.disconnect(context);
     } catch (DatabaseException e) {
       Assert.fail("The JDBC url [" + jdbcUri + "] is not reachable." +
         " This test requires that MySQL be " +
@@ -54,6 +55,7 @@ public class DatabaseServiceImplTest {
       Assert.assertEquals(context.getPassword(), password);
       Assert.assertEquals(context.getDbName(), dbName);
       service.connect(context);
+      service.disconnect(context);
     } catch (DatabaseException e) {
       Assert.fail("The JDBC url [" + jdbcUri + "] is not reachable." +
         " This test requires that PostgreSQL be " +

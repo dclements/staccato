@@ -27,4 +27,11 @@ public interface DatabaseService {
    * @param context the database context
    */
   void connect(DatabaseContext context);
+
+  /**
+   * Disconnects from the database using the context specified
+   *
+   * @param context the database context
+   */
+  void disconnect(DatabaseContext context);
 }

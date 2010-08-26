@@ -3,6 +3,8 @@ package com.readytalk.staccato.database.migration.annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import com.readytalk.staccato.database.DatabaseType;
+
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -37,4 +39,12 @@ public @interface Migration {
    * @return the description of the migration script
    */
   String description();
+
+  /**
+   * Informs the system which database type the script belongs to.
+   * If undefined, the system will assume to queue the script for execution
+   *
+   * @return the database type
+   */
+  DatabaseType databaseType();
 }

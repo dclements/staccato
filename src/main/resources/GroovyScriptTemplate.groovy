@@ -26,6 +26,10 @@ import com.readytalk.staccato.database.migration.MigrationRuntime
  * This field is for informational purposes only but does
  * get outputted to the log file if defined.
  *
+ * Migration.databaseType:
+ * Non-required field that informs the system which database type the script belongs to.
+ * If undefined, the system will assume to queue the script for execution.
+ *
  * @author USER
  * @version 1.0
  */

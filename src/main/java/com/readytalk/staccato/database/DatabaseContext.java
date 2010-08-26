@@ -15,6 +15,7 @@ public class DatabaseContext {
   private String username;
   private String password;
   private String dbName;
+  private DatabaseType databaseType;
 
   public Connection getConnection() {
     return connection;
@@ -54,5 +55,13 @@ public class DatabaseContext {
 
   public void setDbName(String dbName) {
     this.dbName = dbName;
+  }
+
+  public DatabaseType getDatabaseType() {
+    return databaseType;
+  }
+
+  public void setDatabaseType(DatabaseType databaseType) {
+    this.databaseType = databaseType;
   }
 }

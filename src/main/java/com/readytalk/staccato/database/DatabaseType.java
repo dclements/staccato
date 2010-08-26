@@ -2,6 +2,8 @@ package com.readytalk.staccato.database;
 
 import java.net.URI;
 
+import com.readytalk.staccato.database.migration.MigrationException;
+
 /**
  * Represents a database type
  *
@@ -44,7 +46,11 @@ public enum DatabaseType {
    * @return a database type
    */
   public static DatabaseType getTypeFromJDBCUri(URI uri) {
-    return DatabaseType.valueOf(uri.getSchemeSpecificPart().split(":")[0].toUpperCase());
+    try {
+      return DatabaseType.valueOf(uri.getSchemeSpecificPart().split(":")[0].toUpperCase());
+    } catch (IllegalArgumentException e) {
+      throw new MigrationException("Staccato currently does not provide support for the following jdbc uri: " + uri);
+    }
   }
 
 }
