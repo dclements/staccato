@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
  */
 public class DatabaseServiceImplTest {
 
-  @Test(enabled = false)
+  @Test()
   public void testInitContextWithMysql() {
 
     DatabaseService service = new DatabaseServiceImpl();
@@ -22,9 +22,11 @@ public class DatabaseServiceImplTest {
 
     try {
       DatabaseContext context = service.buildContext(jdbcUri, dbName, username, password);
-      Assert.assertEquals(jdbcUri, context.getJdbcUri());
-      Assert.assertEquals(username, context.getUsername());
-      Assert.assertEquals(password, context.getPassword());
+      Assert.assertEquals(context.getJdbcUri(), jdbcUri);
+      Assert.assertEquals(context.getUsername(), username);
+      Assert.assertEquals(context.getPassword(), password);
+      Assert.assertEquals(context.getDbName(), dbName);
+      service.connect(context);
     } catch (DatabaseException e) {
       Assert.fail("The JDBC url [" + jdbcUri + "] is not reachable." +
         " This test requires that MySQL be " +
@@ -47,9 +49,10 @@ public class DatabaseServiceImplTest {
 
     try {
       DatabaseContext context = service.buildContext(jdbcUri, dbName, username, password);
-      Assert.assertEquals(jdbcUri, context.getJdbcUri());
-      Assert.assertEquals(username, context.getUsername());
-      Assert.assertEquals(password, context.getPassword());
+      Assert.assertEquals(context.getJdbcUri(), jdbcUri);
+      Assert.assertEquals(context.getUsername(), username);
+      Assert.assertEquals(context.getPassword(), password);
+      Assert.assertEquals(context.getDbName(), dbName);
       service.connect(context);
     } catch (DatabaseException e) {
       Assert.fail("The JDBC url [" + jdbcUri + "] is not reachable." +
