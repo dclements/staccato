@@ -1,7 +1,9 @@
 I have provided some instructions below to help with building and unit testing from source: 
 
 1.  Building
-Maven is currently the default building solution.
+Maven is currently the default building solution.  Once you have maven installed, you can type the following from the command line to build the project:
+
+mvn compile
 
 2.  Unit Testing
 All unit testing is done via TestNG.  Staccato is built to work with both postgres and mysql so in order to run the unit test suite
@@ -9,3 +11,12 @@ successfully, you'll have to prepare both databases by executing the sql in the 
 
  - src/test/mysql-test-db.sql
  - src/test/postgres-test-db.sql
+
+Once you have your databases setup successfully, run the following command to execute the unit test suite:
+
+mvn test
+
+3.  Installing a jar
+To create a jar and install it to your local maven repository, execute the following:
+
+mvn clean install
