@@ -1,0 +1,2 @@
+This directory is built to a jar for unit testing purposes only.  The goal here is to test
+migrations against a groovy scripts inside a jar file as well as on the file system.
