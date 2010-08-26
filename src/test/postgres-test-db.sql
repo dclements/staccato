@@ -1,9 +1,9 @@
-CREATE USER database_manager WITH PASSWORD 'database_manager';
-CREATE DATABASE database_manager_test WITH OWNER database_manager;
-GRANT ALL PRIVILEGES ON DATABASE database_manager_test TO database_manager;
+-- create user and grant permissions as the postgres user
+CREATE USER staccato WITH PASSWORD 'staccato';
+CREATE DATABASE staccato WITH OWNER staccato;
+GRANT ALL PRIVILEGES ON DATABASE staccato TO staccato;
 
--- connect to your database_manager_test with the database_manager user and run the below scripts
-
+-- connect to the staccato database with the staccato user and run the below scripts
 create table foo (
   id                 serial,
   bar                varchar(50) not null,

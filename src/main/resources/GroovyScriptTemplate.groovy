@@ -1,11 +1,11 @@
 package migrations
 
-import com.ecovate.database.migration.annotation.DataUp
-import com.ecovate.database.migration.annotation.Migration
-import com.ecovate.database.migration.annotation.PostUp
-import com.ecovate.database.migration.annotation.PreUp
-import com.ecovate.database.migration.annotation.SchemaUp
-import com.ecovate.database.migration.MigrationRuntime
+import com.readytalk.staccato.database.migration.annotation.DataUp
+import com.readytalk.staccato.database.migration.annotation.Migration
+import com.readytalk.staccato.database.migration.annotation.PostUp
+import com.readytalk.staccato.database.migration.annotation.PreUp
+import com.readytalk.staccato.database.migration.annotation.SchemaUp
+import com.readytalk.staccato.database.migration.MigrationRuntime
 
 /**
  * Represents a groovy migration script.
