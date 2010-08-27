@@ -1,11 +1,11 @@
 package migrations
 
-import com.readytalk.staccato.database.migration.annotation.DataUp
 import com.readytalk.staccato.database.migration.annotation.Migration
-import com.readytalk.staccato.database.migration.annotation.PostUp
 import com.readytalk.staccato.database.migration.annotation.PreUp
 import com.readytalk.staccato.database.migration.annotation.SchemaUp
 import com.readytalk.staccato.database.migration.MigrationRuntime
+import com.readytalk.staccato.database.migration.annotation.DataUp
+import com.readytalk.staccato.database.migration.annotation.PostUp
 
 /**
  * Represents a groovy migration script.
@@ -17,23 +17,29 @@ import com.readytalk.staccato.database.migration.MigrationRuntime
  * scripts
  *
  * Migration.databaseVersion:
- * The migration projectVersion is for informational purposes
- * only and is used for associating the migration to a contextual
- * version of the database.  This is a required field
+ * This attribute is required and is used for performing incremental
+ * upwards or downwards migrations
+ *
+ * Migration.scriptVersion:
+ * This field is used to perform API version compatibility checking prior to script execution.
+ * If your annotated value doesn't equal the current template version bundled in
+ * the jar, then the system will not execute the script and throw an exception.
  *
  * Migration.description:
- * Non-required field that explains what the script is doing.
+ * Optional attribute that provides information about script execution.
  * This field is for informational purposes only but does
- * get outputted to the log file if defined.
+ * get outputted to the log file when defined.
  *
  * Migration.databaseType:
- * Non-required field that informs the system which database type the script belongs to.
+ * Optional field that informs the system which database type the script belongs to.
  * If undefined, the system will assume to queue the script for execution.
  *
  * @author USER
- * @version 1.0
  */
-@Migration(scriptDate = "DATE", databaseVersion = "DATABASE_VERSION")
+@Migration(
+  scriptDate = "DATE",
+  databaseVersion = "DATABASE_VERSION",
+  scriptVersion = "1.0")
 class GroovyScriptTemplate {
 
   @PreUp

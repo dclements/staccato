@@ -13,6 +13,8 @@ import java.util.logging.Logger;
 
 import org.joda.time.DateTime;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.readytalk.staccato.database.migration.MigrationException;
 import com.readytalk.staccato.database.migration.annotation.Migration;
 import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationParser;
@@ -21,8 +23,7 @@ import com.readytalk.staccato.database.migration.script.validation.ScriptValidat
 import com.readytalk.staccato.database.migration.script.validation.ScriptValidator;
 import com.readytalk.staccato.utils.Resource;
 import com.readytalk.staccato.utils.ResourceLoader;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import com.readytalk.staccato.utils.Version;
 import groovy.lang.GroovyClassLoader;
 
 /**
@@ -61,48 +62,66 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 
       if (annotationParser.isMigrationScript(scriptClass)) {
 
+        Object scriptInstance = null;
         try {
-          Object scriptInstance = scriptClass.newInstance();
-
-          Migration migrationAnnotation = annotationParser.getMigrationAnnotation(scriptInstance);
-          String scriptDateStr = migrationAnnotation.scriptDate();
-          try {
-            DateTime scriptDate = new DateTime(scriptDateStr);
-
-            GroovyScript script = new GroovyScript();
-            script.setUrl(resource.getUrl());
-            script.setFilename(resource.getFilename());
-            script.setScriptClass(scriptClass);
-            script.setScriptDate(scriptDate);
-            script.setScriptInstance(scriptInstance);
-
-            try {
-              validator.validate(script);
-            } catch (ScriptValidationException e) {
-              throw new MigrationException("Unable to validate script: " + script.getFilename(), e);
-            }
-
-            if (scripts.contains(script)) {
-              GroovyScript firstScript = null;
-              for (GroovyScript aScript : scripts) {
-                if (aScript.equals(script)) {
-                  firstScript = aScript;
-                }
-              }
-              throw new MigrationException("Unique script violation.  Groovy script [" + script.getUrl() + "] violates" +
-                " unique date constraint.  Script [" + firstScript.getUrl().toExternalForm() + "] already contains the same date");
-            }
-
-            scripts.add(script);
-          } catch (IllegalArgumentException e) {
-            throw new MigrationException("Script date [" + scriptDateStr + "] is an invalid format for script: " + scriptClass.getName());
-          }
-
+          scriptInstance = scriptClass.newInstance();
         } catch (InstantiationException e) {
           throw new MigrationException("Unable to instantiate script: " + scriptClass.getName(), e);
         } catch (IllegalAccessException e) {
           throw new MigrationException("Unable to access script: " + scriptClass.getName(), e);
         }
+
+        Migration migrationAnnotation = annotationParser.getMigrationAnnotation(scriptInstance);
+
+        String scriptVersionStr = migrationAnnotation.scriptVersion();
+
+        GroovyScript script = new GroovyScript();
+        script.setUrl(resource.getUrl());
+        script.setFilename(resource.getFilename());
+        script.setScriptClass(scriptClass);
+        script.setScriptInstance(scriptInstance);
+
+        // set the script date
+        try {
+          String scriptDateStr = migrationAnnotation.scriptDate();
+          DateTime scriptDate = new DateTime(scriptDateStr);
+          script.setScriptDate(scriptDate);
+        } catch (IllegalArgumentException e) {
+          throw new MigrationException("Script date is an invalid format for script: " + scriptClass.getName());
+        } catch (Exception e) {
+          throw new MigrationException(Migration.class.getName() + " script date is required", e);
+        }
+
+        // set the script version
+        try {
+          Version scriptVersion = new Version(scriptVersionStr, true);
+          script.setScriptVersion(scriptVersion);
+        } catch (IllegalArgumentException e) {
+          throw new MigrationException(Migration.class.getName() + " script version is an invalid format", e);
+        } catch (Exception e) {
+          throw new MigrationException(Migration.class.getName() + " script version is required", e);
+        }
+
+        // now validate all fields
+        try {
+          validator.validate(script);
+        } catch (ScriptValidationException e) {
+          throw new MigrationException("Unable to validate script: " + script.getFilename(), e);
+        }
+
+        // if the script isn't already in the set then add it
+        if (scripts.contains(script)) {
+          GroovyScript firstScript = null;
+          for (GroovyScript aScript : scripts) {
+            if (aScript.equals(script)) {
+              firstScript = aScript;
+            }
+          }
+          throw new MigrationException("Unique script violation.  Groovy script [" + script.getUrl() + "] violates" +
+            " unique date constraint.  Script [" + firstScript.getUrl().toExternalForm() + "] already contains the same date");
+        }
+
+        scripts.add(script);
       } else {
         logger.warning("Unable to load script [" + resource.getFilename() + "].  Not marked for migration with the annotation: " + Migration.class.getName());
       }

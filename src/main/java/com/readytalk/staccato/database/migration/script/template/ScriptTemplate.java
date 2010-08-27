@@ -13,6 +13,8 @@ public class ScriptTemplate {
   private String templateContents;
   private String filename;
   private String classname;
+  private String rawContentHash;
+  private String scriptVersion;
 
   public String getFilename() {
     return filename;
@@ -44,6 +46,22 @@ public class ScriptTemplate {
 
   public void setClassname(String classname) {
     this.classname = classname;
+  }
+
+  public String getRawContentHash() {
+    return rawContentHash;
+  }
+
+  public void setRawContentHash(String rawContentHash) {
+    this.rawContentHash = rawContentHash;
+  }
+
+  public String getScriptVersion() {
+    return scriptVersion;
+  }
+
+  public void setScriptVersion(String scriptVersion) {
+    this.scriptVersion = scriptVersion;
   }
 
   @Override

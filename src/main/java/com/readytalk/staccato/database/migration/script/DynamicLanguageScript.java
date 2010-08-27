@@ -2,6 +2,8 @@ package com.readytalk.staccato.database.migration.script;
 
 import org.joda.time.DateTime;
 
+import com.readytalk.staccato.utils.Version;
+
 /**
  * Models dynamic language scripts (e.g. groovy, etc).
  *
@@ -31,4 +33,11 @@ public interface DynamicLanguageScript<T> extends Script<T> {
    * @return the script instance
    */
   Object getScriptInstance();
+
+  /**
+   * Returns the script version
+   *
+   * @return the script version
+   */
+  Version getScriptVersion();
 }

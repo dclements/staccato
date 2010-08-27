@@ -64,7 +64,6 @@ public class DatabaseServiceImpl implements DatabaseService {
         connection.close();
       }
     } catch (SQLException e1) {
-      logger.warning("Unable to close database connection to: " + context.getJdbcUri() + ".  Retrying...");
       try {
         if (!connection.isClosed()) {
           connection.close();

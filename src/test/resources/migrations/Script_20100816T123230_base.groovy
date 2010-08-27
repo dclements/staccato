@@ -5,7 +5,7 @@ import com.readytalk.staccato.database.migration.annotation.SchemaUp
 import com.readytalk.staccato.database.migration.annotation.PreUp
 import com.readytalk.staccato.database.migration.annotation.Migration
 
-@Migration(scriptDate = "2010-08-16T12:32:30-06:00", databaseVersion = "1.0")
+@Migration(scriptDate = "2010-08-16T12:32:30-06:00", databaseVersion = "1.0", scriptVersion="1.0")
 class Script_20100816T123230_base {
 
   @PreUp

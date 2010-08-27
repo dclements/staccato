@@ -18,9 +18,9 @@ public interface ScriptTemplateService {
    *
    * @param date the script date
    * @param user the user creating the script
-   * @param projectVersion the project version
+   * @param databaseVersion the database version
    * @return the template
    * @throws java.io.IOException on error when loading script template from classpath
    */
-  public ScriptTemplate loadTemplate(DateTime date, String user, String projectVersion) throws IOException;
+  public ScriptTemplate loadTemplate(DateTime date, String user, String databaseVersion) throws IOException;
 }

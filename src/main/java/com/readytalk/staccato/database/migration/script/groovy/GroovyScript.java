@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 import org.joda.time.DateTime;
 
 import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
+import com.readytalk.staccato.utils.Version;
 
 /**
  * Models a groovy script (groovy, etc)
@@ -30,6 +31,9 @@ public class GroovyScript implements DynamicLanguageScript<GroovyScript> {
 
   @NotNull
   private DateTime scriptDate;
+
+  @NotNull
+  private Version scriptVersion;
 
   @Override
   public String getFilename() {
@@ -56,21 +60,8 @@ public class GroovyScript implements DynamicLanguageScript<GroovyScript> {
     return scriptInstance;
   }
 
-  @Override
-  public int compareTo(GroovyScript groovyScript) {
-    return groovyScript.getScriptDate().compareTo(this.getScriptDate());
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    GroovyScript that = (GroovyScript) o;
-
-    if (!scriptDate.equals(that.scriptDate)) return false;
-
-    return true;
+  public Version getScriptVersion() {
+    return scriptVersion;
   }
 
   public void setFilename(String filename) {
@@ -91,6 +82,27 @@ public class GroovyScript implements DynamicLanguageScript<GroovyScript> {
 
   public void setUrl(URL url) {
     this.url = url;
+  }
+
+  public void setScriptVersion(Version scriptVersion) {
+    this.scriptVersion = scriptVersion;
+  }
+
+  @Override
+  public int compareTo(GroovyScript groovyScript) {
+    return groovyScript.getScriptDate().compareTo(this.getScriptDate());
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    GroovyScript that = (GroovyScript) o;
+
+    if (!scriptDate.equals(that.scriptDate)) return false;
+
+    return true;
   }
 
   @Override

@@ -47,4 +47,11 @@ public @interface Migration {
    * @return the database type
    */
   DatabaseType databaseType();
+
+  /**
+   * A version of the script template used to create the migration script
+   *
+   * @return the hash of the script template
+   */
+  String scriptVersion();
 }
