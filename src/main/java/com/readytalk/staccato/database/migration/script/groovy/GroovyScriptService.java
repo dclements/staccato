@@ -2,6 +2,7 @@ package com.readytalk.staccato.database.migration.script.groovy;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.annotation.IncompleteAnnotationException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,8 +74,6 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 
         Migration migrationAnnotation = annotationParser.getMigrationAnnotation(scriptInstance);
 
-        String scriptVersionStr = migrationAnnotation.scriptVersion();
-
         GroovyScript script = new GroovyScript();
         script.setUrl(resource.getUrl());
         script.setFilename(resource.getFilename());
@@ -88,18 +87,19 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
           script.setScriptDate(scriptDate);
         } catch (IllegalArgumentException e) {
           throw new MigrationException("Script date is an invalid format for script: " + scriptClass.getName());
-        } catch (Exception e) {
-          throw new MigrationException(Migration.class.getName() + " script date is required", e);
+        } catch (IncompleteAnnotationException e) {
+          throw new MigrationException(Migration.class.getName() + " script date is required for script: " + script.getFilename(), e);
         }
 
         // set the script version
         try {
+          String scriptVersionStr = migrationAnnotation.scriptVersion();
           Version scriptVersion = new Version(scriptVersionStr, true);
           script.setScriptVersion(scriptVersion);
         } catch (IllegalArgumentException e) {
-          throw new MigrationException(Migration.class.getName() + " script version is an invalid format", e);
-        } catch (Exception e) {
-          throw new MigrationException(Migration.class.getName() + " script version is required", e);
+          throw new MigrationException(Migration.class.getName() + " script version is an invalid format for script: " + script.getFilename(), e);
+        } catch (IncompleteAnnotationException e) {
+          throw new MigrationException(Migration.class.getName() + " script version is required for script: " + script.getFilename(), e);
         }
 
         // now validate all fields
