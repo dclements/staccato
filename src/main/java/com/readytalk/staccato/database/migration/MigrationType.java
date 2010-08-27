@@ -19,8 +19,7 @@ public enum MigrationType {
   DATA_UP(new Class[]{DataUp.class}),
   PRE_UP(new Class[]{PreUp.class}),
   POST_UP(new Class[]{PostUp.class}),
-  UP(new Class[]{PreUp.class, SchemaUp.class, DataUp.class, PostUp.class}),
-  NEW(new Class[]{PreUp.class, SchemaUp.class, DataUp.class, PostUp.class});
+  UP(new Class[]{PreUp.class, SchemaUp.class, DataUp.class, PostUp.class});
 
   private Class<? extends Annotation>[] workflowSteps;
 
