@@ -1,9 +1,11 @@
 package com.readytalk.staccato.database.migration;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.IncompleteAnnotationException;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.google.inject.Inject;
 import com.readytalk.staccato.database.DatabaseContext;
 import com.readytalk.staccato.database.DatabaseException;
 import com.readytalk.staccato.database.DatabaseService;
@@ -14,7 +16,6 @@ import com.readytalk.staccato.database.migration.script.groovy.GroovyScript;
 import com.readytalk.staccato.database.migration.script.groovy.GroovyScriptService;
 import com.readytalk.staccato.database.migration.script.sql.SQLScriptService;
 import com.readytalk.staccato.database.migration.workflow.MigrationWorkflowService;
-import com.google.inject.Inject;
 
 /**
  * @author jhumphrey
@@ -70,36 +71,60 @@ public class GroovyMigrationService implements MigrationService {
     for (GroovyScript script : scripts) {
       logger.info("Executing script: " + script.getFilename());
 
-
       Migration migrationAnnotation = annotationParser.getMigrationAnnotation(script.getScriptInstance());
 
-      // print description if it's there
-      try {
-        String description = migrationAnnotation.description();
-        if (description != null && !description.equals("")) {
-          logger.info("Description: " + description);
-        }
-      } catch (Exception e) {
-        // no worries here, the Migration.description is not required
-        // so exceptions while accessing the annotation is ok
+      // print the description to the logs if it's not null
+      String description = getDescription(migrationAnnotation);
+      if (getDescription(migrationAnnotation) != null) {
+        logger.info("Description: " + description);
       }
 
-      // check script database type, if defined make sure to filter out those that
-      // aren't associated to this type of database migration
-      try {
-        DatabaseType scriptDatabaseType = migrationAnnotation.databaseType();
-        if (scriptDatabaseType != null && scriptDatabaseType != databaseContext.getDatabaseType()) {
-          logger.fine("Excluding " + scriptDatabaseType + " script from execution: " + script.getFilename());
-          continue;
-        }
-      } catch (Exception e) {
-        // no worries here, the Migration.databaseType is not required
-        // so exceptions while accessing the annotation is ok
+      // validate database type
+      if (!isValidDatabaseType(script, migrationAnnotation, databaseContext)) {
+        continue;
       }
 
       migrationWorkflowService.executeWorkflow(script, migrationType.getWorkflowSteps(), migrationRuntime);
     }
 
     databaseService.disconnect(databaseContext);
+  }
+
+  /**
+   * Helper method to get the description from the migration annotation
+   *
+   * @param migrationAnnotation the migration annotation
+   * @return the description
+   */
+  String getDescription(Migration migrationAnnotation) {
+    try {
+      return migrationAnnotation.description();
+    } catch (IncompleteAnnotationException e) {
+      return null;
+    }
+  }
+
+  /**
+   * Helper method to validate that the script we're executing belongs to this database migration.
+   * If the Migration annotation database type is not equal to the
+   * {@link com.readytalk.staccato.database.DatabaseContext} database type then do not execute
+   * this script
+   *
+   * @param script the script
+   * @param migrationAnnotation the migration annotation
+   * @param databaseContext the database context
+   * @return true if valid, false otherwise
+   */
+  boolean isValidDatabaseType(GroovyScript script, Migration migrationAnnotation, DatabaseContext databaseContext) {
+    try {
+      DatabaseType scriptDatabaseType = migrationAnnotation.databaseType();
+      if (scriptDatabaseType != null && scriptDatabaseType != databaseContext.getDatabaseType()) {
+        logger.fine("Excluding " + scriptDatabaseType + " script from execution: " + script.getFilename());
+        return false;
+      }
+      return true;
+    } catch (Exception e) {
+      return true;
+    }
   }
 }

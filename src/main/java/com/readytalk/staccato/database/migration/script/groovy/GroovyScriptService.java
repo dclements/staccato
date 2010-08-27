@@ -1,6 +1,8 @@
 package com.readytalk.staccato.database.migration.script.groovy;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.annotation.IncompleteAnnotationException;
 import java.net.URL;
@@ -13,6 +15,7 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -20,6 +23,7 @@ import com.readytalk.staccato.database.migration.MigrationException;
 import com.readytalk.staccato.database.migration.annotation.Migration;
 import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationParser;
 import com.readytalk.staccato.database.migration.script.DynamicLanguageScriptService;
+import com.readytalk.staccato.database.migration.script.ScriptTemplate;
 import com.readytalk.staccato.database.migration.script.validation.ScriptValidationException;
 import com.readytalk.staccato.database.migration.script.validation.ScriptValidator;
 import com.readytalk.staccato.utils.Resource;
@@ -37,6 +41,13 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 
   Logger logger = Logger.getLogger(this.getClass().getName());
 
+  public static final String TEMPLATE_DATE_FORMAT = "yyyyMMdd'T'HHmmss";
+  public static final String TEMPLATE_CLASSNAME_PREFIX = "Script";
+  public static final String TEMPLATE_NAME = "GroovyScriptTemplate";
+
+  private String scriptTemplateRawContents;
+  private Version scriptTemplateVersion;
+
   private ResourceLoader loader;
   private ScriptValidator validator;
   private MigrationAnnotationParser annotationParser;
@@ -46,6 +57,8 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
     this.loader = loader;
     this.validator = validator;
     this.annotationParser = annotationParser;
+
+    loadScriptTemplate();
   }
 
   /**
@@ -63,7 +76,7 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 
       if (annotationParser.isMigrationScript(scriptClass)) {
 
-        Object scriptInstance = null;
+        Object scriptInstance;
         try {
           scriptInstance = scriptClass.newInstance();
         } catch (InstantiationException e) {
@@ -93,8 +106,18 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 
         // set the script version
         try {
+
           String scriptVersionStr = migrationAnnotation.scriptVersion();
           Version scriptVersion = new Version(scriptVersionStr, true);
+
+          // first check to make sure that the script version is compatible with the
+          // current script template version
+          if (!scriptVersion.equals(scriptTemplateVersion)) {
+            throw new MigrationException("Cannot load script: " + script.getFilename() + ". Script version '" + scriptVersionStr +
+              "' is incompatible with the current script template version '" + scriptTemplateVersion + "'.  Please update your groovy script to " +
+              "the latest version of the template");
+          }
+
           script.setScriptVersion(scriptVersion);
         } catch (IllegalArgumentException e) {
           throw new MigrationException(Migration.class.getName() + " script version is an invalid format for script: " + script.getFilename(), e);
@@ -168,5 +191,64 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
       e.printStackTrace();
       throw new MigrationException("unable to parse groovy script: " + url.toExternalForm(), e);
     }
+  }
+
+  private void loadScriptTemplate() {
+    try {
+      URL url = this.getClass().getClassLoader().getResource(TEMPLATE_NAME + "." + getScriptFileExtension());
+
+      InputStream inputStream = url.openStream();
+
+      BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+      String line;
+      StringBuilder sb = new StringBuilder();
+      while ((line = reader.readLine()) != null) {
+        sb.append(line).append("\n");
+      }
+
+      scriptTemplateRawContents = sb.toString();
+
+      // extract the version
+      Class<?> templateClass = toClass(url);
+      try {
+        Object scriptInstance = templateClass.newInstance();
+
+        Migration migrationAnnotation = annotationParser.getMigrationAnnotation(scriptInstance);
+        scriptTemplateVersion = new Version(migrationAnnotation.scriptVersion(), true);
+      } catch (InstantiationException e) {
+        throw new MigrationException("Unable to instantiate groovy script template", e);
+      } catch (IllegalAccessException e) {
+        throw new MigrationException("Error while accessing groovy script template class", e);
+      }
+    } catch (IOException e) {
+      throw new MigrationException("Unable to load script template: " + TEMPLATE_NAME, e);
+    }
+  }
+
+  @Override
+  public ScriptTemplate getScriptTemplate(DateTime date, String user, String databaseVersion) throws IOException {
+
+    String scriptDate = DateTimeFormat.forPattern(TEMPLATE_DATE_FORMAT).print(date);
+    String classname = TEMPLATE_CLASSNAME_PREFIX + "_" + scriptDate;
+
+    String contents = scriptTemplateRawContents.toString().replace("USER", user).replace(TEMPLATE_NAME, classname).
+      replace("DATABASE_VERSION", databaseVersion).replace("DATE", date.toString()).trim();
+
+    ScriptTemplate scriptTemplate = new ScriptTemplate();
+    scriptTemplate.setVersion(scriptTemplateVersion);
+    scriptTemplate.setClassname(classname);
+    scriptTemplate.setContents(contents);
+
+    return scriptTemplate;
+  }
+
+  @Override
+  public Version getScriptTemplateVersion() {
+    return scriptTemplateVersion;
+  }
+
+  @Override
+  public String getScriptTemplateRawContents() {
+    return scriptTemplateRawContents;
   }
 }

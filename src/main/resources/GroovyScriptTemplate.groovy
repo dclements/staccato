@@ -39,7 +39,7 @@ import com.readytalk.staccato.database.migration.annotation.PostUp
 @Migration(
   scriptDate = "DATE",
   databaseVersion = "DATABASE_VERSION",
-  scriptVersion = "1.0")
+  scriptVersion = "1.0.0")
 class GroovyScriptTemplate {
 
   @PreUp
