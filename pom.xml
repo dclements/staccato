@@ -158,6 +158,27 @@
         </configuration>
       </plugin>
 
+      <plugin>
+        <groupId>com.readytalk</groupId>
+        <artifactId>staccato-maven-plugin</artifactId>
+        <version>1.0</version>
+        <configuration>
+          <jdbcUrl>jdbc:postgresql://localhost:5432/${dbName}</jdbcUrl>
+          <dbUsername>tomcat</dbUsername>
+          <dbPassword>tomcat</dbPassword>
+          <migrationType>UP</migrationType>
+          <migrationsDir>${basedir}/src/test/resources/system_integration_test</migrationsDir>
+        </configuration>
+        <executions>
+          <execution>
+            <phase/>
+            <goals>
+              <goal>create-script</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
 
