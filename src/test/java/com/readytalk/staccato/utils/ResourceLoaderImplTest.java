@@ -29,7 +29,7 @@ public class ResourceLoaderImplTest {
     ResourceLoaderImpl resourceLoader = new ResourceLoaderImpl();
 
     try {
-      resourceLoader.readFromFileDir(url, ScriptService.MIGRATION_DIR, "groovy");
+      resourceLoader.readFromFileDir(url, ScriptService.DEFAULT_MIGRATION_DIR, "groovy");
       Assert.fail("should have thrown an exception since the directory [" + file.getAbsolutePath() + "] is invalid");
     } catch (ResourceLoaderException e) {
       // no-op
@@ -46,7 +46,7 @@ public class ResourceLoaderImplTest {
     URL url = new URL(invalidJarPath);
 
     try {
-      loader.readFromJarDir(url, ScriptService.MIGRATION_DIR, "groovy");
+      loader.readFromJarDir(url, ScriptService.DEFAULT_MIGRATION_DIR, "groovy");
       Assert.fail("should have thrown an exception since the directory [" + invalidJarPath + "] is invalid");
     } catch (MigrationException e) {
       // no-op
@@ -60,12 +60,12 @@ public class ResourceLoaderImplTest {
 
     File file = new File("target/migration.jar");
 
-    String validJarPath = "jar:file:" + file.getAbsolutePath() + "!/" + ScriptService.MIGRATION_DIR;
+    String validJarPath = "jar:file:" + file.getAbsolutePath() + "!/" + ScriptService.DEFAULT_MIGRATION_DIR;
     URL url = new URL(validJarPath);
 
     Collection<? extends Resource> actualScripts;
     try {
-      actualScripts = loader.readFromJarDir(url, ScriptService.MIGRATION_DIR, "groovy");
+      actualScripts = loader.readFromJarDir(url, ScriptService.DEFAULT_MIGRATION_DIR, "groovy");
       Assert.assertEquals(2, actualScripts.size());
     } catch (MigrationException e) {
       e.printStackTrace();
@@ -78,7 +78,7 @@ public class ResourceLoaderImplTest {
 
     ResourceLoaderImpl loader = new ResourceLoaderImpl();
 
-    Set<Resource> actualScripts = loader.loadRecursively(ScriptService.MIGRATION_DIR, "groovy");
+    Set<Resource> actualScripts = loader.loadRecursively(ScriptService.DEFAULT_MIGRATION_DIR, "groovy");
 
     // should be 3 groovy scripts, only those scripts in the test/resources/migrations dir are loaded
     Assert.assertEquals(3, actualScripts.size());
@@ -89,7 +89,7 @@ public class ResourceLoaderImplTest {
 
     ResourceLoaderImpl loader = new ResourceLoaderImpl();
 
-    Set<Resource> actualScripts = loader.loadRecursively(ScriptService.MIGRATION_DIR, "sql");
+    Set<Resource> actualScripts = loader.loadRecursively(ScriptService.DEFAULT_MIGRATION_DIR, "sql");
 
     // should be 4 sql scripts.  Only those scripts that are in the test/resources/migrations directory are loaded
     Assert.assertEquals(3, actualScripts.size());

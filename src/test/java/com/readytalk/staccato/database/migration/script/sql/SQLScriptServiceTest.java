@@ -38,7 +38,7 @@ public class SQLScriptServiceTest {
     resources.add(resourceThree);
 
     ResourceLoader loader = EasyMock.createStrictMock(ResourceLoader.class);
-    EasyMock.expect(loader.loadRecursively(ScriptService.MIGRATION_DIR, "sql")).andReturn(resources);
+    EasyMock.expect(loader.loadRecursively(ScriptService.DEFAULT_MIGRATION_DIR, "sql")).andReturn(resources);
     EasyMock.replay(loader);
 
     SQLScriptService service = new SQLScriptService(loader);
@@ -76,7 +76,7 @@ public class SQLScriptServiceTest {
     resources.add(resourceTwo);
 
     ResourceLoader loader = EasyMock.createStrictMock(ResourceLoader.class);
-    EasyMock.expect(loader.loadRecursively(ScriptService.MIGRATION_DIR, "sql")).andReturn(resources);
+    EasyMock.expect(loader.loadRecursively(ScriptService.DEFAULT_MIGRATION_DIR, "sql")).andReturn(resources);
     EasyMock.replay(loader);
 
     SQLScriptService service = new SQLScriptService(loader);

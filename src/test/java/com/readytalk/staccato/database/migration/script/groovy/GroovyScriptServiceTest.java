@@ -71,7 +71,7 @@ public class GroovyScriptServiceTest {
     resources.add(resourceThree);
 
     ResourceLoader loader = EasyMock.createStrictMock(ResourceLoader.class);
-    EasyMock.expect(loader.loadRecursively(ScriptService.MIGRATION_DIR, "groovy")).andReturn(resources);
+    EasyMock.expect(loader.loadRecursively(ScriptService.DEFAULT_MIGRATION_DIR, "groovy")).andReturn(resources);
     EasyMock.replay(loader);
 
     // don't care about validation so create a nice mock
@@ -119,7 +119,7 @@ public class GroovyScriptServiceTest {
     resources.add(resourceTwo);
 
     ResourceLoader loader = EasyMock.createStrictMock(ResourceLoader.class);
-    EasyMock.expect(loader.loadRecursively(ScriptService.MIGRATION_DIR, "groovy")).andReturn(resources);
+    EasyMock.expect(loader.loadRecursively(ScriptService.DEFAULT_MIGRATION_DIR, "groovy")).andReturn(resources);
     EasyMock.replay(loader);
 
     // don't care about validation so create a nice mock

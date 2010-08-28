@@ -19,6 +19,8 @@ public class SQLScriptService implements ScriptService<SQLScript> {
 
   private ResourceLoader loader;
 
+  private String migrationDir = DEFAULT_MIGRATION_DIR;
+
   @Inject
   public SQLScriptService(ResourceLoader loader) {
     this.loader = loader;
@@ -26,7 +28,7 @@ public class SQLScriptService implements ScriptService<SQLScript> {
 
   @Override
   public List<SQLScript> load() {
-    Set<Resource> resources = loader.loadRecursively(MIGRATION_DIR, getScriptFileExtension());
+    Set<Resource> resources = loader.loadRecursively(migrationDir, getScriptFileExtension());
 
     List<SQLScript> scripts = new ArrayList<SQLScript>();
 
@@ -61,5 +63,15 @@ public class SQLScriptService implements ScriptService<SQLScript> {
   @Override
   public String getScriptFileExtension() {
     return "sql";
+  }
+
+  @Override
+  public void setMigrationDir(String migrationDir) {
+    this.migrationDir = migrationDir;
+  }
+
+  @Override
+  public String getMigrationDir() {
+    return migrationDir;
   }
 }
