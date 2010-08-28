@@ -1,2 +1,3 @@
-This directory is built to a jar for unit testing purposes only.  The goal here is to test
-migrations against a groovy scripts inside a jar file as well as on the file system.
+This directory is built to a jar for unit testing purposes only.  This jar is used for verifying
+that resources in the /migrations directory can be loaded from it successfully.  The scripts
+in this jar do not get tested in any real migration execution workflows.
