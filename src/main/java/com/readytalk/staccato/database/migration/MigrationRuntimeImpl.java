@@ -1,17 +1,16 @@
 package com.readytalk.staccato.database.migration;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.readytalk.staccato.database.DatabaseContext;
 import com.readytalk.staccato.database.migration.script.sql.SQLScript;
+import com.readytalk.staccato.utils.SQLUtils;
+import com.readytalk.staccato.utils.StringUtils;
 
 /**
  * @author jhumphrey
@@ -41,29 +40,12 @@ public class MigrationRuntimeImpl implements MigrationRuntime {
   @Override
   public ResultSet executeSQL(String sql) {
 
-    ResultSet rs = null;
     try {
-      Connection conn = databaseContext.getConnection();
-      Statement st = conn.createStatement();
-
-      boolean isResultSet = st.execute(sql);
-      if (isResultSet) {
-        rs = st.getResultSet();
-      }
-
-    } catch (Exception e) {
-
-      String truncatedSql = sql;
-
-      if (sql.length() > 100) {
-        truncatedSql = sql.substring(0, 100);
-      }
-
-      logger.severe("Unable to execute query: [" + truncatedSql + "...]");
-      throw new MigrationException("Error occurred while executing sql: " + truncatedSql, e);
+      return SQLUtils.execute(databaseContext.getConnection(), sql);
+    } catch (SQLException e) {
+      logger.log(Level.SEVERE, "Error occurred while executing sql:" + StringUtils.truncate(100, sql), e);
+      return null;
     }
-
-    return rs;
   }
 
   @Override
@@ -80,27 +62,15 @@ public class MigrationRuntimeImpl implements MigrationRuntime {
       }
     }
 
-    if (scriptToExecute != null) {
-
-      try {
-        URL scriptUrl = scriptToExecute.getUrl();
-        BufferedReader in = new BufferedReader(new InputStreamReader(scriptUrl.openStream()));
-        StringBuilder stringBuilder = new StringBuilder();
-        String inputLine;
-        while ((inputLine = in.readLine()) != null) {
-          stringBuilder.append(inputLine).append("\n");
-        }
-        in.close();
-
-        rs = executeSQL(stringBuilder.toString());
-
-      } catch (IOException e) {
-        e.printStackTrace();
-        throw new MigrationException("Unable to read script: " + filename, e);
-      }
-
-    } else {
+    if (scriptToExecute == null) {
       throw new MigrationException("Unable to locate sql script '" + filename + "' in classpath");
+    }
+
+    URL scriptUrl = scriptToExecute.getUrl();
+    try {
+      rs = SQLUtils.executeSQLFile(databaseContext.getConnection(), scriptUrl);
+    } catch (SQLException e) {
+      throw new MigrationException("Unable to sql script file: " + filename, e);
     }
 
     return rs;

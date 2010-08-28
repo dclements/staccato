@@ -3,6 +3,7 @@ package com.readytalk.staccato.database;
 import java.net.URI;
 
 import com.google.inject.ImplementedBy;
+import com.readytalk.staccato.utils.VersionRange;
 
 /**
  * @author jhumphrey
@@ -34,4 +35,25 @@ public interface DatabaseService {
    * @param context the database context
    */
   void disconnect(DatabaseContext context);
+
+  /**
+   * Starts a database transaction
+   *
+   * @param context the database context
+   */
+  void startTransaction(DatabaseContext context);
+
+  /**
+   * Ends the transaction
+   *
+   * @param context the database context
+   */
+  void endTransaction(DatabaseContext context);
+
+  /**
+   * Rollsback any queries in the connection
+   *
+   * @param context the database context
+   */
+  void rollback(DatabaseContext context);
 }

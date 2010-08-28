@@ -73,4 +73,36 @@ public class DatabaseServiceImpl implements DatabaseService {
       }
     }
   }
+
+  @Override
+  public void startTransaction(DatabaseContext context) {
+    try {
+      if (context.getConnection().getAutoCommit()) {
+        context.getConnection().setAutoCommit(false);
+      }
+    } catch (SQLException e) {
+      throw new DatabaseException("Unable to start transaction", e);
+    }
+  }
+
+  @Override
+  public void endTransaction(DatabaseContext context) {
+    try {
+      if (!context.getConnection().getAutoCommit()) {
+        context.getConnection().commit();
+        context.getConnection().setAutoCommit(true);
+      }
+    } catch (SQLException e) {
+      throw new DatabaseException("Unable to end the transaction", e);
+    }
+  }
+
+  @Override
+  public void rollback(DatabaseContext context) {
+    try {
+      context.getConnection().rollback();
+    } catch (SQLException e) {
+      throw new DatabaseException("Unable to rollback database", e);
+    }
+  }
 }

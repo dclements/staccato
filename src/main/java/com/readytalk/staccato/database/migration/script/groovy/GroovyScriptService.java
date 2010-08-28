@@ -14,6 +14,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
@@ -92,6 +93,13 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
         script.setFilename(resource.getFilename());
         script.setScriptClass(scriptClass);
         script.setScriptInstance(scriptInstance);
+
+        // set the sha1 hash
+        try {
+          script.setSha1Hash(DigestUtils.shaHex(resource.getUrl().openStream()));
+        } catch (IOException e) {
+          throw new MigrationException("Error while opening stream for url: " + resource.getUrl().toExternalForm(), e);
+        }
 
         // set the script date
         try {

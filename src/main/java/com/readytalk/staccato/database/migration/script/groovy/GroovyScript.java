@@ -35,6 +35,9 @@ public class GroovyScript implements DynamicLanguageScript<GroovyScript> {
   @NotNull
   private Version scriptVersion;
 
+  @NotNull
+  private String sha1Hash;
+
   @Override
   public String getFilename() {
     return filename;
@@ -60,8 +63,14 @@ public class GroovyScript implements DynamicLanguageScript<GroovyScript> {
     return scriptInstance;
   }
 
+  @Override
   public Version getScriptVersion() {
     return scriptVersion;
+  }
+
+  @Override
+  public String getSHA1Hash() {
+    return sha1Hash;
   }
 
   public void setFilename(String filename) {
@@ -86,6 +95,10 @@ public class GroovyScript implements DynamicLanguageScript<GroovyScript> {
 
   public void setScriptVersion(Version scriptVersion) {
     this.scriptVersion = scriptVersion;
+  }
+
+  public void setSha1Hash(String sha1Hash) {
+    this.sha1Hash = sha1Hash;
   }
 
   @Override

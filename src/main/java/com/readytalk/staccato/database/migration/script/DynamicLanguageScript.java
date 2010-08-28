@@ -39,5 +39,12 @@ public interface DynamicLanguageScript<T> extends Script<T> {
    *
    * @return the script version
    */
-  Version getScriptVersion();  
+  Version getScriptVersion();
+
+  /**
+   * Returns the SHA1 hash of the file
+   *
+   * @return the SHA1 hash
+   */
+  String getSHA1Hash();
 }
