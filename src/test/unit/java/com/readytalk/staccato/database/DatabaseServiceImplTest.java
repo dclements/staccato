@@ -21,7 +21,7 @@ public class DatabaseServiceImplTest extends BaseTest {
     DatabaseService service = new DatabaseServiceImpl();
 
     try {
-      DatabaseContext context = service.buildContext(mysqlJdbcUri, dbName, dbUsername, dbPassword);
+      DatabaseContext context = service.initialize(mysqlJdbcUri, dbName, dbUsername, dbPassword);
       Assert.assertEquals(context.getJdbcUri(), mysqlJdbcUri);
       Assert.assertEquals(context.getUsername(), dbUsername);
       Assert.assertEquals(context.getPassword(), dbPassword);
@@ -39,7 +39,7 @@ public class DatabaseServiceImplTest extends BaseTest {
     DatabaseService service = new DatabaseServiceImpl();
 
     try {
-      DatabaseContext context = service.buildContext(postgresqlJdbcUri, dbName, dbUsername, dbPassword);
+      DatabaseContext context = service.initialize(postgresqlJdbcUri, dbName, dbUsername, dbPassword);
       Assert.assertEquals(context.getJdbcUri(), postgresqlJdbcUri);
       Assert.assertEquals(context.getUsername(), dbUsername);
       Assert.assertEquals(context.getPassword(), dbPassword);
@@ -56,7 +56,7 @@ public class DatabaseServiceImplTest extends BaseTest {
     DatabaseServiceImpl service = new DatabaseServiceImpl();
 
     try {
-      DatabaseContext context = service.buildContext(postgresqlJdbcUri, dbName, dbUsername, dbPassword);
+      DatabaseContext context = service.initialize(postgresqlJdbcUri, dbName, dbUsername, dbPassword);
       service.connect(context);
 
       String expectedFilename = "foo";
@@ -94,7 +94,7 @@ public class DatabaseServiceImplTest extends BaseTest {
     DatabaseServiceImpl service = new DatabaseServiceImpl();
 
     try {
-      DatabaseContext context = service.buildContext(postgresqlJdbcUri, dbName, dbUsername, dbPassword);
+      DatabaseContext context = service.initialize(postgresqlJdbcUri, dbName, dbUsername, dbPassword);
       service.connect(context);
 
       String expectedFilename = "foo";

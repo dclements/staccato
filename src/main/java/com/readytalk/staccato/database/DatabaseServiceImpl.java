@@ -17,7 +17,7 @@ public class DatabaseServiceImpl implements DatabaseService {
   Logger logger = Logger.getLogger(this.getClass().getName());
 
   @Override
-  public DatabaseContext buildContext(URI jdbcUri, String dbName, String username, String password) {
+  public DatabaseContext initialize(URI jdbcUri, String dbName, String username, String password) {
 
     DatabaseContext context = new DatabaseContext();
     context.setUsername(username);
@@ -27,6 +27,8 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     DatabaseType databaseType = DatabaseType.getTypeFromJDBCUri(jdbcUri);
     context.setDatabaseType(databaseType);
+
+    connect(context);
 
     return context;
   }

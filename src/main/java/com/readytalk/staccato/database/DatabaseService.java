@@ -21,7 +21,7 @@ public interface DatabaseService {
    * @param password the db password
    * @return database context
    */
-  DatabaseContext buildContext(URI jdbcUri, String dbName, String username, String password);
+  DatabaseContext initialize(URI jdbcUri, String dbName, String username, String password);
 
   /**
    * Connects to the database using the context specified

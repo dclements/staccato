@@ -16,7 +16,6 @@ import com.readytalk.staccato.database.migration.MigrationRuntime;
 import com.readytalk.staccato.database.migration.MigrationRuntimeImpl;
 import com.readytalk.staccato.database.migration.MigrationType;
 import com.readytalk.staccato.database.migration.MigrationVersionsService;
-import com.readytalk.staccato.database.migration.MigrationVersionsServiceImpl;
 import com.readytalk.staccato.database.migration.ProjectContext;
 import com.readytalk.staccato.database.migration.script.groovy.GroovyScript;
 import com.readytalk.staccato.database.migration.script.groovy.GroovyScriptService;
@@ -43,9 +42,13 @@ public class GroovyMigration1IntegrationTest extends BaseTest {
   @Inject
   public SQLScriptService sqlScriptService;
 
+
+  @Inject
+  public MigrationVersionsService versionsService;
+
   @Test
-  public void testMigrationVersionsTableIsCreated() {
-    DatabaseContext dbCtx = dbService.buildContext(postgresqlJdbcUri, dbName, dbUsername, dbPassword);
+  public void testMigrationVersionsTableIsCreated() throws SQLException {
+    DatabaseContext dbCtx = dbService.initialize(postgresqlJdbcUri, dbName, dbUsername, dbPassword);
 
     ProjectContext pCtx = new ProjectContext();
     pCtx.setName("foo");
@@ -58,19 +61,8 @@ public class GroovyMigration1IntegrationTest extends BaseTest {
     List<GroovyScript> migrationScripts = groovyScriptService.load(migrationDir);
     migrationService.run(migrationScripts, migrationRuntime);
 
-    Connection connection = makePostgresqlConnection();
+    Assert.assertTrue(versionsService.versionTableExists(dbCtx));
 
-    try {
-      SQLUtils.execute(connection, "select * from " + MigrationVersionsService.MIGRATION_VERSIONS_TABLE);
-    } catch (SQLException e) {
-      Assert.fail("should not have thrown", e);
-    }
-
-    // delete the migrations table
-    try {
-      SQLUtils.execute(makePostgresqlConnection(), "drop table " + MigrationVersionsService.MIGRATION_VERSIONS_TABLE);
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
+    SQLUtils.execute(makePostgresqlConnection(), "drop table " + MigrationVersionsService.MIGRATION_VERSIONS_TABLE);
   }
 }

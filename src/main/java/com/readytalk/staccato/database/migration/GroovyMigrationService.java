@@ -3,12 +3,10 @@ package com.readytalk.staccato.database.migration;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.IncompleteAnnotationException;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.inject.Inject;
 import com.readytalk.staccato.database.DatabaseContext;
-import com.readytalk.staccato.database.DatabaseException;
 import com.readytalk.staccato.database.DatabaseService;
 import com.readytalk.staccato.database.DatabaseType;
 import com.readytalk.staccato.database.migration.annotation.Migration;
@@ -24,19 +22,16 @@ public class GroovyMigrationService implements MigrationService<GroovyScript> {
   Logger logger = Logger.getLogger(this.getClass().getName());
 
   private MigrationWorkflowService migrationWorkflowService;
-  private DatabaseService databaseService;
   private MigrationAnnotationParser annotationParser;
   private MigrationVersionsService migrationVersionsService;
 
   @Inject
   public GroovyMigrationService(
     MigrationWorkflowService migrationWorkflowService,
-    DatabaseService databaseService,
     MigrationAnnotationParser annotationParser,
     MigrationVersionsService migrationVersionsService) {
 
     this.migrationWorkflowService = migrationWorkflowService;
-    this.databaseService = databaseService;
     this.annotationParser = annotationParser;
     this.migrationVersionsService = migrationVersionsService;
   }
@@ -47,86 +42,45 @@ public class GroovyMigrationService implements MigrationService<GroovyScript> {
     DatabaseContext databaseContext = migrationRuntime.getDatabaseContext();
     MigrationType migrationType = migrationRuntime.getMigrationType();
 
-    try {
-      String workflowOutput = "workflow: ";
-      for (Class<? extends Annotation> aClass : migrationType.getWorkflowSteps()) {
-        workflowOutput += aClass.getSimpleName() + " ";
-      }
-
-      logger.info("Running " + databaseContext.getDatabaseType() + " migration: " + migrationType.name() + ", " + workflowOutput);
-
-      // establish the connection to the database
-      try {
-        databaseService.connect(databaseContext);
-      } catch (DatabaseException e) {
-        //TODO:  Design for the workflow when the database does not yet exist
-        //
-        // Currently, the system won't work unless the database has been created prior to migration execution
-        //
-        // How to design to this?
-        //
-        // Possible ideas:
-        //  1. create a new workflow called CREATE that is similar to UP but has one additional step called at the beginning called @Create.
-        //     The idea here is that there would be a script method annotated with @Create that would contain the logic necessary to create the database from scratch.
-        //
-        //      cons:  Since only one @Create would be necessary, this annotation doesn't really follow the same pattern
-        //             as all the other workflow step annotations.  In other words, there wouldn't be ONE-TO-MANY of these throughout the script set.
-        //             Kinda hacky...  Maybe add an attribute called 'unique'?  This doesn't really solve the problem but makes it contextually better..maybe?
-        //
-        //             ex:
-        //
-        //             @Create(unique=true)
-        //             void createDatabase()
-        //
-        logger.severe(e.getMessage());
-        throw new MigrationException("Unable to establish a connection to the database for jdbc uri:" +
-          databaseContext.getJdbcUri() + ", username: " + databaseContext.getUsername() + ", password: " +
-          databaseContext.getPassword() + ".  Please make sure that the database exists and that that the " +
-          "user permissions are set appropriately.", e);
-      }
-
-      // iterate through the groovy scripts for invocation
-      for (GroovyScript script : migrationScripts) {
-        logger.info("Executing script: " + script.getFilename());
-
-        Migration migrationAnnotation = annotationParser.getMigrationAnnotation(script.getScriptInstance());
-
-        // print the description to the logs if it's not null
-        String description = getDescription(migrationAnnotation);
-        if (getDescription(migrationAnnotation) != null) {
-          logger.info("Description: " + description);
-        }
-
-        // validate database type
-        if (!isValidDatabaseType(script, migrationAnnotation, databaseContext)) {
-          continue;
-        }
-
-        try {
-          // todo: Spent a ton of time trying to get transactions to work without luck.  Figure this out
-//          databaseService.startTransaction(databaseContext, script);
-
-          migrationWorkflowService.executeWorkflow(script, migrationType.getWorkflowSteps(), migrationRuntime);
-
-          // if execute is successful, log to the migration versions table
-          migrationVersionsService.log(databaseContext, script);
-
-          // todo: add this back in once transactions are figured out
-//          databaseService.endTransaction(databaseContext, script);
-        } catch (Exception e) {
-
-          try {
-            databaseService.rollback(databaseContext, script);
-          } catch (DatabaseException de) {
-            logger.log(Level.SEVERE, "Unable to rollback transaction", de.getCause());
-          }
-
-          throw new MigrationException("An error occurred during execution of migration script: " + script.getFilename(), e);
-        }
-      }
-    } finally {
-      databaseService.disconnect(databaseContext);
+    String workflowOutput = "workflow: ";
+    for (Class<? extends Annotation> aClass : migrationType.getWorkflowSteps()) {
+      workflowOutput += aClass.getSimpleName() + " ";
     }
+
+    logger.info("Running " + databaseContext.getDatabaseType() + " migration: " + migrationType.name() + ", " + workflowOutput);
+
+    // iterate through the groovy scripts for invocation
+    for (GroovyScript script : migrationScripts) {
+      logger.info("Executing script: " + script.getFilename());
+
+      Migration migrationAnnotation = annotationParser.getMigrationAnnotation(script.getScriptInstance());
+
+      // print the description to the logs if it's not null
+      String description = getDescription(migrationAnnotation);
+      if (getDescription(migrationAnnotation) != null) {
+        logger.info("Description: " + description);
+      }
+
+      // validate database type
+      if (!isValidDatabaseType(script, migrationAnnotation, databaseContext)) {
+        continue;
+      }
+
+      // todo: Figure out transactions
+      // i'd like to create a transaction prior to each individual script execution so that if
+      // there are errors, I can rollback anything that was done.
+      // I spent a ton of time trying to get transactions to work without luck.
+      // databaseService.startTransaction(databaseContext, script);
+
+      migrationWorkflowService.executeWorkflow(script, migrationType.getWorkflowSteps(), migrationRuntime);
+
+      // if execute is successful, log to the migration versions table
+      migrationVersionsService.log(databaseContext, script);
+
+      // todo: add this back in once transactions are figured out
+//          databaseService.endTransaction(databaseContext, script);
+    }
+
   }
 
   /**
