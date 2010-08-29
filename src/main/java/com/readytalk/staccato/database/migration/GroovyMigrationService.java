@@ -103,25 +103,25 @@ public class GroovyMigrationService implements MigrationService<GroovyScript> {
         }
 
         try {
-          // make sure that we put all script workflow execution in a transaction
-          databaseService.startTransaction(databaseContext);
+          // todo: Spent a ton of time trying to get transactions to work without luck.  Figure this out
+//          databaseService.startTransaction(databaseContext, script);
 
           migrationWorkflowService.executeWorkflow(script, migrationType.getWorkflowSteps(), migrationRuntime);
 
           // if execute is successful, log to the migration versions table
           migrationVersionsService.log(databaseContext, script);
 
-          // end the transaction.  This commits all sql queries
-          databaseService.endTransaction(databaseContext);
+          // todo: add this back in once transactions are figured out
+//          databaseService.endTransaction(databaseContext, script);
         } catch (Exception e) {
-          logger.log(Level.SEVERE, "An unexpected error occurred during migration execution of script: " + script.getFilename() + ".  Rolling back migration", e);
 
           try {
-            databaseService.rollback(databaseContext);
+            databaseService.rollback(databaseContext, script);
           } catch (DatabaseException de) {
             logger.log(Level.SEVERE, "Unable to rollback transaction", de.getCause());
           }
 
+          throw new MigrationException("An error occurred during execution of migration script: " + script.getFilename(), e);
         }
       }
     } finally {

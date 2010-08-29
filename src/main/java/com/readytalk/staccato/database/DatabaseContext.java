@@ -2,6 +2,11 @@ package com.readytalk.staccato.database;
 
 import java.net.URI;
 import java.sql.Connection;
+import java.sql.Savepoint;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Simple struct for modeling database meta-data
@@ -16,6 +21,7 @@ public class DatabaseContext {
   private String password;
   private String dbName;
   private DatabaseType databaseType;
+  private Map<String, Savepoint> txnSavepoints = new HashMap<String, Savepoint>();
 
   public Connection getConnection() {
     return connection;
@@ -63,5 +69,9 @@ public class DatabaseContext {
 
   public void setDatabaseType(DatabaseType databaseType) {
     this.databaseType = databaseType;
+  }
+
+  public Map<String, Savepoint> getTxnSavepoints() {
+    return txnSavepoints;
   }
 }

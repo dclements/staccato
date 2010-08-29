@@ -1,9 +1,10 @@
 package com.readytalk.staccato.database;
 
 import java.net.URI;
+import java.sql.Connection;
 
 import com.google.inject.ImplementedBy;
-import com.readytalk.staccato.utils.VersionRange;
+import com.readytalk.staccato.database.migration.script.Script;
 
 /**
  * @author jhumphrey
@@ -40,20 +41,23 @@ public interface DatabaseService {
    * Starts a database transaction
    *
    * @param context the database context
+   * @param script the script creating a transaction for
    */
-  void startTransaction(DatabaseContext context);
+  void startTransaction(DatabaseContext context, Script script);
 
   /**
    * Ends the transaction
    *
-   * @param context the database context
+   * @param context the database connection
+   * @param script the script ending the transaction for
    */
-  void endTransaction(DatabaseContext context);
+  void endTransaction(DatabaseContext context, Script script);
 
   /**
    * Rollsback any queries in the connection
    *
-   * @param context the database context
+   * @param context the database connection
+   * @param script the script rolling back
    */
-  void rollback(DatabaseContext context);
+  void rollback(DatabaseContext context, Script script);
 }

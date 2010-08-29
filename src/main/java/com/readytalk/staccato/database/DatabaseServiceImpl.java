@@ -4,7 +4,10 @@ import java.net.URI;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.util.logging.Logger;
+
+import com.readytalk.staccato.database.migration.script.Script;
 
 /**
  * @author jhumphrey
@@ -75,33 +78,66 @@ public class DatabaseServiceImpl implements DatabaseService {
   }
 
   @Override
-  public void startTransaction(DatabaseContext context) {
+  public void startTransaction(DatabaseContext context, Script script) {
     try {
-      if (context.getConnection().getAutoCommit()) {
-        logger.finest("Settings auto-commit to false for transactional management");
-        context.getConnection().setAutoCommit(false);
-      }
+      Connection connection = context.getConnection();
+      connection.setAutoCommit(false);
+
+      String savepointName = buildSavepointName(script);
+
+      Savepoint savepoint = connection.setSavepoint(savepointName);
+      context.getTxnSavepoints().put(savepointName, savepoint);
+      logger.finest("started transaction with savepoint: " + savepointName);
     } catch (SQLException e) {
       throw new DatabaseException("Unable to start transaction", e);
     }
   }
 
   @Override
-  public void endTransaction(DatabaseContext context) {
+  public void endTransaction(DatabaseContext context, Script script) {
     try {
-      if (!context.getConnection().getAutoCommit()) {
-        context.getConnection().commit();
-        context.getConnection().setAutoCommit(true);
+      Connection connection = context.getConnection();
+      if (!connection.getAutoCommit()) {
+        connection.commit();
+        connection.setAutoCommit(true);
+
+        String savepointName = buildSavepointName(script);
+
+        try {
+          connection.releaseSavepoint(context.getTxnSavepoints().get(savepointName));
+        } catch (SQLException e) {
+          logger.warning("Savepoint not found when ending transaction: " + savepointName);
+        } finally {
+          context.getTxnSavepoints().remove(savepointName);
+        }
       }
     } catch (SQLException e) {
       throw new DatabaseException("Unable to end the transaction", e);
     }
   }
 
+  /**
+   * Helper method for building a transaction savepoint name
+   *
+   * @param script the script
+   * @return the savepoint name
+   */
+  String buildSavepointName(Script script) {
+    return "transaction_savepoint_" + script.getFilename();
+  }
+
   @Override
-  public void rollback(DatabaseContext context) {
+  public void rollback(DatabaseContext context, Script script) {
     try {
-      context.getConnection().rollback();
+
+      String savepointName = buildSavepointName(script);
+
+      Connection connection = context.getConnection();
+      if (!connection.getAutoCommit()) {
+        logger.finest("rolling back transaction to savepoint: " + savepointName);
+        connection.rollback(context.getTxnSavepoints().get(savepointName));
+        context.getTxnSavepoints().remove(savepointName);
+      }
     } catch (SQLException e) {
       throw new DatabaseException("Unable to rollback database", e);
     }

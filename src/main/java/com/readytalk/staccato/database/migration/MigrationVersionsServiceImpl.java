@@ -54,7 +54,6 @@ public class MigrationVersionsServiceImpl implements MigrationVersionsService {
    */
   @Override
   public boolean versionTableExists(DatabaseContext context) {
-
     try {
       if (context.getConnection().isClosed()) {
         throw new DatabaseException("Connection is closed to: " + context.getJdbcUri());
