@@ -60,4 +60,25 @@ public class BaseTest {
 
     return null;
   }
+
+  public Connection makeMysqlConnection() {
+    URI jdbcUri = this.mysqlJdbcUri;
+
+    try {
+
+      Class.forName("com.mysql.jdbc.Driver");
+
+      String username = dbUsername;
+      String password = dbPassword;
+
+      return DriverManager.getConnection(jdbcUri.toString(), username, password);
+
+    } catch (ClassNotFoundException e) {
+      Assert.fail(getDatabaseErrorMessage(jdbcUri));
+    } catch (SQLException e) {
+      Assert.fail(getDatabaseErrorMessage(jdbcUri));
+    }
+
+    return null;
+  }
 }

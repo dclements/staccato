@@ -1,6 +1,7 @@
 package com.readytalk.staccato;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class GroovyMigration1IntegrationTest extends BaseTest {
   public MigrationVersionsService versionsService;
 
   @Test
-  public void testMigrationVersionsTableIsCreated() throws SQLException {
+  public void testMigrationVersionLoggingWithPostgres() throws SQLException {
     DatabaseContext dbCtx = dbService.initialize(postgresqlJdbcUri, dbName, dbUsername, dbPassword);
 
     ProjectContext pCtx = new ProjectContext();
@@ -63,6 +64,36 @@ public class GroovyMigration1IntegrationTest extends BaseTest {
 
     Assert.assertTrue(versionsService.versionTableExists(dbCtx));
 
-    SQLUtils.execute(makePostgresqlConnection(), "drop table " + MigrationVersionsService.MIGRATION_VERSIONS_TABLE);
+    // make sure script execution was logged
+    ResultSet rs = SQLUtils.execute(dbCtx.getConnection(), "select * from " + MigrationVersionsService.MIGRATION_VERSIONS_TABLE);
+
+    Assert.assertNotNull(rs);
+
+    SQLUtils.execute(dbCtx.getConnection(), "drop table " + MigrationVersionsService.MIGRATION_VERSIONS_TABLE);
+  }
+
+  @Test
+  public void testMigrationVersionLoggingWithMysql() throws SQLException {
+    DatabaseContext dbCtx = dbService.initialize(mysqlJdbcUri, dbName, dbUsername, dbPassword);
+
+    ProjectContext pCtx = new ProjectContext();
+    pCtx.setName("foo");
+    pCtx.setVersion("1.0");
+
+    List<SQLScript> sqlScripts = sqlScriptService.load(migrationDir);
+
+    MigrationRuntime migrationRuntime = new MigrationRuntimeImpl(dbCtx, pCtx, sqlScripts, MigrationType.SCHEMA_UP);
+
+    List<GroovyScript> migrationScripts = groovyScriptService.load(migrationDir);
+    migrationService.run(migrationScripts, migrationRuntime);
+
+    Assert.assertTrue(versionsService.versionTableExists(dbCtx));
+
+    // make sure script execution was logged
+    ResultSet rs = SQLUtils.execute(dbCtx.getConnection(), "select * from " + MigrationVersionsService.MIGRATION_VERSIONS_TABLE);
+
+    Assert.assertNotNull(rs);
+
+    SQLUtils.execute(dbCtx.getConnection(), "drop table " + MigrationVersionsService.MIGRATION_VERSIONS_TABLE);
   }
 }

@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
+import org.joda.time.format.DateTimeFormat;
 
 import com.readytalk.staccato.database.DatabaseContext;
 import com.readytalk.staccato.database.DatabaseException;
@@ -85,7 +86,18 @@ public class MigrationVersionsServiceImpl implements MigrationVersionsService {
 
     try {
       String filename = script.getFilename();
-      String date = script.getScriptDate().toString();
+
+      String date;
+
+      switch(databaseContext.getDatabaseType()) {
+        case MYSQL:
+          date = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss.SSS").print(script.getScriptDate());
+          break;
+        default:
+          date = script.getScriptDate().toString();
+          break;
+      }
+
       String hash = script.getSHA1Hash();
       String version = script.getScriptVersion().toString();
 
