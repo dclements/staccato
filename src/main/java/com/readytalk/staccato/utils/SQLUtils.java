@@ -9,10 +9,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author jhumphrey
  */
 public class SQLUtils {
+
+  public static final Logger logger = Logger.getLogger(SQLUtils.class);
 
   /**
    * Executes sql
@@ -24,6 +28,8 @@ public class SQLUtils {
    */
   public static ResultSet execute(Connection connection, String sql) throws SQLException {
 
+    logger.trace("Executing sql: \n" + sql + "\n");
+
     ResultSet rs = null;
     try {
       Statement st = connection.createStatement();
@@ -34,9 +40,7 @@ public class SQLUtils {
       }
 
     } catch (Exception e) {
-
-      String truncatedSql = StringUtils.truncate(100, sql);
-      throw new SQLException("Error occurred while executing sql: " + truncatedSql, e);
+      throw new SQLException("Error occurred while executing sql: " + sql, e);
     }
 
     return rs;
@@ -51,6 +55,8 @@ public class SQLUtils {
    * @throws SQLException if errors during execution
    */
   public static ResultSet executeSQLFile(Connection connection, URL url) throws SQLException {
+
+    logger.trace("Executing sql file url: " + url.toExternalForm());
 
     ResultSet rs;
 

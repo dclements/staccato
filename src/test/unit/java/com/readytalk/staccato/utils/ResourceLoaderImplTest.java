@@ -29,7 +29,7 @@ public class ResourceLoaderImplTest {
     ResourceLoaderImpl resourceLoader = new ResourceLoaderImpl();
 
     try {
-      resourceLoader.readFromFileDir(url, MigrationService.DEFAULT_MIGRATION_DIR, "groovy");
+      resourceLoader.readFromFileDir(url, "groovy");
       Assert.fail("should have thrown an exception since the directory [" + file.getAbsolutePath() + "] is invalid");
     } catch (ResourceLoaderException e) {
       // no-op

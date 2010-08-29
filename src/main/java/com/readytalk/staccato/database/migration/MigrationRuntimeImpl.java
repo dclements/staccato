@@ -4,20 +4,20 @@ import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import com.readytalk.staccato.database.DatabaseContext;
 import com.readytalk.staccato.database.migration.script.sql.SQLScript;
 import com.readytalk.staccato.utils.SQLUtils;
-import com.readytalk.staccato.utils.StringUtils;
 
 /**
  * @author jhumphrey
  */
 public class MigrationRuntimeImpl implements MigrationRuntime {
 
-  Logger logger = Logger.getLogger(this.getClass().getName());
+  public static final Logger logger = Logger.getLogger(MigrationRuntimeImpl.class);
 
   private DatabaseContext databaseContext;
   private ProjectContext projectContext;
@@ -57,7 +57,7 @@ public class MigrationRuntimeImpl implements MigrationRuntime {
     try {
       return SQLUtils.execute(databaseContext.getConnection(), sql);
     } catch (SQLException e) {
-      logger.log(Level.SEVERE, "Error occurred while executing sql:" + StringUtils.truncate(100, sql), e);
+      logger.log(Level.FATAL, "Error occurred while executing sql:" + sql, e);
       return null;
     }
   }

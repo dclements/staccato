@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 import com.readytalk.staccato.database.DatabaseContext;
 import com.readytalk.staccato.database.DatabaseException;
 import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
@@ -14,6 +16,8 @@ import com.readytalk.staccato.utils.SQLUtils;
  * @author jhumphrey
  */
 public class MigrationVersionsServiceImpl implements MigrationVersionsService {
+
+  public static final Logger logger = Logger.getLogger(MigrationVersionsServiceImpl.class);
 
   /**
    * {@inheritDoc}
@@ -42,6 +46,7 @@ public class MigrationVersionsServiceImpl implements MigrationVersionsService {
       }
 
       try {
+        logger.debug("Creating table: " + MIGRATION_VERSIONS_TABLE);
         SQLUtils.executeSQLFile(context.getConnection(), url);
       } catch (SQLException e) {
         throw new DatabaseException("Unable to execute mysql script: " + url.toExternalForm(), e);
@@ -64,6 +69,7 @@ public class MigrationVersionsServiceImpl implements MigrationVersionsService {
 
     Connection conn = context.getConnection();
     try {
+      logger.debug("Checking for existence of table: " + MIGRATION_VERSIONS_TABLE);
       ResultSet rs = SQLUtils.execute(conn, "select * from " + MIGRATION_VERSIONS_TABLE);
       rs.close();
       return true;
@@ -87,6 +93,9 @@ public class MigrationVersionsServiceImpl implements MigrationVersionsService {
       sqlBuilder.append("INSERT INTO ").append(MIGRATION_VERSIONS_TABLE).append(" ");
       sqlBuilder.append("(script_date, script_version, script_hash, script_filename)").append(" ");
       sqlBuilder.append("  values('").append(date).append("', '").append(version).append("', '").append(hash).append("', '").append(filename).append("')");
+
+      logger.debug("Logged migration to: " + MIGRATION_VERSIONS_TABLE);
+
       SQLUtils.execute(databaseContext.getConnection(), sqlBuilder.toString());
     } catch (SQLException e) {
       throw new MigrationException("Unable to execute query", e);

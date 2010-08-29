@@ -13,6 +13,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 
 import com.readytalk.staccato.database.migration.MigrationException;
 
@@ -21,8 +22,12 @@ import com.readytalk.staccato.database.migration.MigrationException;
  */
 public class ResourceLoaderImpl implements ResourceLoader {
 
+  public static final Logger logger = Logger.getLogger(ResourceLoaderImpl.class);
+
   @Override
   public Set<Resource> loadRecursively(String directory, String fileExtension) {
+
+    logger.debug("Searching directory [" + directory + "] for resources with file extension [" + fileExtension + "]");
 
     Set<Resource> resources = new HashSet<Resource>();
 
@@ -35,7 +40,7 @@ public class ResourceLoaderImpl implements ResourceLoader {
         String protocol = resourceUrl.getProtocol();
 
         if (protocol.equals("file")) {
-          resources.addAll(readFromFileDir(resourceUrl, directory, fileExtension));
+          resources.addAll(readFromFileDir(resourceUrl, fileExtension));
         } else if (protocol.equals("jar")) {
           resources.addAll(readFromJarDir(resourceUrl, directory, fileExtension));
         }
@@ -49,7 +54,7 @@ public class ResourceLoaderImpl implements ResourceLoader {
 
   // helper method for loading file resources
 
-  Collection<? extends Resource> readFromFileDir(URL resourceUrl, String directory, String fileExtension) {
+  Collection<? extends Resource> readFromFileDir(URL resourceUrl, String fileExtension) {
 
     Set<Resource> resources = new HashSet<Resource>();
 
@@ -65,6 +70,7 @@ public class ResourceLoaderImpl implements ResourceLoader {
         resource.setUrl(file.toURI().toURL());
         resource.setType(ResourceType.FILE);
         resources.add(resource);
+        logger.trace("Found " + ResourceType.FILE + " resource: " + file.getAbsolutePath());
       }
 
     } catch (URISyntaxException e) {
@@ -110,6 +116,7 @@ public class ResourceLoaderImpl implements ResourceLoader {
           resource.setUrl(entryUrl);
           resource.setType(ResourceType.JAR);
           resources.add(resource);
+          logger.trace("Found " + ResourceType.JAR + " resource: " + file.getAbsolutePath());
         }
       }
     }

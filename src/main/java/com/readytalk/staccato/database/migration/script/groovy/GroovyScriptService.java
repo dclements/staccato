@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.logging.Logger;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
@@ -40,7 +40,7 @@ import groovy.lang.GroovyClassLoader;
 @Singleton
 public class GroovyScriptService implements DynamicLanguageScriptService<GroovyScript> {
 
-  Logger logger = Logger.getLogger(this.getClass().getName());
+  public static final Logger logger = Logger.getLogger(GroovyScriptService.class);
 
   public static final String TEMPLATE_DATE_FORMAT = "yyyyMMdd'T'HHmmss";
   public static final String TEMPLATE_CLASSNAME_PREFIX = "Script";
@@ -67,6 +67,9 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
    */
   @Override
   public List<GroovyScript> load(String migrationDir) {
+
+    logger.debug("Loading groovy scripts from migration directory: " + migrationDir);
+
     Set<Resource> resources = loader.loadRecursively(migrationDir, getScriptFileExtension());
 
     SortedSet<GroovyScript> scripts = new TreeSet<GroovyScript>();
@@ -153,8 +156,9 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
         }
 
         scripts.add(script);
+        logger.debug("Added groovy script to migration: " + script.getFilename());
       } else {
-        logger.warning("Unable to load script [" + resource.getFilename() + "].  Not marked for migration with the annotation: " + Migration.class.getName());
+        logger.warn("Unable to load script [" + resource.getFilename() + "].  Not marked for migration with the annotation: " + Migration.class.getName());
       }
     }
 
@@ -176,6 +180,8 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
    * @return a java class
    */
   public Class<?> toClass(URL url) {
+
+    logger.trace("Converting groovy script [" + url.toExternalForm() + "] to a java class");
 
     GroovyClassLoader gcl = new GroovyClassLoader(this.getClass().getClassLoader());
     try {
@@ -223,6 +229,9 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 
         Migration migrationAnnotation = annotationParser.getMigrationAnnotation(scriptInstance);
         scriptTemplateVersion = new Version(migrationAnnotation.scriptVersion(), true);
+
+        logger.debug("Loaded groovy script template version " + scriptTemplateVersion.toString() + ": " + url.toExternalForm());
+
       } catch (InstantiationException e) {
         throw new MigrationException("Unable to instantiate groovy script template", e);
       } catch (IllegalAccessException e) {

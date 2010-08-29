@@ -2,7 +2,8 @@ package com.readytalk.staccato.database.migration.workflow;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import com.readytalk.staccato.database.migration.MigrationException;
 import com.readytalk.staccato.database.migration.MigrationResult;
@@ -19,7 +20,7 @@ import com.google.inject.Inject;
  */
 public class MigrationWorkflowServiceImpl<T extends Annotation> implements MigrationWorkflowService {
 
-  Logger logger = Logger.getLogger(this.getClass().getName());
+  public static final Logger logger = Logger.getLogger(MigrationWorkflowServiceImpl.class);
 
   private MigrationAnnotationParser annotationParser;
 
@@ -37,7 +38,7 @@ public class MigrationWorkflowServiceImpl<T extends Annotation> implements Migra
       beginOutput += aClass.getSimpleName() + " ";
     }
 
-    logger.fine(beginOutput);
+    logger.debug(beginOutput);
 
     MigrationResult migrationResult = new MigrationResult();
 
@@ -56,15 +57,15 @@ public class MigrationWorkflowServiceImpl<T extends Annotation> implements Migra
             Object executionResult = stepExecutorInstance.execute(script.getScriptInstance(), new WorkflowContext(annotationParser, migrationRuntime));
             migrationResult.getResultMap().put(annotation.annotationType(), executionResult);
           } catch (InstantiationException e) {
-            throw new MigrationException(e);
+            throw new MigrationException("Unable to instantiate workflow step: " + workflowStep.getSimpleName(), e);
           } catch (IllegalAccessException e) {
-            throw new MigrationException(e);
+            throw new MigrationException("Unable to access workflow step class: " + workflowStep.getSimpleName(), e);
           } catch (InvocationTargetException e) {
-            throw new MigrationException(e);
+            throw new MigrationException("Error invoking workflow step: " + workflowStep.getSimpleName(), e);
           }
         }
       } else {
-        logger.fine("Skipping workflow step @" + workflowStep.getSimpleName() + ". No annotated methods found in script: " + script.getFilename());
+        logger.debug("Skipping workflow step @" + workflowStep.getSimpleName() + ". No annotated methods found in script: " + script.getFilename());
       }
     }
 

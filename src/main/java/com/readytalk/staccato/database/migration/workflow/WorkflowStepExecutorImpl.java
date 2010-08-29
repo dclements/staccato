@@ -3,7 +3,8 @@ package com.readytalk.staccato.database.migration.workflow;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationParser;
 
@@ -12,7 +13,7 @@ import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationP
  */
 public class WorkflowStepExecutorImpl<T extends Annotation> implements WorkflowStepExecutor<T> {
 
-  Logger logger = Logger.getLogger(this.getClass().getName());
+  public static final Logger logger = Logger.getLogger(WorkflowStepExecutorImpl.class);
 
   private T workflowStep;
 
@@ -29,7 +30,7 @@ public class WorkflowStepExecutorImpl<T extends Annotation> implements WorkflowS
     Object result;
 
     try {
-      logger.fine("Invoking workflow step @" + workflowStep.annotationType().getSimpleName() + " on method: " + method.getName());
+      logger.debug("Invoking workflow step @" + workflowStep.annotationType().getSimpleName() + " on method: " + method.getName());
       // first try invoking without runtime argument
       result = method.invoke(scriptInstance);
     } catch (IllegalArgumentException e) {

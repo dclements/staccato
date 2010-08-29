@@ -3,12 +3,16 @@ package com.readytalk.staccato.database.migration.annotation;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
+import org.apache.log4j.Logger;
+
 import com.readytalk.staccato.database.migration.MigrationException;
 
 /**
  * @author jhumphrey
  */
 public class MigrationAnnotationParserImpl implements MigrationAnnotationParser {
+
+  public static final Logger logger = Logger.getLogger(MigrationAnnotationParserImpl.class);
 
   @Override
   public Migration getMigrationAnnotation(Object scriptInstance) {
@@ -24,6 +28,8 @@ public class MigrationAnnotationParserImpl implements MigrationAnnotationParser 
   @SuppressWarnings("unchecked")
   public <T extends Annotation> T getMethodAnnotation(Object scriptInstance, Class<? extends Annotation> workflowStep) {
 
+    logger.trace("Getting annotation instance for workflow step: " + workflowStep.getSimpleName());
+
     T annotation = null;
 
     Method annotatedMethod = getAnnotatedMethod(scriptInstance, workflowStep);
@@ -31,11 +37,14 @@ public class MigrationAnnotationParserImpl implements MigrationAnnotationParser 
     if (annotatedMethod != null) {
       annotation = (T) annotatedMethod.getAnnotation(workflowStep);
     }
+
     return annotation;
   }
 
   @Override
   public Method getAnnotatedMethod(Object scriptInstance, Class<? extends Annotation> annotation) {
+
+    logger.trace("Looking for method annotated with: " + annotation.getSimpleName());
 
     Method[] methods = scriptInstance.getClass().getMethods();
 
@@ -47,6 +56,7 @@ public class MigrationAnnotationParserImpl implements MigrationAnnotationParser 
           throw new MigrationException("only one method may be annotated with [" + annotation.getName() + "]");
         } else {
           annotatedMethod = method;
+          logger.trace("found method: " + annotatedMethod.getName());
         }
       }
     }

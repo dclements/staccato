@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import com.readytalk.staccato.database.migration.MigrationException;
 import com.readytalk.staccato.database.migration.script.ScriptService;
 import com.readytalk.staccato.utils.Resource;
@@ -17,6 +19,8 @@ import com.google.inject.Singleton;
 @Singleton
 public class SQLScriptService implements ScriptService<SQLScript> {
 
+  public static final Logger logger = Logger.getLogger(SQLScriptService.class);
+
   private ResourceLoader loader;
 
   @Inject
@@ -26,6 +30,9 @@ public class SQLScriptService implements ScriptService<SQLScript> {
 
   @Override
   public List<SQLScript> load(String migrationDir) {
+
+    logger.debug("Loading sql scripts from migration directory: " + migrationDir);
+
     Set<Resource> resources = loader.loadRecursively(migrationDir, getScriptFileExtension());
 
     List<SQLScript> scripts = new ArrayList<SQLScript>();

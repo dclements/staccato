@@ -3,7 +3,8 @@ package com.readytalk.staccato.database.migration;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.IncompleteAnnotationException;
 import java.util.List;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import com.google.inject.Inject;
 import com.readytalk.staccato.database.DatabaseContext;
@@ -19,7 +20,7 @@ import com.readytalk.staccato.database.migration.workflow.MigrationWorkflowServi
  */
 public class GroovyMigrationService implements MigrationService<GroovyScript> {
 
-  Logger logger = Logger.getLogger(this.getClass().getName());
+  public static final Logger logger = Logger.getLogger(GroovyMigrationService.class);
 
   private MigrationWorkflowService migrationWorkflowService;
   private MigrationAnnotationParser annotationParser;
@@ -112,7 +113,7 @@ public class GroovyMigrationService implements MigrationService<GroovyScript> {
     try {
       DatabaseType scriptDatabaseType = migrationAnnotation.databaseType();
       if (scriptDatabaseType != null && scriptDatabaseType != databaseContext.getDatabaseType()) {
-        logger.fine("Excluding " + scriptDatabaseType + " script from execution: " + script.getFilename());
+        logger.debug("Excluding " + scriptDatabaseType + " script from execution: " + script.getFilename());
         return false;
       }
       return true;

@@ -5,7 +5,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Savepoint;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import com.readytalk.staccato.database.migration.script.Script;
 
@@ -14,10 +15,12 @@ import com.readytalk.staccato.database.migration.script.Script;
  */
 public class DatabaseServiceImpl implements DatabaseService {
 
-  Logger logger = Logger.getLogger(this.getClass().getName());
+  public static final Logger logger = Logger.getLogger(DatabaseServiceImpl.class);
 
   @Override
   public DatabaseContext initialize(URI jdbcUri, String dbName, String username, String password) {
+
+    logger.info("Initializing database context for: " + jdbcUri.toString() + ", username: " + username);
 
     DatabaseContext context = new DatabaseContext();
     context.setUsername(username);
@@ -42,7 +45,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
       Class.forName(context.getDatabaseType().getDriver());
 
-      logger.info("Connecting to database: " + jdbcUri.toString());
+      logger.debug("Connecting to database: " + jdbcUri.toString());
 
       String username = context.getUsername();
       String password = context.getPassword();
@@ -74,7 +77,7 @@ public class DatabaseServiceImpl implements DatabaseService {
           connection.close();
         }
       } catch (SQLException e2) {
-        logger.severe("Unable to close database connection to: " + context.getJdbcUri());
+        logger.warn("Unable to close database connection to: " + context.getJdbcUri());
       }
     }
   }
@@ -89,7 +92,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
       Savepoint savepoint = connection.setSavepoint(savepointName);
       context.getTxnSavepoints().put(savepointName, savepoint);
-      logger.finest("started transaction with savepoint: " + savepointName);
+      logger.debug("started transaction with savepoint: " + savepointName);
     } catch (SQLException e) {
       throw new DatabaseException("Unable to start transaction", e);
     }
@@ -108,7 +111,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         try {
           connection.releaseSavepoint(context.getTxnSavepoints().get(savepointName));
         } catch (SQLException e) {
-          logger.warning("Savepoint not found when ending transaction: " + savepointName);
+          logger.debug("Savepoint not found when ending transaction: " + savepointName);
         } finally {
           context.getTxnSavepoints().remove(savepointName);
         }
@@ -136,7 +139,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
       Connection connection = context.getConnection();
       if (!connection.getAutoCommit()) {
-        logger.finest("rolling back transaction to savepoint: " + savepointName);
+        logger.debug("rolling back transaction to savepoint: " + savepointName);
         connection.rollback(context.getTxnSavepoints().get(savepointName));
         context.getTxnSavepoints().remove(savepointName);
       }

@@ -20,6 +20,12 @@
 
     <!--compile-->
     <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.16</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
       <version>1.4</version>
@@ -191,7 +197,6 @@
                 </javac>
 
                 <testng outputDir="target/integration">
-                  <!--<jvmarg value="-Djava.util.logging.config.file=src/test/unit/resources/logging.properties"/>-->
                   <classpath>
                     <path refid="maven.test.classpath"/>
                     <path location="target/classes"/>
