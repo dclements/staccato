@@ -52,7 +52,6 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
   private ResourceLoader loader;
   private ScriptValidator validator;
   private MigrationAnnotationParser annotationParser;
-  private String migrationDir = DEFAULT_MIGRATION_DIR;
 
   @Inject
   public GroovyScriptService(ResourceLoader loader, ScriptValidator validator, MigrationAnnotationParser annotationParser) {
@@ -67,7 +66,7 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
    * {@inheritDoc}
    */
   @Override
-  public List<GroovyScript> load() {
+  public List<GroovyScript> load(String migrationDir) {
     Set<Resource> resources = loader.loadRecursively(migrationDir, getScriptFileExtension());
 
     SortedSet<GroovyScript> scripts = new TreeSet<GroovyScript>();
@@ -168,16 +167,6 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
   @Override
   public String getScriptFileExtension() {
     return "groovy";
-  }
-
-  @Override
-  public void setMigrationDir(String migrationDir) {
-    this.migrationDir = migrationDir;
-  }
-
-  @Override
-  public String getMigrationDir() {
-    return migrationDir;
   }
 
   /**

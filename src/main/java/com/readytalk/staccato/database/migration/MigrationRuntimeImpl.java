@@ -22,19 +22,33 @@ public class MigrationRuntimeImpl implements MigrationRuntime {
   private DatabaseContext databaseContext;
   private ProjectContext projectContext;
   private List<SQLScript> sqlScripts;
+  private MigrationType migrationType;
 
-  public MigrationRuntimeImpl(DatabaseContext databaseContext, ProjectContext projectContext, List<SQLScript> sqlScripts) {
+  public MigrationRuntimeImpl(DatabaseContext databaseContext, ProjectContext projectContext, List<SQLScript> sqlScripts, MigrationType migrationType) {
     this.databaseContext = databaseContext;
     this.projectContext = projectContext;
     this.sqlScripts = sqlScripts;
+    this.migrationType = migrationType;
   }
 
+  @Override
   public DatabaseContext getDatabaseContext() {
     return databaseContext;
   }
 
+  @Override
   public ProjectContext getProjectContext() {
     return projectContext;
+  }
+
+  @Override
+  public MigrationType getMigrationType() {
+    return migrationType;
+  }
+
+  @Override
+  public List<SQLScript> sqlScripts() {
+    return sqlScripts;
   }
 
   @Override

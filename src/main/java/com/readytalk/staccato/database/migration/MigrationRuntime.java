@@ -1,8 +1,10 @@
 package com.readytalk.staccato.database.migration;
 
 import java.sql.ResultSet;
+import java.util.List;
 
 import com.readytalk.staccato.database.DatabaseContext;
+import com.readytalk.staccato.database.migration.script.sql.SQLScript;
 
 /**
  * @author jhumphrey
@@ -22,6 +24,20 @@ public interface MigrationRuntime {
    * @return the project contedt
    */
   ProjectContext getProjectContext();
+
+  /**
+   * Returns the migration type for this runtime
+   *
+   * @return the migration type
+   */
+  MigrationType getMigrationType();
+
+  /**
+   * The list of sql scripts for the migration runtime
+   *
+   * @return list of sql scripts
+   */
+  List<SQLScript> sqlScripts();
 
   /**
    * Executes SQL contained in a string:

@@ -1,12 +1,9 @@
 package com.readytalk.staccato.database.migration;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.apache.commons.codec.digest.DigestUtils;
 
 import com.readytalk.staccato.database.DatabaseContext;
 import com.readytalk.staccato.database.DatabaseException;

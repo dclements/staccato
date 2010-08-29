@@ -1,20 +1,23 @@
 package com.readytalk.staccato.database.migration;
 
-import com.readytalk.staccato.database.DatabaseContext;
+import java.util.List;
+
 import com.google.inject.ImplementedBy;
+import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
 
 /**
  * @author jhumphrey
  */
 @ImplementedBy(GroovyMigrationService.class)
-public interface MigrationService {
+public interface MigrationService<T extends DynamicLanguageScript> {
+  
+  public static final String DEFAULT_MIGRATION_DIR = "migrations/";
 
   /**
    * Runs a migration
    *
-   * @param databaseContext the database context to run the migration under
-   * @param projectContext the project context
-   * @param migrationType the migration type
+   * @param migrationScripts the migration scripts to run
+   * @param migrationRuntime the migration runtime
    */
-  void run(DatabaseContext databaseContext, ProjectContext projectContext, MigrationType migrationType);
+  void run(List<T> migrationScripts, MigrationRuntime migrationRuntime);
 }

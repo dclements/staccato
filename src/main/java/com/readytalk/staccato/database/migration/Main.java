@@ -1,6 +1,7 @@
 package com.readytalk.staccato.database.migration;
 
 import java.net.URI;
+import java.util.List;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -10,11 +11,15 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.readytalk.staccato.database.DatabaseContext;
 import com.readytalk.staccato.database.DatabaseService;
 import com.readytalk.staccato.database.migration.guice.MigrationModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import com.readytalk.staccato.database.migration.script.groovy.GroovyScript;
+import com.readytalk.staccato.database.migration.script.groovy.GroovyScriptService;
+import com.readytalk.staccato.database.migration.script.sql.SQLScript;
+import com.readytalk.staccato.database.migration.script.sql.SQLScriptService;
 
 /**
  * Contains the main for running this application.
@@ -49,18 +54,27 @@ public class Main {
       String projectVersion = line.getOptionValue(OPTION_SET.projectVersionOpt.getOpt());
       String migrationType = line.getOptionValue(OPTION_SET.migrationTypeOpt.getOpt());
 
-      DatabaseService databaseService = injector.getInstance(DatabaseService.class);
+      String migrationDir = MigrationService.DEFAULT_MIGRATION_DIR;
 
-      // initialize database context
-      DatabaseContext dbContext = databaseService.buildContext(URI.create(jdbcUri), dbName, username, password);
+      // initialize database context      
+      DatabaseService databaseService = injector.getInstance(DatabaseService.class);
+      DatabaseContext dbCtx = databaseService.buildContext(URI.create(jdbcUri), dbName, username, password);
 
       // initialize project context
-      ProjectContext pContext = new ProjectContext();
-      pContext.setName(projectName);
-      pContext.setVersion(projectVersion);
+      ProjectContext pCtx = new ProjectContext();
+      pCtx.setName(projectName);
+      pCtx.setVersion(projectVersion);
 
-      MigrationService migrationService = injector.getInstance(GroovyMigrationService.class);
-      migrationService.run(dbContext, pContext, MigrationType.valueOf(migrationType));
+      // initialize the runtime
+      SQLScriptService sqlScriptService = injector.getInstance(SQLScriptService.class);
+      List<SQLScript> sqlScripts = sqlScriptService.load(migrationDir);
+      MigrationRuntime migrationRuntime = new MigrationRuntimeImpl(dbCtx, pCtx, sqlScripts, MigrationType.valueOf(migrationType));
+
+      // load the groovy scripts and run the migration
+      GroovyScriptService scriptService = injector.getInstance(GroovyScriptService.class);
+      List<GroovyScript> scripts = scriptService.load(migrationDir);
+      MigrationService<GroovyScript> migrationService = injector.getInstance(GroovyMigrationService.class);
+      migrationService.run(scripts, migrationRuntime);
 
     }
   }

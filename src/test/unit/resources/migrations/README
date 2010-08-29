@@ -1,0 +1,3 @@
+This migration directory is used for non-integration testing purposes.  In other words,
+files in this directory do not participate in any real migration execution process.  Therefore,
+some of these scripts might be invalid.

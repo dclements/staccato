@@ -78,6 +78,7 @@ public class DatabaseServiceImpl implements DatabaseService {
   public void startTransaction(DatabaseContext context) {
     try {
       if (context.getConnection().getAutoCommit()) {
+        logger.finest("Settings auto-commit to false for transactional management");
         context.getConnection().setAutoCommit(false);
       }
     } catch (SQLException e) {

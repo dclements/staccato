@@ -13,15 +13,14 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(SQLScriptService.class)
 public interface ScriptService<T extends Script> {
 
-  public static final String DEFAULT_MIGRATION_DIR = "migrations/";
-
   /**
    * Loads scripts into a list.  The expectation is that index 0 of the list
    * is the first script to load when running a migration
    *
+   * @param migrationDir the migration directory to load the script from
    * @return a set of {@link com.readytalk.staccato.database.migration.script.groovy.GroovyScript} objects
    */
-  List<T> load();
+  List<T> load(String migrationDir);
 
   /**
    * Returns the filename extension of the script
@@ -29,20 +28,4 @@ public interface ScriptService<T extends Script> {
    * @return the script filename extension
    */
   String getScriptFileExtension();
-
-  /**
-   * Used to set the directory where all migration scripts are stored.  By default,
-   * this directory is set to 'migrations/'
-   *
-   * @param migrationDir the migrations directory
-   */
-  void setMigrationDir(String migrationDir);
-
-  /**
-   * The migrations directory.  This is the directory where all migration scripts are stored.
-   * By default, this directory is set to 'migrations/'
-   *
-   * @return the migrations directory
-   */
-  String getMigrationDir();
 }

@@ -10,11 +10,11 @@ import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationP
  */
 public class WorkflowContext {
   private MigrationAnnotationParser annotationParser;
-  private MigrationRuntime migrationRumtime;
+  private MigrationRuntime migrationRuntime;
 
   public WorkflowContext(MigrationAnnotationParser annotationParser, MigrationRuntime migrationRuntime) {
     this.annotationParser = annotationParser;
-    this.migrationRumtime = migrationRuntime;
+    this.migrationRuntime = migrationRuntime;
   }
 
   public MigrationAnnotationParser getAnnotationParser() {
@@ -22,6 +22,6 @@ public class WorkflowContext {
   }
 
   public MigrationRuntime getMigrationRuntime() {
-    return migrationRumtime;
+    return migrationRuntime;
   }
 }

@@ -104,7 +104,24 @@
 
   <build>
 
+    <testSourceDirectory>src/test/unit</testSourceDirectory>
+
+    <testResources>
+      <testResource>
+        <directory>src/test/unit/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>src/test/integration/resources</directory>
+      </testResource>
+    </testResources>
+
     <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.6</version>
+      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -139,7 +156,52 @@
 
                 <echo>Creating jar migration.jar</echo>
 
-                <jar destfile="${basedir}/target/migration.jar" basedir="${basedir}/src/test/migration-jar"/>
+                <jar destfile="${basedir}/target/migration.jar" basedir="${basedir}/src/test/unit/migration-jar"/>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+
+          <execution>
+            <id>integration-test</id>
+            <phase>test</phase>
+            <configuration>
+              <tasks>
+                <echo>Running Integration tests</echo>
+                <taskdef resource="testngtasks">
+                  <classpath refid="maven.test.classpath"/>
+                </taskdef>
+
+                <javac srcdir="src/test/integration/java"
+                       destdir="target/test-classes"
+                       classpath="${maven.test.classpath}"
+                       debug="on"
+                       source="1.6"
+                       includeantruntime="false">
+                  <classpath>
+                    <path refid="maven.test.classpath"/>
+                    <path location="target/classes"/>
+                    <path>
+                      <fileset dir="target" includes="**/*.jar"/>
+                    </path>
+                    <path location="target/test-classes"/>
+                  </classpath>
+                </javac>
+
+                <testng outputDir="target/integration">
+                  <!--<jvmarg value="-Djava.util.logging.config.file=src/test/unit/resources/logging.properties"/>-->
+                  <classpath>
+                    <path refid="maven.test.classpath"/>
+                    <path location="target/classes"/>
+                    <path>
+                      <fileset dir="target" includes="**/*.jar"/>
+                    </path>
+                    <path location="target/test-classes"/>
+                  </classpath>
+                  <classfileset dir="target/test-classes" includes="**/*IntegrationTest.class"/>
+                </testng>
               </tasks>
             </configuration>
             <goals>
@@ -167,7 +229,7 @@
           <dbUsername>tomcat</dbUsername>
           <dbPassword>tomcat</dbPassword>
           <migrationType>UP</migrationType>
-          <migrationsDir>${basedir}/src/test/resources/system_integration_test</migrationsDir>
+          <migrationsDir>${basedir}/src/test/integration/resources/groovy</migrationsDir>
         </configuration>
         <executions>
           <execution>

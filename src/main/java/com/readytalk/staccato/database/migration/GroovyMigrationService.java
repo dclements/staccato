@@ -14,38 +14,38 @@ import com.readytalk.staccato.database.DatabaseType;
 import com.readytalk.staccato.database.migration.annotation.Migration;
 import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationParser;
 import com.readytalk.staccato.database.migration.script.groovy.GroovyScript;
-import com.readytalk.staccato.database.migration.script.groovy.GroovyScriptService;
-import com.readytalk.staccato.database.migration.script.sql.SQLScriptService;
 import com.readytalk.staccato.database.migration.workflow.MigrationWorkflowService;
 
 /**
  * @author jhumphrey
  */
-public class GroovyMigrationService implements MigrationService {
+public class GroovyMigrationService implements MigrationService<GroovyScript> {
 
   Logger logger = Logger.getLogger(this.getClass().getName());
 
-  private GroovyScriptService scriptService;
   private MigrationWorkflowService migrationWorkflowService;
-  private SQLScriptService sqlScriptService;
   private DatabaseService databaseService;
   private MigrationAnnotationParser annotationParser;
   private MigrationVersionsService migrationVersionsService;
 
   @Inject
-  public GroovyMigrationService(GroovyScriptService scriptService, MigrationWorkflowService migrationWorkflowService,
-    SQLScriptService sqlScriptService, DatabaseService databaseService, MigrationAnnotationParser annotationParser,
+  public GroovyMigrationService(
+    MigrationWorkflowService migrationWorkflowService,
+    DatabaseService databaseService,
+    MigrationAnnotationParser annotationParser,
     MigrationVersionsService migrationVersionsService) {
-    this.scriptService = scriptService;
+
     this.migrationWorkflowService = migrationWorkflowService;
-    this.sqlScriptService = sqlScriptService;
     this.databaseService = databaseService;
     this.annotationParser = annotationParser;
     this.migrationVersionsService = migrationVersionsService;
   }
 
   @Override
-  public void run(DatabaseContext databaseContext, ProjectContext projectContext, MigrationType migrationType) {
+  public void run(List<GroovyScript> migrationScripts, MigrationRuntime migrationRuntime) {
+
+    DatabaseContext databaseContext = migrationRuntime.getDatabaseContext();
+    MigrationType migrationType = migrationRuntime.getMigrationType();
 
     try {
       String workflowOutput = "workflow: ";
@@ -54,9 +54,6 @@ public class GroovyMigrationService implements MigrationService {
       }
 
       logger.info("Running " + databaseContext.getDatabaseType() + " migration: " + migrationType.name() + ", " + workflowOutput);
-
-      // load scripts.  These all have been validated and ordered by the script date
-      List<GroovyScript> scripts = scriptService.load();
 
       // establish the connection to the database
       try {
@@ -88,11 +85,8 @@ public class GroovyMigrationService implements MigrationService {
           "user permissions are set appropriately.", e);
       }
 
-      // create the migration runtime.  This can be passed to a migration workflow method as a method arg
-      MigrationRuntimeImpl migrationRuntime = new MigrationRuntimeImpl(databaseContext, projectContext, sqlScriptService.load());
-
       // iterate through the groovy scripts for invocation
-      for (GroovyScript script : scripts) {
+      for (GroovyScript script : migrationScripts) {
         logger.info("Executing script: " + script.getFilename());
 
         Migration migrationAnnotation = annotationParser.getMigrationAnnotation(script.getScriptInstance());
