@@ -123,7 +123,7 @@ public class MigrationVersionsServiceImplTest extends BaseTest {
     Assert.assertTrue(service.versionTableExists(context));
 
     // insert a row to it:
-    DateTime expectedScriptDate = new DateTime();
+    DateTime expectedScriptDate = new DateTime("2010-08-29T15:38:01-06:00");
     Version expectedVersion = new Version("1.0.0", true);
     String expectedFilename = "foo.groovy";
     String expectedHash = "hasheesh";

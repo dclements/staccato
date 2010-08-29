@@ -1,6 +1,7 @@
-package com.readytalk.staccato.database.migration;
+package com.readytalk.staccato;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.cli.BasicParser;
@@ -10,12 +11,21 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.readytalk.staccato.database.DatabaseContext;
 import com.readytalk.staccato.database.DatabaseException;
 import com.readytalk.staccato.database.DatabaseService;
+import com.readytalk.staccato.database.migration.GroovyMigrationService;
+import com.readytalk.staccato.database.migration.MigrationException;
+import com.readytalk.staccato.database.migration.MigrationRuntime;
+import com.readytalk.staccato.database.migration.MigrationRuntimeImpl;
+import com.readytalk.staccato.database.migration.MigrationService;
+import com.readytalk.staccato.database.migration.MigrationType;
+import com.readytalk.staccato.database.migration.ProjectContext;
 import com.readytalk.staccato.database.migration.guice.MigrationModule;
 import com.readytalk.staccato.database.migration.script.groovy.GroovyScript;
 import com.readytalk.staccato.database.migration.script.groovy.GroovyScriptService;
@@ -54,11 +64,78 @@ public class Main {
       String projectName = line.getOptionValue(OPTION_SET.projectNameOpt.getOpt());
       String projectVersion = line.getOptionValue(OPTION_SET.projectVersionOpt.getOpt());
       String migrationType = line.getOptionValue(OPTION_SET.migrationTypeOpt.getOpt());
+      String migrateFromDateOpt = line.getOptionValue(OPTION_SET.migrateFromDateOpt.getOpt());
+      String migrateToDateOpt = line.getOptionValue(OPTION_SET.migrateToDateOpt.getOpt());
+      String migrateScript = line.getOptionValue(OPTION_SET.migrateScriptOpt.getOpt());
+      String migrationDir = line.getOptionValue(OPTION_SET.migrationsDirOpt.getOpt());
 
-      // load the groovy scripts and run the migration
-      String migrationDir = MigrationService.DEFAULT_MIGRATION_DIR;
+      // set the migration dir
+      if (StringUtils.isEmpty(migrationDir)) {
+        migrationDir = MigrationService.DEFAULT_MIGRATION_DIR;
+      }
+
+      // check the migrate to and from dates
+      DateTime migrateFromDate = null;
+      if (migrateFromDateOpt != null && !migrateFromDateOpt.equals("")) {
+        try {
+          migrateFromDate = new DateTime(migrateFromDateOpt);
+        } catch (Exception e) {
+          throw new MigrationException(OPTION_SET.migrateFromDateOpt.getArgName() + " value must be in ISO-8601 format: " + OPTION_SET.migrateFromDateOpt.getOpt());
+        }
+      }
+
+      DateTime migrateToDate = null;
+      if (migrateToDateOpt != null && !migrateToDateOpt.equals("")) {
+        try {
+          migrateToDate = new DateTime(migrateToDateOpt);
+        } catch (Exception e) {
+          throw new MigrationException(OPTION_SET.migrateToDateOpt.getArgName() + " value must be in ISO-8601 format: " + OPTION_SET.migrateToDateOpt.getOpt());
+        }
+      }
+
+      // load groovy scripts
       GroovyScriptService scriptService = injector.getInstance(GroovyScriptService.class);
-      List<GroovyScript> scripts = scriptService.load(migrationDir);
+      List<GroovyScript> loadedScripts = scriptService.load(migrationDir);
+
+      // stores the scripts to run
+      List<GroovyScript> scriptsToRun = new ArrayList<GroovyScript>();
+
+      // the migrateScript option takes precedence so filter on it first
+      if (!StringUtils.isEmpty(migrateScript)) {
+        for (GroovyScript script : loadedScripts) {
+          if (script.getFilename().equals(migrateScript)) {
+            scriptsToRun.add(script);
+            break;
+          }
+        }
+
+        if (scriptsToRun.size() == 0) {
+          throw new MigrationException("The script to migrate was not found: " + migrateScript);
+        }
+
+      } else {
+
+        // if the migrate script option isn't defined, then filter on dates
+        if (migrateFromDate == null && migrateToDate == null) {
+          scriptsToRun.addAll(loadedScripts);
+        } else {
+          for (GroovyScript loadedScript : loadedScripts) {
+            DateTime loadedScriptDate = loadedScript.getScriptDate();
+            boolean include = false;
+            if (migrateFromDate != null && loadedScriptDate.isAfter(migrateFromDate)) {
+              include = true;
+            }
+
+            if (migrateToDate != null && loadedScriptDate.isBefore(migrateFromDate)) {
+              include = true;
+            }
+
+            if (include) {
+              scriptsToRun.add(loadedScript);
+            }
+          }
+        }
+      }
 
       // initialize database context
       DatabaseService databaseService = injector.getInstance(DatabaseService.class);
@@ -105,7 +182,7 @@ public class Main {
       MigrationService<GroovyScript> migrationService = injector.getInstance(GroovyMigrationService.class);
 
       try {
-        migrationService.run(scripts, migrationRuntime);
+        migrationService.run(scriptsToRun, migrationRuntime);
       } finally {
         // make sure we disconnect no matter what
         databaseService.disconnect(dbCtx);
@@ -128,15 +205,24 @@ public class Main {
    * Struct for a set of Option objects.  These represent options given on the command line
    */
   private static class OptionSet {
-    Option jdbcUrlOpt = new Option("jdbc", "jdbcUrl", true, "JDBC URL");
-    Option dbNameOpt = new Option("dbn", "databaseName", true, "The database name");
-    Option usernameOpt = new Option("dbu", "dbUsername", true, "The database username");
-    Option passwordOpt = new Option("dbp", "dbPassword", true, "The database password");
-    Option projectNameOpt = new Option("pn", "projectName", true, "The project name");
-    Option projectVersionOpt = new Option("pv", "projectVersion", true, "The project version");
-    Option migrationTypeOpt = new Option("m", "migrationType", true, "The migration type:\n" + MigrationType.description());
 
     Options options = new Options();
+
+    public Option jdbcUrlOpt = new Option("jdbc", "jdbcUrl", true, "JDBC URL");
+    public Option dbNameOpt = new Option("dbn", "databaseName", true, "The database name");
+    public Option usernameOpt = new Option("dbu", "dbUsername", true, "The database username");
+    public Option passwordOpt = new Option("dbp", "dbPassword", true, "The database password");
+    public Option projectNameOpt = new Option("pn", "projectName", true, "The project name");
+    public Option projectVersionOpt = new Option("pv", "projectVersion", true, "The project version");
+    public Option migrationTypeOpt = new Option("m", "migrationType", true, "The migration type:\n" + MigrationType.description());
+    public Option migrateFromDateOpt = new Option("mfd", "migrateFromDate", true, "The date to migrate from.  Must be defined using ISO-8601 format.  If not specified, " +
+      "and the migrateScript option is undefined, then Staccato will run the migration starting from the script with the earliest date");
+    public Option migrateToDateOpt = new Option("mtd", "migrateToDate", true, "The date to migrate to.  Must be defined using ISO-8601 format.  This option is only interpreted " +
+      "if the migrationFromDate is specified. If the migrateFromDate is specified and this field is not specified, then the system will migrate to the current date/time");
+    public Option migrateScriptOpt = new Option("ms", "migrateScript", true, "Runs a single script only.  Option must be equal to the name of the script (e.g. ScriptFoo.groovy) " +
+      "and the script must be available in the classpath.  If this option is specified, then any values defined for migrateFromDate and migrateToDate will be ignored.");
+    public Option migrationsDirOpt = new Option("md", "migrationsDir", true, "The directory where Staccato will search for migration scripts.  " +
+      "This directory must be in the classpath.  If not defined, the default is: " + MigrationService.DEFAULT_MIGRATION_DIR);
 
     private OptionSet() {
       jdbcUrlOpt.setRequired(true);
@@ -159,6 +245,18 @@ public class Main {
 
       migrationTypeOpt.setRequired(true);
       options.addOption(migrationTypeOpt);
+
+      migrateFromDateOpt.setRequired(false);
+      options.addOption(migrateFromDateOpt);
+
+      migrateToDateOpt.setRequired(false);
+      options.addOption(migrateToDateOpt);
+
+      migrateScriptOpt.setRequired(false);
+      options.addOption(migrateScriptOpt);
+
+      migrationsDirOpt.setRequired(false);
+      options.addOption(migrationsDirOpt);
     }
   }
 }

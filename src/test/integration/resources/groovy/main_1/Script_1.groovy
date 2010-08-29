@@ -1,8 +1,7 @@
-package groovy.migration_1
+package groovy.main_1
 
-import com.readytalk.staccato.database.migration.MigrationRuntime
+import com.readytalk.staccato.database.migration.annotation.DataUp
 import com.readytalk.staccato.database.migration.annotation.Migration
-import com.readytalk.staccato.database.migration.annotation.SchemaUp
 
 /**
  * Represents a groovy migration script.
@@ -34,13 +33,12 @@ import com.readytalk.staccato.database.migration.annotation.SchemaUp
  * @author jhumphrey
  */
 @Migration(
-  scriptDate = "2010-08-28T18:46:33-06:00",
+  scriptDate = "2010-08-29T15:38:01-06:00",
   databaseVersion = "1.0.0-SNAPSHOT",
-  description = "Simple script for testing that the migration versions table gets created succesfully in both mysql and postgresql",
   scriptVersion = "1.0.0")
-class TestCreateMigrationVersionsTable {
+class Script_1 {
 
-  @SchemaUp
-  schemaUp(MigrationRuntime runtime) {
+  @DataUp
+  dataUp() {
   }
 }

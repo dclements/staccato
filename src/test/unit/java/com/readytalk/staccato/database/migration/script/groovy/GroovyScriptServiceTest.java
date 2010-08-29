@@ -23,7 +23,6 @@ import com.readytalk.staccato.database.migration.MigrationService;
 import com.readytalk.staccato.database.migration.annotation.Migration;
 import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationParser;
 import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationParserImpl;
-import com.readytalk.staccato.database.migration.script.ScriptService;
 import com.readytalk.staccato.database.migration.script.ScriptTemplate;
 import com.readytalk.staccato.database.migration.script.validation.ScriptValidator;
 import com.readytalk.staccato.utils.Resource;
@@ -142,10 +141,11 @@ public class GroovyScriptServiceTest {
   @Test
   public void testGetScriptTemplate() throws IOException, URISyntaxException, NoSuchAlgorithmException {
 
-    DateTime expectedDateTime = new DateTime();
-    String expectedScriptDateStr = DateTimeFormat.forPattern(GroovyScriptService.TEMPLATE_DATE_FORMAT).print(new DateTime());
+    DateTime expectedScriptDate = new DateTime();
+    String expectedScriptDateStr = DateTimeFormat.forPattern(GroovyScriptService.TEMPLATE_SCRIPT_DATE_FORMAT).print(expectedScriptDate);
+    String expectedClassnameDateStr = DateTimeFormat.forPattern(GroovyScriptService.TEMPLATE_CLASSNAME_DATE_FORMAT).print(expectedScriptDate);
 
-    String expectedClassname = GroovyScriptService.TEMPLATE_CLASSNAME_PREFIX + "_" + expectedScriptDateStr;
+    String expectedClassname = GroovyScriptService.TEMPLATE_CLASSNAME_PREFIX + "_" + expectedClassnameDateStr;
     String expectedUser = System.getenv("USER");
     String expectedDatabaseVersion = "1.0";
 
@@ -153,12 +153,13 @@ public class GroovyScriptServiceTest {
     ScriptValidator validator = EasyMock.createMock(ScriptValidator.class);
     MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
     GroovyScriptService service = new GroovyScriptService(loader, validator, annotationParser);
-    ScriptTemplate template = service.getScriptTemplate(expectedDateTime, expectedUser, expectedDatabaseVersion);
+    ScriptTemplate template = service.getScriptTemplate(expectedScriptDate, expectedUser, expectedDatabaseVersion);
 
     Assert.assertTrue(template.getContents().contains(expectedUser));
     Assert.assertTrue(template.getContents().contains(expectedDatabaseVersion));
     Assert.assertTrue(template.getContents().contains(expectedClassname));
     Assert.assertTrue(template.getContents().contains(expectedScriptDateStr));
+    Assert.assertTrue(template.getContents().contains(expectedClassnameDateStr));
   }
 
   /**

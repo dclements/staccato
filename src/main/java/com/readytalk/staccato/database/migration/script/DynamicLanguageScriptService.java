@@ -5,8 +5,8 @@ import java.net.URL;
 
 import org.joda.time.DateTime;
 
-import com.readytalk.staccato.database.migration.script.groovy.GroovyScriptService;
 import com.google.inject.ImplementedBy;
+import com.readytalk.staccato.database.migration.script.groovy.GroovyScriptService;
 import com.readytalk.staccato.utils.Version;
 
 /**
@@ -17,6 +17,11 @@ import com.readytalk.staccato.utils.Version;
 @ImplementedBy(GroovyScriptService.class)
 public interface DynamicLanguageScriptService<T extends DynamicLanguageScript> extends ScriptService<T> {
 
+  public static final String TEMPLATE_SCRIPT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZZ";
+  public static final String TEMPLATE_CLASSNAME_DATE_FORMAT = "yyyyMMdd'T'HHmmss";
+  public static final String TEMPLATE_CLASSNAME_PREFIX = "Script";
+  public static final String TEMPLATE_NAME = "GroovyScriptTemplate";
+
   /**
    * Parses the given url to a java class
    *
@@ -24,7 +29,6 @@ public interface DynamicLanguageScriptService<T extends DynamicLanguageScript> e
    * @return the java class representation
    */
   Class<?> toClass(URL url);
-
 
   /**
    * Returns a string representation of the script template with the DATE,

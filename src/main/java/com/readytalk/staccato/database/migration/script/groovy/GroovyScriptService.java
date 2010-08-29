@@ -42,10 +42,6 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 
   public static final Logger logger = Logger.getLogger(GroovyScriptService.class);
 
-  public static final String TEMPLATE_DATE_FORMAT = "yyyyMMdd'T'HHmmss";
-  public static final String TEMPLATE_CLASSNAME_PREFIX = "Script";
-  public static final String TEMPLATE_NAME = "GroovyScriptTemplate";
-
   private String scriptTemplateRawContents;
   private Version scriptTemplateVersion;
 
@@ -245,11 +241,12 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
   @Override
   public ScriptTemplate getScriptTemplate(DateTime date, String user, String databaseVersion) throws IOException {
 
-    String scriptDate = DateTimeFormat.forPattern(TEMPLATE_DATE_FORMAT).print(date);
-    String classname = TEMPLATE_CLASSNAME_PREFIX + "_" + scriptDate;
+    String scriptDate = DateTimeFormat.forPattern(TEMPLATE_SCRIPT_DATE_FORMAT).print(date);
+    String classnameDate = DateTimeFormat.forPattern(TEMPLATE_CLASSNAME_DATE_FORMAT).print(date);
+    String classname = TEMPLATE_CLASSNAME_PREFIX + "_" + classnameDate;
 
     String contents = scriptTemplateRawContents.toString().replace("USER", user).replace(TEMPLATE_NAME, classname).
-      replace("DATABASE_VERSION", databaseVersion).replace("DATE", date.toString()).trim();
+      replace("DATABASE_VERSION", databaseVersion).replace("DATE", scriptDate).trim();
 
     ScriptTemplate scriptTemplate = new ScriptTemplate();
     scriptTemplate.setVersion(scriptTemplateVersion);
