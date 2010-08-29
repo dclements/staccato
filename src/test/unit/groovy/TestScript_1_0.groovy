@@ -8,10 +8,10 @@ import com.readytalk.staccato.database.migration.annotation.Migration
  * @author jhumphrey
  */
 @Migration(
-  scriptDate = "2010-08-17T07:00:00-06:00",
-  databaseVersion = "1.0",
-  description = "A test script",
-  scriptVersion="1.0.0")
+scriptDate = "2010-08-17T07:00:00-06:00",
+databaseVersion = "1.0",
+description = "A test script",
+scriptVersion = "1.0.0")
 class TestScript_1_0 {
 
   @DataUp

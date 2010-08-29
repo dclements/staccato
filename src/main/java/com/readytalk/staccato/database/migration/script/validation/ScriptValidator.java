@@ -1,8 +1,8 @@
 package com.readytalk.staccato.database.migration.script.validation;
 
+import com.google.inject.ImplementedBy;
 import com.readytalk.staccato.database.migration.script.Script;
 import com.readytalk.staccato.database.migration.script.validation.javax.ScriptValidatorImpl;
-import com.google.inject.ImplementedBy;
 
 /**
  * Used for validating {@link Script}

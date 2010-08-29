@@ -4,10 +4,10 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
+import com.google.inject.Inject;
 import com.readytalk.staccato.database.migration.script.Script;
 import com.readytalk.staccato.database.migration.script.validation.ScriptValidationException;
 import com.readytalk.staccato.database.migration.script.validation.ScriptValidator;
-import com.google.inject.Inject;
 
 /**
  * An implementation using javax.validation (JSR 303)

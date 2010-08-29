@@ -1,6 +1,5 @@
 package com.readytalk.staccato.database.migration;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -95,6 +94,7 @@ public class MigrationVersionsServiceImplTest extends BaseTest {
       Assert.fail("failed to delete the " + MIGRATION_VERSIONS_TABLE + " table.", e);
     }
   }
+
   @Test
   public void testAPIWithMySQL() {
 

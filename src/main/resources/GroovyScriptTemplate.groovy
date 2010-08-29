@@ -1,11 +1,11 @@
 package migrations
 
-import com.readytalk.staccato.database.migration.annotation.Migration
-import com.readytalk.staccato.database.migration.annotation.PreUp
-import com.readytalk.staccato.database.migration.annotation.SchemaUp
 import com.readytalk.staccato.database.migration.MigrationRuntime
 import com.readytalk.staccato.database.migration.annotation.DataUp
+import com.readytalk.staccato.database.migration.annotation.Migration
 import com.readytalk.staccato.database.migration.annotation.PostUp
+import com.readytalk.staccato.database.migration.annotation.PreUp
+import com.readytalk.staccato.database.migration.annotation.SchemaUp
 
 /**
  * Represents a groovy migration script.
@@ -37,9 +37,9 @@ import com.readytalk.staccato.database.migration.annotation.PostUp
  * @author USER
  */
 @Migration(
-  scriptDate = "DATE",
-  databaseVersion = "DATABASE_VERSION",
-  scriptVersion = "1.0.0")
+scriptDate = "DATE",
+databaseVersion = "DATABASE_VERSION",
+scriptVersion = "1.0.0")
 class GroovyScriptTemplate {
 
   @PreUp

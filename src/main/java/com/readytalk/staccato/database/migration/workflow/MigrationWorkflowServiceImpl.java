@@ -5,13 +5,13 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.log4j.Logger;
 
+import com.google.inject.Inject;
 import com.readytalk.staccato.database.migration.MigrationException;
 import com.readytalk.staccato.database.migration.MigrationResult;
 import com.readytalk.staccato.database.migration.MigrationRuntime;
 import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationParser;
 import com.readytalk.staccato.database.migration.annotation.WorkflowStep;
 import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
-import com.google.inject.Inject;
 
 /**
  * Default implemenation for executing migrations

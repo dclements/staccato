@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 
 import com.google.inject.Inject;
 import com.readytalk.staccato.database.DatabaseContext;
-import com.readytalk.staccato.database.DatabaseService;
 import com.readytalk.staccato.database.DatabaseType;
 import com.readytalk.staccato.database.migration.annotation.Migration;
 import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationParser;

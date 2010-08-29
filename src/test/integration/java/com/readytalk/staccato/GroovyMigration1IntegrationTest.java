@@ -1,6 +1,5 @@
 package com.readytalk.staccato;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -42,7 +41,6 @@ public class GroovyMigration1IntegrationTest extends BaseTest {
 
   @Inject
   public SQLScriptService sqlScriptService;
-
 
   @Inject
   public MigrationVersionsService versionsService;

@@ -2,10 +2,10 @@ package com.readytalk.staccato.database.migration.workflow;
 
 import java.lang.annotation.Annotation;
 
+import com.google.inject.ImplementedBy;
 import com.readytalk.staccato.database.migration.MigrationResult;
 import com.readytalk.staccato.database.migration.MigrationRuntime;
 import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
-import com.google.inject.ImplementedBy;
 
 /**
  * Interface for executing migrations

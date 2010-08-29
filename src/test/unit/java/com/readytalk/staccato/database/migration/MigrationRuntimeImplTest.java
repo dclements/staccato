@@ -1,21 +1,9 @@
 package com.readytalk.staccato.database.migration;
 
-import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.readytalk.staccato.database.DatabaseContext;
-import com.readytalk.staccato.database.DatabaseException;
-import com.readytalk.staccato.database.DatabaseService;
-import com.readytalk.staccato.database.DatabaseServiceImpl;
-import com.readytalk.staccato.database.migration.script.sql.SQLScript;
 
 /**
  * @author jhumphrey

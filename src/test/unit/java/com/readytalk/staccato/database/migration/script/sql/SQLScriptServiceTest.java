@@ -11,7 +11,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.readytalk.staccato.database.migration.MigrationService;
-import com.readytalk.staccato.database.migration.script.ScriptService;
 import com.readytalk.staccato.utils.Resource;
 import com.readytalk.staccato.utils.ResourceLoader;
 

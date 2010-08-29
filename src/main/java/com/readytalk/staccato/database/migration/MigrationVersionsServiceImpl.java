@@ -89,7 +89,7 @@ public class MigrationVersionsServiceImpl implements MigrationVersionsService {
 
       String date;
 
-      switch(databaseContext.getDatabaseType()) {
+      switch (databaseContext.getDatabaseType()) {
         case MYSQL:
           date = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(script.getScriptDate());
           break;

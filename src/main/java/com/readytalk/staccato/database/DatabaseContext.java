@@ -4,9 +4,7 @@ import java.net.URI;
 import java.sql.Connection;
 import java.sql.Savepoint;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Simple struct for modeling database meta-data

@@ -1,7 +1,6 @@
 package com.readytalk.staccato.database;
 
 import java.net.URI;
-import java.sql.Connection;
 
 import com.google.inject.ImplementedBy;
 import com.readytalk.staccato.database.migration.script.Script;

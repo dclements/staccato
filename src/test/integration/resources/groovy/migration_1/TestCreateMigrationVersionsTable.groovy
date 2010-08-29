@@ -34,10 +34,10 @@ import com.readytalk.staccato.database.migration.annotation.SchemaUp
  * @author jhumphrey
  */
 @Migration(
-  scriptDate = "2010-08-28T18:46:33-06:00",
-  databaseVersion = "1.0.0-SNAPSHOT",
-  description = "Simple script for testing that the migration versions table gets created succesfully in both mysql and postgresql",
-  scriptVersion = "1.0.0")
+scriptDate = "2010-08-28T18:46:33-06:00",
+databaseVersion = "1.0.0-SNAPSHOT",
+description = "Simple script for testing that the migration versions table gets created succesfully in both mysql and postgresql",
+scriptVersion = "1.0.0")
 class TestCreateMigrationVersionsTable {
 
   @SchemaUp

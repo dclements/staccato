@@ -6,12 +6,12 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.readytalk.staccato.database.migration.MigrationException;
 import com.readytalk.staccato.database.migration.script.ScriptService;
 import com.readytalk.staccato.utils.Resource;
 import com.readytalk.staccato.utils.ResourceLoader;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 /**
  * @author jhumphrey

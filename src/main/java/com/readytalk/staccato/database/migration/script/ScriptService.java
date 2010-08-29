@@ -2,8 +2,8 @@ package com.readytalk.staccato.database.migration.script;
 
 import java.util.List;
 
-import com.readytalk.staccato.database.migration.script.sql.SQLScriptService;
 import com.google.inject.ImplementedBy;
+import com.readytalk.staccato.database.migration.script.sql.SQLScriptService;
 
 /**
  * Interface for interacting with Script objects

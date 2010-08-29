@@ -1,8 +1,6 @@
 package com.readytalk.staccato;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -12,10 +10,7 @@ import org.testng.annotations.Test;
 import com.readytalk.staccato.database.BaseTest;
 import com.readytalk.staccato.database.migration.MigrationException;
 import com.readytalk.staccato.database.migration.MigrationType;
-import com.readytalk.staccato.database.migration.MigrationVersionsService;
 import com.readytalk.staccato.database.migration.script.groovy.GroovyScript;
-import com.readytalk.staccato.utils.SQLUtils;
-import com.readytalk.staccato.utils.Version;
 
 /**
  * @author jhumphrey
@@ -66,6 +61,7 @@ public class MainTest extends BaseTest {
       deleteVersionsTable(makePostgresqlConnection());
     }
   }
+
   /**
    * Tests that only Script_2 gets executed
    *
