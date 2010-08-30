@@ -191,6 +191,8 @@
                        classpath="${maven.test.classpath}"
                        debug="on"
                        source="1.6"
+                       executable="${env.JAVA_HOME}/bin/javac"
+		       fork="true"
                        includeantruntime="false">
                   <classpath>
                     <path refid="maven.test.classpath"/>
@@ -231,7 +233,7 @@
         </configuration>
       </plugin>
 
-      <plugin>
+      <!-- <plugin>
         <groupId>com.readytalk</groupId>
         <artifactId>staccato-maven-plugin</artifactId>
         <version>1.0</version>
@@ -250,7 +252,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
+      </plugin> -->
 
     </plugins>
   </build>
