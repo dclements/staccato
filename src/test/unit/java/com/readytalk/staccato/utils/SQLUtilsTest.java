@@ -2,10 +2,12 @@ package com.readytalk.staccato.utils;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.readytalk.staccato.database.BaseTest;
@@ -15,10 +17,10 @@ import com.readytalk.staccato.database.BaseTest;
  */
 public class SQLUtilsTest extends BaseTest {
 
-  @Test
-  public void testExecute() throws SQLException {
+  @Test(dataProvider = "jdbcProvider")
+  public void testExecute(URI jdbcUri) throws SQLException {
 
-    ResultSet rs = SQLUtils.execute(makePostgresqlConnection(), "select * from foo");
+    ResultSet rs = SQLUtils.execute(makeConnection(jdbcUri), "select * from foo");
 
     while (rs.next()) {
       Assert.assertEquals(rs.getInt(1), 1);
@@ -26,10 +28,10 @@ public class SQLUtilsTest extends BaseTest {
     }
   }
 
-  @Test
-  public void testExecuteFile() throws MalformedURLException, SQLException {
+  @Test(dataProvider = "jdbcProvider")
+  public void testExecuteFile(URI jdbcUri) throws MalformedURLException, SQLException {
     File file = new File("src/test/unit/resources/test.sql");
-    ResultSet rs = SQLUtils.executeSQLFile(makePostgresqlConnection(), file.toURI().toURL());
+    ResultSet rs = SQLUtils.executeSQLFile(makeConnection(jdbcUri), file.toURI().toURL());
 
     while (rs.next()) {
       Assert.assertEquals(rs.getInt(1), 1);

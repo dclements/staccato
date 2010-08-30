@@ -12,6 +12,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -49,33 +50,20 @@ public class BaseTest {
       "help with this setup";
   }
 
-  public Connection makePostgresqlConnection() {
-    URI jdbcUri = this.postgresqlJdbcUri;
-
-    try {
-
-      Class.forName("org.postgresql.Driver");
-
-      String username = dbUsername;
-      String password = dbPassword;
-
-      return DriverManager.getConnection(jdbcUri.toString(), username, password);
-
-    } catch (ClassNotFoundException e) {
-      Assert.fail(getDatabaseErrorMessage(jdbcUri));
-    } catch (SQLException e) {
-      Assert.fail(getDatabaseErrorMessage(jdbcUri));
-    }
-
-    return null;
+  @DataProvider(name = "jdbcProvider")
+  public Object[][] jdbcProvider() {
+    return new Object[][]{
+      {postgresqlJdbcUri},
+      {mysqlJdbcUri}
+    };
   }
 
-  public Connection makeMysqlConnection() {
-    URI jdbcUri = this.mysqlJdbcUri;
+  public Connection makeConnection(URI jdbcUri) {
+    DatabaseType dbType = DatabaseType.getTypeFromJDBCUri(jdbcUri);
 
     try {
 
-      Class.forName("com.mysql.jdbc.Driver");
+      Class.forName(dbType.getDriver());
 
       String username = dbUsername;
       String password = dbPassword;
@@ -102,8 +90,8 @@ public class BaseTest {
     }
   }
 
-  protected List<GroovyScript> loadScriptsFromVersionsTable() throws SQLException {
-    ResultSet rs = SQLUtils.execute(makePostgresqlConnection(), "select script_date, script_filename, script_version, script_hash from " + MigrationVersionsService.MIGRATION_VERSIONS_TABLE);
+  protected List<GroovyScript> loadScriptsFromVersionsTable(Connection connection) throws SQLException {
+    ResultSet rs = SQLUtils.execute(connection, "select script_date, script_filename, script_version, script_hash from " + MigrationVersionsService.MIGRATION_VERSIONS_TABLE);
     List<GroovyScript> scripts = new ArrayList<GroovyScript>();
     while (rs.next()) {
       GroovyScript groovyScript = new GroovyScript();
