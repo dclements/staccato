@@ -46,10 +46,10 @@ public class MainTest extends BaseTest {
    * @param jdbcUri the jdbc uri
    * @throws java.sql.SQLException on exception
    */
-  @Test(dataProvider = "loadMainOptions")
+  @Test(dataProvider = "migrateScriptTestOptions")
   public void testRunWithMigrateScriptOption(String scriptDate, String scriptName, URI jdbcUri) throws SQLException {
     MigrationType migrationType = MigrationType.DATA_UP;
-    String migrationDir = "groovy/main_1";
+    String migrationDir = "groovy/main";
 
     try {
       Main.main("-jdbc", jdbcUri.toString(), "-dbn", dbName, "-dbu", dbUsername, "-dbp", dbPassword,
@@ -66,14 +66,69 @@ public class MainTest extends BaseTest {
       deleteVersionsTable(makeConnection(jdbcUri));
     }
   }
+  /**
+   * Tests that Main works when using the --ms (migrateScript) option.  This option
+   * runs a migration against a single script only
+   *
+   * @param jdbcUri the jdbc uri
+   * @throws java.sql.SQLException on exception
+   */
+  @Test(dataProvider = "jdbcProvider")
+  public void testRunWithDateRangeOptionsVariations(URI jdbcUri) throws SQLException {
+    MigrationType migrationType = MigrationType.DATA_UP;
+    String migrationDir = "groovy/main";
 
-  @DataProvider(name = "loadMainOptions")
-  public Object[][] loadMainOptions() {
+    // all should run in this test since
+    try {
+      Main.main("-jdbc", jdbcUri.toString(), "-dbn", dbName, "-dbu", dbUsername, "-dbp", dbPassword,
+        "-m", migrationType.name(), "-md", migrationDir, "-mfd", "2000-01-01");
+
+      List<GroovyScript> loggedScripts = loadScriptsFromVersionsTable(makeConnection(jdbcUri));
+
+      Assert.assertEquals(loggedScripts.size(), 10);
+
+    } catch (MigrationException e) {
+      Assert.fail(e.getMessage(), e);
+    } finally {
+      deleteVersionsTable(makeConnection(jdbcUri));
+    }
+
+    try {
+      Main.main("-jdbc", jdbcUri.toString(), "-dbn", dbName, "-dbu", dbUsername, "-dbp", dbPassword,
+        "-m", migrationType.name(), "-md", migrationDir, "-mfd", "2005-01-01T00:00:00-06:00");
+
+      List<GroovyScript> loggedScripts = loadScriptsFromVersionsTable(makeConnection(jdbcUri));
+
+      Assert.assertEquals(loggedScripts.size(), 6);
+
+    } catch (MigrationException e) {
+      Assert.fail(e.getMessage(), e);
+    } finally {
+      deleteVersionsTable(makeConnection(jdbcUri));
+    }
+
+    try {
+      Main.main("-jdbc", jdbcUri.toString(), "-dbn", dbName, "-dbu", dbUsername, "-dbp", dbPassword,
+        "-m", migrationType.name(), "-md", migrationDir, "-mfd", "2011-01-01");
+
+      List<GroovyScript> loggedScripts = loadScriptsFromVersionsTable(makeConnection(jdbcUri));
+
+      Assert.assertEquals(loggedScripts.size(), 0);
+
+    } catch (MigrationException e) {
+      Assert.fail(e.getMessage(), e);
+    } finally {
+      deleteVersionsTable(makeConnection(jdbcUri));
+    }
+  }
+
+  @DataProvider(name = "migrateScriptTestOptions")
+  public Object[][] migrateScriptTestOptions() {
     return new Object[][]{
-      {"2000-01-01T00:00:00-06:00", "Script_1.groovy", postgresqlJdbcUri},
-      {"2001-01-01T00:00:00-06:00", "Script_2.groovy", postgresqlJdbcUri},
-      {"2001-01-01T00:00:00-06:00", "Script_1.groovy", mysqlJdbcUri},
-      {"2001-01-01T00:00:00-06:00", "Script_2.groovy", mysqlJdbcUri},
+      {"2001-01-01T00:00:00-06:00", "Script_1.groovy", postgresqlJdbcUri},
+      {"2002-01-01T00:00:00-06:00", "Script_2.groovy", postgresqlJdbcUri},
+      {"2003-01-01T00:00:00-06:00", "Script_1.groovy", mysqlJdbcUri},
+      {"2004-01-01T00:00:00-06:00", "Script_2.groovy", mysqlJdbcUri}
     };
   }
 }

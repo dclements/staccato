@@ -91,15 +91,22 @@ public class BaseTest {
   }
 
   protected List<GroovyScript> loadScriptsFromVersionsTable(Connection connection) throws SQLException {
-    ResultSet rs = SQLUtils.execute(connection, "select script_date, script_filename, script_version, script_hash from " + MigrationVersionsService.MIGRATION_VERSIONS_TABLE);
+
     List<GroovyScript> scripts = new ArrayList<GroovyScript>();
-    while (rs.next()) {
-      GroovyScript groovyScript = new GroovyScript();
-      groovyScript.setScriptDate(new DateTime(rs.getTimestamp(1)));
-      groovyScript.setFilename(rs.getString(2));
-      groovyScript.setScriptVersion(new Version(rs.getString(3), true));
-      groovyScript.setSha1Hash(rs.getString(4));
-      scripts.add(groovyScript);
+
+    try {
+      ResultSet rs;
+      rs = SQLUtils.execute(connection, "select script_date, script_filename, script_version, script_hash from " + MigrationVersionsService.MIGRATION_VERSIONS_TABLE);
+      while (rs.next()) {
+        GroovyScript groovyScript = new GroovyScript();
+        groovyScript.setScriptDate(new DateTime(rs.getTimestamp(1)));
+        groovyScript.setFilename(rs.getString(2));
+        groovyScript.setScriptVersion(new Version(rs.getString(3), true));
+        groovyScript.setSha1Hash(rs.getString(4));
+        scripts.add(groovyScript);
+      }
+    } catch (SQLException e) {
+      // exceptions are ok here
     }
 
     return scripts;

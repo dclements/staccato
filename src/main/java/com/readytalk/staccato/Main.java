@@ -122,11 +122,11 @@ public class Main {
           for (GroovyScript loadedScript : loadedScripts) {
             DateTime loadedScriptDate = loadedScript.getScriptDate();
             boolean include = false;
-            if (migrateFromDate != null && loadedScriptDate.isAfter(migrateFromDate)) {
+            if (migrateFromDate != null && (loadedScriptDate.isEqual(migrateFromDate) || loadedScriptDate.isAfter(migrateFromDate))) {
               include = true;
             }
 
-            if (migrateToDate != null && loadedScriptDate.isBefore(migrateFromDate)) {
+            if (migrateToDate != null && (loadedScriptDate.isEqual(migrateFromDate) || loadedScriptDate.isBefore(migrateFromDate))) {
               include = true;
             }
 
