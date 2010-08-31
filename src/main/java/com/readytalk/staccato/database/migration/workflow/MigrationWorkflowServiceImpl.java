@@ -61,7 +61,7 @@ public class MigrationWorkflowServiceImpl<T extends Annotation> implements Migra
           } catch (IllegalAccessException e) {
             throw new MigrationException("Unable to access workflow step class: " + workflowStep.getSimpleName(), e);
           } catch (InvocationTargetException e) {
-            throw new MigrationException("Error invoking workflow step: " + workflowStep.getSimpleName(), e);
+            throw new MigrationException("Error invoking workflow step " + workflowStep.getSimpleName() + " in script: " + script.getFilename(), e);
           }
         }
       } else {
