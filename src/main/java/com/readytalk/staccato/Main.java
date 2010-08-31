@@ -63,7 +63,7 @@ public class Main {
       String password = line.getOptionValue(OPTION_SET.passwordOpt.getOpt());
       String projectName = line.getOptionValue(OPTION_SET.projectNameOpt.getOpt());
       String projectVersion = line.getOptionValue(OPTION_SET.projectVersionOpt.getOpt());
-      String migrationType = line.getOptionValue(OPTION_SET.migrationTypeOpt.getOpt());
+      String migrationTypeOpt = line.getOptionValue(OPTION_SET.migrationTypeOpt.getOpt());
       String migrateFromDateOpt = line.getOptionValue(OPTION_SET.migrateFromDateOpt.getOpt());
       String migrateToDateOpt = line.getOptionValue(OPTION_SET.migrateToDateOpt.getOpt());
       String migrateScript = line.getOptionValue(OPTION_SET.migrateScriptOpt.getOpt());
@@ -176,8 +176,16 @@ public class Main {
       SQLScriptService sqlScriptService = injector.getInstance(SQLScriptService.class);
       List<SQLScript> sqlScripts = sqlScriptService.load(migrationDir);
 
+      // set the migration type
+      MigrationType migrationType = null;
+      try {
+        migrationType = MigrationType.valueOf(migrationTypeOpt);
+      } catch (IllegalArgumentException e) {
+        throw new MigrationException("Invalid migrationType: " + migrationTypeOpt + ".  The list of valid migration types are:\n" + MigrationType.description());
+      }
+
       // initialize the runtime
-      MigrationRuntime migrationRuntime = new MigrationRuntimeImpl(dbCtx, pCtx, sqlScripts, MigrationType.valueOf(migrationType));
+      MigrationRuntime migrationRuntime = new MigrationRuntimeImpl(dbCtx, pCtx, sqlScripts, migrationType);
 
       MigrationService<GroovyScript> migrationService = injector.getInstance(GroovyMigrationService.class);
 
