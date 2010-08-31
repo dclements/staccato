@@ -15,7 +15,7 @@ import com.readytalk.staccato.database.migration.annotation.SchemaUp;
 @SuppressWarnings("unchecked")
 public enum MigrationType {
   SCHEMA_UP(new Class[]{SchemaUp.class}),
-  SCHEMA_DATA_UP(new Class[]{SchemaUp.class}),
+  SCHEMA_DATA_UP(new Class[]{SchemaUp.class, DataUp.class}),
   DATA_UP(new Class[]{DataUp.class}),
   PRE_UP(new Class[]{PreUp.class}),
   POST_UP(new Class[]{PostUp.class}),
