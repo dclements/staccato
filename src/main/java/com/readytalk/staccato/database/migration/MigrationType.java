@@ -43,7 +43,7 @@ public enum MigrationType {
   public static String description() {
     StringBuilder builder = new StringBuilder();
     for (MigrationType migrationType : MigrationType.values()) {
-      builder.append(migrationType.name()).append(": ").append(migrationType.toString()).append("\n");
+      builder.append(migrationType.name()).append(" - Executes migration workflow: ").append(migrationType.toString()).append("\n");
     }
 
     return builder.toString();
