@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.readytalk.staccato.database.DatabaseContext;
@@ -52,18 +51,12 @@ public class MigrationRuntimeImpl implements MigrationRuntime {
   }
 
   @Override
-  public ResultSet executeSQL(String sql) {
-
-    try {
-      return SQLUtils.execute(databaseContext.getConnection(), sql);
-    } catch (SQLException e) {
-      logger.log(Level.FATAL, "Error occurred while executing sql:" + sql, e);
-      return null;
-    }
+  public ResultSet executeSQL(String sql) throws SQLException {
+    return SQLUtils.execute(databaseContext.getConnection(), sql);
   }
 
   @Override
-  public ResultSet executeSQLFile(String filename) {
+  public ResultSet executeSQLFile(String filename) throws SQLException {
 
     ResultSet rs;
 
@@ -81,11 +74,7 @@ public class MigrationRuntimeImpl implements MigrationRuntime {
     }
 
     URL scriptUrl = scriptToExecute.getUrl();
-    try {
-      rs = SQLUtils.executeSQLFile(databaseContext.getConnection(), scriptUrl);
-    } catch (SQLException e) {
-      throw new MigrationException("Unable to sql script file: " + filename, e);
-    }
+    rs = SQLUtils.executeSQLFile(databaseContext.getConnection(), scriptUrl);
 
     return rs;
   }

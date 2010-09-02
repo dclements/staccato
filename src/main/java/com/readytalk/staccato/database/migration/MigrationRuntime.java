@@ -1,6 +1,7 @@
 package com.readytalk.staccato.database.migration;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import com.readytalk.staccato.database.DatabaseContext;
@@ -50,7 +51,7 @@ public interface MigrationRuntime {
    * @param sql the sql string (e.g. select * from foo)
    * @return the result set
    */
-  ResultSet executeSQL(String sql);
+  ResultSet executeSQL(String sql) throws SQLException;
 
   /**
    * Executes sql located in a file.  The filename is specified via the filename param
@@ -58,5 +59,5 @@ public interface MigrationRuntime {
    * @param filename the name of the file to execute sql from
    * @return the result set
    */
-  ResultSet executeSQLFile(String filename);
+  ResultSet executeSQLFile(String filename) throws SQLException;
 }
