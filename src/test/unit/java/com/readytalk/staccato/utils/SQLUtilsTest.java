@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.testng.Assert;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.readytalk.staccato.database.BaseTest;
@@ -17,7 +16,7 @@ import com.readytalk.staccato.database.BaseTest;
  */
 public class SQLUtilsTest extends BaseTest {
 
-  @Test(dataProvider = "jdbcProvider")
+  @Test(dataProvider = "fullyQualifiedJdbcProvider")
   public void testExecute(URI jdbcUri) throws SQLException {
 
     ResultSet rs = SQLUtils.execute(makeConnection(jdbcUri), "select * from foo");
@@ -28,7 +27,7 @@ public class SQLUtilsTest extends BaseTest {
     }
   }
 
-  @Test(dataProvider = "jdbcProvider")
+  @Test(dataProvider = "fullyQualifiedJdbcProvider")
   public void testExecuteFile(URI jdbcUri) throws MalformedURLException, SQLException {
     File file = new File("src/test/unit/resources/test.sql");
     ResultSet rs = SQLUtils.executeSQLFile(makeConnection(jdbcUri), file.toURI().toURL());

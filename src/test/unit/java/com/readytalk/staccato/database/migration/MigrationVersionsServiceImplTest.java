@@ -28,7 +28,7 @@ import static com.readytalk.staccato.database.migration.MigrationVersionsService
  */
 public class MigrationVersionsServiceImplTest extends BaseTest {
 
-  @Test(dataProvider = "jdbcProvider")
+  @Test(dataProvider = "fullyQualifiedJdbcProvider")
   public void testAPI(URI jdbcUri) {
 
     MigrationVersionsServiceImpl service = new MigrationVersionsServiceImpl();

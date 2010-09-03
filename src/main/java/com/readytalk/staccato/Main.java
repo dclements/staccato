@@ -57,7 +57,7 @@ public class Main {
       }
 
       // extract options values from the command line
-      String jdbcUri = line.getOptionValue(OPTION_SET.jdbcUrlOpt.getOpt());
+      String jdbcUriStr = line.getOptionValue(OPTION_SET.jdbcUrlOpt.getOpt());
       String dbName = line.getOptionValue(OPTION_SET.dbNameOpt.getOpt());
       String username = line.getOptionValue(OPTION_SET.usernameOpt.getOpt());
       String password = line.getOptionValue(OPTION_SET.passwordOpt.getOpt());
@@ -141,7 +141,7 @@ public class Main {
       DatabaseService databaseService = injector.getInstance(DatabaseService.class);
       DatabaseContext dbCtx;
       try {
-        dbCtx = databaseService.initialize(URI.create(jdbcUri), dbName, username, password);
+        dbCtx = databaseService.initialize(URI.create(jdbcUriStr), dbName, username, password);
       } catch (DatabaseException e) {
         //TODO:  Design for the workflow when the database does not yet exist
         //
@@ -163,7 +163,7 @@ public class Main {
         //             void createDatabase()
         //
         throw new MigrationException("Unable to establish a connection to the database for jdbc uri:" +
-          jdbcUri + ", username: " + username + ", password: " + password + ".  Please make sure that " +
+          jdbcUriStr + ", username: " + username + ", password: " + password + ".  Please make sure that " +
           "the database exists and that that the user permissions are set appropriately.", e);
       }
 

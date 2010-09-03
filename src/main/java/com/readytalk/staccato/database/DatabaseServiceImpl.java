@@ -22,10 +22,20 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     logger.info("Initializing database context for: " + jdbcUri.toString() + ", username: " + username);
 
+    String fullyQualifiedJdbcUriStr = jdbcUri.toString();
+
+    if (fullyQualifiedJdbcUriStr.endsWith("/")) {
+      fullyQualifiedJdbcUriStr += dbName;
+    } else {
+      fullyQualifiedJdbcUriStr += "/" + dbName;
+    }
+
+    URI fullyQualifiedJdbcUri = URI.create(fullyQualifiedJdbcUriStr);
+
     DatabaseContext context = new DatabaseContext();
     context.setUsername(username);
     context.setPassword(password);
-    context.setJdbcUri(jdbcUri);
+    context.setJdbcUri(fullyQualifiedJdbcUri);
     context.setDbName(dbName);
 
     DatabaseType databaseType = DatabaseType.getTypeFromJDBCUri(jdbcUri);

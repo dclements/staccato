@@ -1,5 +1,6 @@
 package com.readytalk.staccato.database;
 
+import java.net.URI;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.util.Map;
@@ -22,7 +23,7 @@ public class DatabaseServiceImplTest extends BaseTest {
 
     try {
       DatabaseContext context = service.initialize(mysqlJdbcUri, dbName, dbUsername, dbPassword);
-      Assert.assertEquals(context.getJdbcUri(), mysqlJdbcUri);
+      Assert.assertEquals(context.getJdbcUri(), URI.create(mysqlJdbcUri + dbName));
       Assert.assertEquals(context.getUsername(), dbUsername);
       Assert.assertEquals(context.getPassword(), dbPassword);
       Assert.assertEquals(context.getDbName(), dbName);
@@ -40,7 +41,7 @@ public class DatabaseServiceImplTest extends BaseTest {
 
     try {
       DatabaseContext context = service.initialize(postgresqlJdbcUri, dbName, dbUsername, dbPassword);
-      Assert.assertEquals(context.getJdbcUri(), postgresqlJdbcUri);
+      Assert.assertEquals(context.getJdbcUri(), URI.create(postgresqlJdbcUri + dbName));
       Assert.assertEquals(context.getUsername(), dbUsername);
       Assert.assertEquals(context.getPassword(), dbPassword);
       Assert.assertEquals(context.getDbName(), dbName);

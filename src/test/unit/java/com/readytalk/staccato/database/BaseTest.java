@@ -28,8 +28,8 @@ import com.readytalk.staccato.utils.Version;
 public class BaseTest {
 
   public final String dbName = "staccato";
-  public final URI mysqlJdbcUri = URI.create("jdbc:mysql://localhost:3306/" + dbName);
-  public final URI postgresqlJdbcUri = URI.create("jdbc:postgresql://localhost:5432/" + dbName);
+  public final URI mysqlJdbcUri = URI.create("jdbc:mysql://localhost:3306/");
+  public final URI postgresqlJdbcUri = URI.create("jdbc:postgresql://localhost:5432/");
   public final String dbUsername = "staccato";
   public final String dbPassword = "staccato";
 
@@ -55,6 +55,14 @@ public class BaseTest {
     return new Object[][]{
       {postgresqlJdbcUri},
       {mysqlJdbcUri}
+    };
+  }
+
+  @DataProvider(name = "fullyQualifiedJdbcProvider")
+  public Object[][] fullyQualifedJdbcProvider() {
+    return new Object[][]{
+      {URI.create(postgresqlJdbcUri.toString() + dbName)},
+      {URI.create(mysqlJdbcUri.toString() + dbName)}
     };
   }
 
@@ -96,13 +104,12 @@ public class BaseTest {
 
     try {
       ResultSet rs;
-      rs = SQLUtils.execute(connection, "select script_date, script_filename, script_version, script_hash from " + MigrationVersionsService.MIGRATION_VERSIONS_TABLE);
+      rs = SQLUtils.execute(connection, "select script_date, script_filename, script_hash from " + MigrationVersionsService.MIGRATION_VERSIONS_TABLE);
       while (rs.next()) {
         GroovyScript groovyScript = new GroovyScript();
         groovyScript.setScriptDate(new DateTime(rs.getTimestamp(1)));
         groovyScript.setFilename(rs.getString(2));
-        groovyScript.setScriptVersion(new Version(rs.getString(3), true));
-        groovyScript.setSha1Hash(rs.getString(4));
+        groovyScript.setSha1Hash(rs.getString(3));
         scripts.add(groovyScript);
       }
     } catch (SQLException e) {
