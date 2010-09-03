@@ -9,6 +9,7 @@ import com.google.inject.Inject;
 import com.readytalk.staccato.database.migration.MigrationException;
 import com.readytalk.staccato.database.migration.MigrationResult;
 import com.readytalk.staccato.database.migration.MigrationRuntime;
+import com.readytalk.staccato.database.migration.MigrationVersionsService;
 import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationParser;
 import com.readytalk.staccato.database.migration.annotation.WorkflowStep;
 import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
@@ -24,9 +25,12 @@ public class MigrationWorkflowServiceImpl<T extends Annotation> implements Migra
 
   private MigrationAnnotationParser annotationParser;
 
+  private MigrationVersionsService migrationVersionsService;
+
   @Inject
-  public MigrationWorkflowServiceImpl(MigrationAnnotationParser annotationParser) {
+  public MigrationWorkflowServiceImpl(MigrationAnnotationParser annotationParser, MigrationVersionsService migrationVersionsService) {
     this.annotationParser = annotationParser;
+    this.migrationVersionsService = migrationVersionsService;
   }
 
   @Override
@@ -56,6 +60,10 @@ public class MigrationWorkflowServiceImpl<T extends Annotation> implements Migra
             stepExecutorInstance.initialize((T) annotation);
             Object executionResult = stepExecutorInstance.execute(script.getScriptInstance(), new WorkflowContext(annotationParser, migrationRuntime));
             migrationResult.getResultMap().put(annotation.annotationType(), executionResult);
+
+            // if execute is successful, log to the migration versions table
+            migrationVersionsService.log(migrationRuntime.getDatabaseContext(), script, workflowStep, annotationParser.getMigrationAnnotation(script.getScriptInstance()));
+
           } catch (InstantiationException e) {
             throw new MigrationException("Unable to instantiate workflow step: " + workflowStep.getSimpleName(), e);
           } catch (IllegalAccessException e) {

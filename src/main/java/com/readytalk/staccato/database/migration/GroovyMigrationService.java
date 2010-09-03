@@ -23,17 +23,14 @@ public class GroovyMigrationService implements MigrationService<GroovyScript> {
 
   private MigrationWorkflowService migrationWorkflowService;
   private MigrationAnnotationParser annotationParser;
-  private MigrationVersionsService migrationVersionsService;
 
   @Inject
   public GroovyMigrationService(
     MigrationWorkflowService migrationWorkflowService,
-    MigrationAnnotationParser annotationParser,
-    MigrationVersionsService migrationVersionsService) {
+    MigrationAnnotationParser annotationParser) {
 
     this.migrationWorkflowService = migrationWorkflowService;
     this.annotationParser = annotationParser;
-    this.migrationVersionsService = migrationVersionsService;
   }
 
   @Override
@@ -74,8 +71,6 @@ public class GroovyMigrationService implements MigrationService<GroovyScript> {
 
       migrationWorkflowService.executeWorkflow(script, migrationType.getWorkflowSteps(), migrationRuntime);
 
-      // if execute is successful, log to the migration versions table
-      migrationVersionsService.log(databaseContext, script);
 
       // todo: add this back in once transactions are figured out
 //          databaseService.endTransaction(databaseContext, script);

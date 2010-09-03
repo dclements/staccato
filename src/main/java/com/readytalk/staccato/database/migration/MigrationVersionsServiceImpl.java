@@ -1,5 +1,6 @@
 package com.readytalk.staccato.database.migration;
 
+import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -10,6 +11,7 @@ import org.joda.time.format.DateTimeFormat;
 
 import com.readytalk.staccato.database.DatabaseContext;
 import com.readytalk.staccato.database.DatabaseException;
+import com.readytalk.staccato.database.migration.annotation.Migration;
 import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
 import com.readytalk.staccato.utils.SQLUtils;
 
@@ -80,7 +82,7 @@ public class MigrationVersionsServiceImpl implements MigrationVersionsService {
   }
 
   @Override
-  public void log(DatabaseContext databaseContext, DynamicLanguageScript script) {
+  public void log(DatabaseContext databaseContext, DynamicLanguageScript script, Class<? extends Annotation> workflowStep, Migration migrationAnnotation) {
     // create the migration versions table
     createVersionsTable(databaseContext);
 
@@ -99,12 +101,17 @@ public class MigrationVersionsServiceImpl implements MigrationVersionsService {
       }
 
       String hash = script.getSHA1Hash();
-      String version = script.getScriptVersion().toString();
 
       StringBuilder sqlBuilder = new StringBuilder();
       sqlBuilder.append("INSERT INTO ").append(MIGRATION_VERSIONS_TABLE).append(" ");
-      sqlBuilder.append("(script_date, script_version, script_hash, script_filename)").append(" ");
-      sqlBuilder.append("  values('").append(date).append("', '").append(version).append("', '").append(hash).append("', '").append(filename).append("')");
+      sqlBuilder.append("(database_version, script_date, script_hash, script_filename, workflow_step) ");
+      sqlBuilder.append("values('");
+      sqlBuilder.append(migrationAnnotation.databaseVersion()).append("', '");
+      sqlBuilder.append(date).append("', '");
+      sqlBuilder.append(hash).append("', '");
+      sqlBuilder.append(filename).append("', '");
+      sqlBuilder.append(workflowStep.getSimpleName());
+      sqlBuilder.append("')");
 
       logger.debug("Logged migration to: " + MIGRATION_VERSIONS_TABLE);
 

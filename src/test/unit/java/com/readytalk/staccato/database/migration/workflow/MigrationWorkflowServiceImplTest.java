@@ -7,8 +7,11 @@ import org.easymock.EasyMock;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.readytalk.staccato.database.DatabaseContext;
 import com.readytalk.staccato.database.migration.MigrationResult;
 import com.readytalk.staccato.database.migration.MigrationRuntime;
+import com.readytalk.staccato.database.migration.MigrationVersionsService;
+import com.readytalk.staccato.database.migration.annotation.Migration;
 import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationParser;
 import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationParserImpl;
 import com.readytalk.staccato.database.migration.annotation.TestWorkflowStepOne;
@@ -39,13 +42,31 @@ public class MigrationWorkflowServiceImplTest {
     EasyMock.expect(script.getScriptInstance()).andReturn(scriptInstance);
     EasyMock.expect(script.getScriptInstance()).andReturn(scriptInstance);
     EasyMock.expect(script.getScriptInstance()).andReturn(scriptInstance);
+    EasyMock.expect(script.getScriptInstance()).andReturn(scriptInstance);
+    EasyMock.expect(script.getScriptInstance()).andReturn(scriptInstance);
+    EasyMock.expect(script.getScriptInstance()).andReturn(scriptInstance);
+    EasyMock.expect(script.getScriptInstance()).andReturn(scriptInstance);
     EasyMock.replay(script);
+
+    DatabaseContext dbCtx = EasyMock.createStrictMock(DatabaseContext.class);
+    MigrationRuntime runtime = EasyMock.createMock(MigrationRuntime.class);
+    EasyMock.expect(runtime.getDatabaseContext()).andReturn(dbCtx);
+    EasyMock.expect(runtime.getDatabaseContext()).andReturn(dbCtx);
+    EasyMock.replay(runtime);
 
     MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
 
-    MigrationWorkflowServiceImpl workflowService = new MigrationWorkflowServiceImpl(annotationParser);
+    Migration migrationAnnotation = EasyMock.createStrictMock(Migration.class);
+    EasyMock.expect(migrationAnnotation.databaseVersion()).andReturn("1.0");
+    EasyMock.expect(migrationAnnotation.databaseVersion()).andReturn("1.0");
+    EasyMock.replay(migrationAnnotation);
 
-    MigrationRuntime runtime = EasyMock.createMock(MigrationRuntime.class);
+    MigrationVersionsService migrationVersionsService = EasyMock.createNiceMock(MigrationVersionsService.class);
+    migrationVersionsService.log(dbCtx, script, TestWorkflowStepOne.class, migrationAnnotation);
+    migrationVersionsService.log(dbCtx, script, TestWorkflowStepTwo.class, migrationAnnotation);
+    EasyMock.replay(migrationVersionsService);
+
+    MigrationWorkflowServiceImpl workflowService = new MigrationWorkflowServiceImpl(annotationParser, migrationVersionsService);
 
     MigrationResult result = workflowService.executeWorkflow(script, new Class[]{TestWorkflowStepOne.class, TestWorkflowStepTwo.class}, runtime);
 

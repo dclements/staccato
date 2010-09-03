@@ -1,5 +1,6 @@
 package com.readytalk.staccato.database.migration;
 
+import java.lang.annotation.Annotation;
 import java.net.URI;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,12 +10,13 @@ import org.easymock.EasyMock;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.testng.Assert;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.readytalk.staccato.database.BaseTest;
 import com.readytalk.staccato.database.DatabaseContext;
 import com.readytalk.staccato.database.DatabaseType;
+import com.readytalk.staccato.database.migration.annotation.Migration;
+import com.readytalk.staccato.database.migration.annotation.PreUp;
 import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
 import com.readytalk.staccato.database.migration.script.groovy.GroovyScriptService;
 import com.readytalk.staccato.utils.Version;
@@ -56,32 +58,39 @@ public class MigrationVersionsServiceImplTest extends BaseTest {
     // insert a row to it:
     String expectedScriptDateStr = DateTimeFormat.forPattern(GroovyScriptService.TEMPLATE_SCRIPT_DATE_FORMAT).print(new DateTime());
     DateTime expectedScriptDate = new DateTime(expectedScriptDateStr);
-    Version expectedVersion = new Version("1.0.0", true);
     String expectedFilename = "foo.groovy";
     String expectedHash = "hasheesh";
+    String expectedDatabaseVersion = "1.0";
+    Class<? extends Annotation> expectedWorkflowStep = PreUp.class;
+
     DynamicLanguageScript script = EasyMock.createMock(DynamicLanguageScript.class);
     EasyMock.expect(script.getScriptDate()).andReturn(expectedScriptDate);
-    EasyMock.expect(script.getScriptVersion()).andReturn(expectedVersion);
     EasyMock.expect(script.getFilename()).andReturn(expectedFilename);
     EasyMock.expect(script.getSHA1Hash()).andReturn(expectedHash);
     EasyMock.replay(script);
 
-    service.log(context, script);
+    Migration migrationAnnotation = EasyMock.createStrictMock(Migration.class);
+    EasyMock.expect(migrationAnnotation.databaseVersion()).andReturn(expectedDatabaseVersion);
+    EasyMock.replay(migrationAnnotation);
+
+    // test with preup
+    service.log(context, script, expectedWorkflowStep, migrationAnnotation);
 
     // now delete it
     ResultSet rs;
 
     // test that it got inserted
-    Statement st = null;
+    Statement st;
     try {
       st = context.getConnection().createStatement();
-      rs = st.executeQuery("select script_date, script_filename, script_hash, script_version from " + MIGRATION_VERSIONS_TABLE);
+      rs = st.executeQuery("select script_date, script_filename, script_hash, workflow_step, database_version from " + MIGRATION_VERSIONS_TABLE);
 
       while (rs.next()) {
         Assert.assertEquals(new DateTime(rs.getTimestamp(1)), expectedScriptDate);
         Assert.assertEquals(rs.getString(2), expectedFilename);
         Assert.assertEquals(rs.getString(3), expectedHash);
-        Assert.assertEquals(new Version(rs.getString(4)), expectedVersion);
+        Assert.assertEquals(rs.getString(4), expectedWorkflowStep.getSimpleName());
+        Assert.assertEquals(rs.getString(5), expectedDatabaseVersion);
       }
 
     } catch (SQLException e) {
