@@ -20,8 +20,6 @@ public class DatabaseServiceImpl implements DatabaseService {
   @Override
   public DatabaseContext initialize(URI jdbcUri, String dbName, String username, String password) {
 
-    logger.info("Initializing database context for: " + jdbcUri.toString() + ", username: " + username);
-
     String fullyQualifiedJdbcUriStr = jdbcUri.toString();
 
     if (fullyQualifiedJdbcUriStr.endsWith("/")) {
@@ -31,6 +29,8 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     URI fullyQualifiedJdbcUri = URI.create(fullyQualifiedJdbcUriStr);
+
+    logger.info("Initializing database context for: " + fullyQualifiedJdbcUri + ", username: " + username);
 
     DatabaseContext context = new DatabaseContext();
     context.setUsername(username);
