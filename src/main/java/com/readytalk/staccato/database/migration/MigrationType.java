@@ -2,6 +2,7 @@ package com.readytalk.staccato.database.migration;
 
 import java.lang.annotation.Annotation;
 
+import com.readytalk.staccato.database.migration.annotation.Create;
 import com.readytalk.staccato.database.migration.annotation.DataUp;
 import com.readytalk.staccato.database.migration.annotation.PostUp;
 import com.readytalk.staccato.database.migration.annotation.PreUp;
@@ -19,7 +20,8 @@ public enum MigrationType {
   DATA_UP(new Class[]{DataUp.class}),
   PRE_UP(new Class[]{PreUp.class}),
   POST_UP(new Class[]{PostUp.class}),
-  UP(new Class[]{PreUp.class, SchemaUp.class, DataUp.class, PostUp.class});
+  UP(new Class[]{PreUp.class, SchemaUp.class, DataUp.class, PostUp.class}),
+  CREATE(new Class[]{Create.class});
 
   private Class<? extends Annotation>[] workflowSteps;
 

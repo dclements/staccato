@@ -18,63 +18,36 @@ public class DatabaseServiceImpl implements DatabaseService {
   public static final Logger logger = Logger.getLogger(DatabaseServiceImpl.class);
 
   @Override
-  public DatabaseContext initialize(URI jdbcUri, String dbName, String username, String password) {
-
-    String fullyQualifiedJdbcUriStr = jdbcUri.toString();
-
-    if (fullyQualifiedJdbcUriStr.endsWith("/")) {
-      fullyQualifiedJdbcUriStr += dbName;
-    } else {
-      fullyQualifiedJdbcUriStr += "/" + dbName;
-    }
-
-    URI fullyQualifiedJdbcUri = URI.create(fullyQualifiedJdbcUriStr);
-
-    logger.info("Initializing database context for: " + fullyQualifiedJdbcUri + ", username: " + username);
-
-    DatabaseContext context = new DatabaseContext();
-    context.setUsername(username);
-    context.setPassword(password);
-    context.setJdbcUri(fullyQualifiedJdbcUri);
-    context.setDbName(dbName);
-
-    DatabaseType databaseType = DatabaseType.getTypeFromJDBCUri(jdbcUri);
-    context.setDatabaseType(databaseType);
-
-    connect(context);
-
-    return context;
+  public DatabaseContextBuilder getDatabaseContextBuilder() {
+    return new DatabaseContextBuilder();
   }
 
   @Override
-  public void connect(DatabaseContext context) {
+  public Connection connect(URI jdbcUri, String username, String password, DatabaseType databaseType) {
 
-    URI jdbcUri = context.getJdbcUri();
+    Connection connection;
 
     try {
 
-      Class.forName(context.getDatabaseType().getDriver());
+      Class.forName(databaseType.getDriver());
 
       logger.debug("Connecting to database: " + jdbcUri.toString());
 
-      String username = context.getUsername();
-      String password = context.getPassword();
-
-      Connection connection = DriverManager.getConnection(jdbcUri.toString(), username, password);
-
-      context.setConnection(connection);
+      connection = DriverManager.getConnection(jdbcUri.toString(), username, password);
 
     } catch (ClassNotFoundException e) {
       throw new DatabaseException("SQL driver not found", e);
     } catch (SQLException e) {
       throw new DatabaseException("SQL exception occurred when establishing connection to database: " + jdbcUri, e);
     }
+
+    return connection;
   }
 
   @Override
   public void disconnect(DatabaseContext context) {
 
-    logger.info("Disconnecting database connection: " + context.getJdbcUri().toString());
+    logger.info("Disconnecting database connection: " + context.getFullyQualifiedJdbcUri().toString());
 
     Connection connection = context.getConnection();
     try {
@@ -87,7 +60,7 @@ public class DatabaseServiceImpl implements DatabaseService {
           connection.close();
         }
       } catch (SQLException e2) {
-        logger.warn("Unable to close database connection to: " + context.getJdbcUri());
+        logger.warn("Unable to close database connection to: " + context.getFullyQualifiedJdbcUri());
       }
     }
   }

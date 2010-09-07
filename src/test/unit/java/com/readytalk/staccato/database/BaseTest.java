@@ -20,18 +20,20 @@ import com.readytalk.staccato.database.migration.MigrationVersionsService;
 import com.readytalk.staccato.database.migration.guice.MigrationModule;
 import com.readytalk.staccato.database.migration.script.groovy.GroovyScript;
 import com.readytalk.staccato.utils.SQLUtils;
-import com.readytalk.staccato.utils.Version;
 
 /**
  * @author jhumphrey
  */
 public class BaseTest {
 
-  public final String dbName = "staccato";
   public final URI mysqlJdbcUri = URI.create("jdbc:mysql://localhost:3306/");
   public final URI postgresqlJdbcUri = URI.create("jdbc:postgresql://localhost:5432/");
+  public final String rootDbName = "staccato_root";
+  public final String dbName = "staccato";
   public final String dbUsername = "staccato";
   public final String dbPassword = "staccato";
+  public final String rootDbUsername = dbUsername;
+  public final String rootDbPassword = dbPassword;
 
   protected Injector injector;
 
@@ -48,22 +50,6 @@ public class BaseTest {
       "is created with grants for username '" + dbUsername + "' with password '" + dbPassword + "'.  " +
       "Please refer to the src/test/database directory for sql scripts to " +
       "help with this setup";
-  }
-
-  @DataProvider(name = "jdbcProvider")
-  public Object[][] jdbcProvider() {
-    return new Object[][]{
-      {postgresqlJdbcUri},
-      {mysqlJdbcUri}
-    };
-  }
-
-  @DataProvider(name = "fullyQualifiedJdbcProvider")
-  public Object[][] fullyQualifedJdbcProvider() {
-    return new Object[][]{
-      {URI.create(postgresqlJdbcUri.toString() + dbName)},
-      {URI.create(mysqlJdbcUri.toString() + dbName)}
-    };
   }
 
   public Connection makeConnection(URI jdbcUri) {
@@ -118,4 +104,20 @@ public class BaseTest {
 
     return scripts;
   }
+
+  @DataProvider(name = "jdbcProvider")
+  public Object[][] jdbcProvider() {
+    return new Object[][]{
+      {postgresqlJdbcUri},
+      {mysqlJdbcUri}
+    };
+  }
+
+  @DataProvider(name = "fullyQualifiedJdbcProvider")
+  public Object[][] fullyQualifedJdbcProvider() {
+    return new Object[][]{
+      {URI.create(postgresqlJdbcUri.toString() + dbName)},
+      {URI.create(mysqlJdbcUri.toString() + dbName)}
+    };
+  }  
 }

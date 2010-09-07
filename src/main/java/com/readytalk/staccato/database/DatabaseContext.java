@@ -14,10 +14,14 @@ import java.util.Map;
 public class DatabaseContext {
 
   private Connection connection;
-  private URI jdbcUri;
+  private URI baseJdbcUri;
+  private URI fullyQualifiedJdbcUri;
   private String username;
   private String password;
   private String dbName;
+  private String rootDbName;
+  private String rootUsername;
+  private String rootPassword;
   private DatabaseType databaseType;
   private Map<String, Savepoint> txnSavepoints = new HashMap<String, Savepoint>();
 
@@ -29,12 +33,20 @@ public class DatabaseContext {
     this.connection = connection;
   }
 
-  public URI getJdbcUri() {
-    return jdbcUri;
+  public URI getBaseJdbcUri() {
+    return baseJdbcUri;
   }
 
-  public void setJdbcUri(URI jdbcUri) {
-    this.jdbcUri = jdbcUri;
+  public void setBaseJdbcUri(URI baseJdbcUri) {
+    this.baseJdbcUri = baseJdbcUri;
+  }
+
+  public URI getFullyQualifiedJdbcUri() {
+    return fullyQualifiedJdbcUri;
+  }
+
+  public void setFullyQualifiedJdbcUri(URI fullyQualifiedJdbcUri) {
+    this.fullyQualifiedJdbcUri = fullyQualifiedJdbcUri;
   }
 
   public String getPassword() {
@@ -59,6 +71,30 @@ public class DatabaseContext {
 
   public void setDbName(String dbName) {
     this.dbName = dbName;
+  }
+
+  public String getRootDbName() {
+    return rootDbName;
+  }
+
+  public void setRootDbName(String rootDbName) {
+    this.rootDbName = rootDbName;
+  }
+
+  public String getRootPassword() {
+    return rootPassword;
+  }
+
+  public void setRootPassword(String rootPassword) {
+    this.rootPassword = rootPassword;
+  }
+
+  public String getRootUsername() {
+    return rootUsername;
+  }
+
+  public void setRootUsername(String rootUsername) {
+    this.rootUsername = rootUsername;
   }
 
   public DatabaseType getDatabaseType() {

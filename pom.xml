@@ -204,7 +204,7 @@
                   </classpath>
                 </javac>
 
-                <testng outputDir="target/integration">
+                <testng outputDir="target/integration" verbose="2" haltonfailure="true">
                   <classpath>
                     <path refid="maven.test.classpath"/>
                     <path location="target/classes"/>

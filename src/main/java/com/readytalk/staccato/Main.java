@@ -17,6 +17,7 @@ import org.joda.time.DateTime;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.readytalk.staccato.database.DatabaseContext;
+import com.readytalk.staccato.database.DatabaseContextBuilder;
 import com.readytalk.staccato.database.DatabaseException;
 import com.readytalk.staccato.database.DatabaseService;
 import com.readytalk.staccato.database.migration.GroovyMigrationService;
@@ -57,7 +58,7 @@ public class Main {
       }
 
       // extract options values from the command line
-      String jdbcUriStr = line.getOptionValue(OPTION_SET.jdbcUrlOpt.getOpt());
+      String baseJdbcUriStr = line.getOptionValue(OPTION_SET.jdbcUrlOpt.getOpt());
       String dbName = line.getOptionValue(OPTION_SET.dbNameOpt.getOpt());
       String username = line.getOptionValue(OPTION_SET.usernameOpt.getOpt());
       String password = line.getOptionValue(OPTION_SET.passwordOpt.getOpt());
@@ -68,6 +69,9 @@ public class Main {
       String migrateToDateOpt = line.getOptionValue(OPTION_SET.migrateToDateOpt.getOpt());
       String migrateScript = line.getOptionValue(OPTION_SET.migrateScriptOpt.getOpt());
       String migrationDir = line.getOptionValue(OPTION_SET.migrationsDirOpt.getOpt());
+      String rootDbName = line.getOptionValue(OPTION_SET.rootDbNameOpt.getOpt());
+      String rootDbUsername = line.getOptionValue(OPTION_SET.rootDbUsernameDirOpt.getOpt());
+      String rootDbPassword = line.getOptionValue(OPTION_SET.rootDbPasswordOpt.getOpt());
 
       // set the migration dir
       if (StringUtils.isEmpty(migrationDir)) {
@@ -137,34 +141,32 @@ public class Main {
         }
       }
 
-      // initialize database context
-      DatabaseService databaseService = injector.getInstance(DatabaseService.class);
-      DatabaseContext dbCtx;
+      // set the migration type
+      MigrationType migrationType;
       try {
-        dbCtx = databaseService.initialize(URI.create(jdbcUriStr), dbName, username, password);
-      } catch (DatabaseException e) {
-        //TODO:  Design for the workflow when the database does not yet exist
-        //
-        // Currently, the system won't work unless the database has been created prior to migration execution
-        //
-        // How to design to this?
-        //
-        // Possible ideas:
-        //  1. create a new workflow called CREATE that is similar to UP but has one additional step called at the beginning called @Create.
-        //     The idea here is that there would be a script method annotated with @Create that would contain the logic necessary to create the database from scratch.
-        //
-        //      cons:  Since only one @Create would be necessary, this annotation doesn't really follow the same pattern
-        //             as all the other workflow step annotations.  In other words, there wouldn't be ONE-TO-MANY of these throughout the script set.
-        //             Kinda hacky...  Maybe add an attribute called 'unique'?  This doesn't really solve the problem but makes it contextually better..maybe?
-        //
-        //             ex:
-        //
-        //             @Create(unique=true)
-        //             void createDatabase()
-        //
-        throw new MigrationException("Unable to establish a connection to the database for jdbc uri:" +
-          jdbcUriStr + ", username: " + username + ", password: " + password + ".  Please make sure that " +
-          "the database exists and that that the user permissions are set appropriately.", e);
+        migrationType = MigrationType.valueOf(migrationTypeOpt);
+      } catch (IllegalArgumentException e) {
+        throw new MigrationException("Invalid migrationType: " + migrationTypeOpt + ".  The list of valid migration types are:\n" + MigrationType.description());
+      }
+
+      // set the database context
+      DatabaseService databaseService = injector.getInstance(DatabaseService.class);
+      DatabaseContextBuilder dbCtxBuilder = databaseService.getDatabaseContextBuilder();
+      dbCtxBuilder.setBaseJdbcContext(baseJdbcUriStr, dbName, username, password).build();
+      dbCtxBuilder.setRootJdbcContext(rootDbName, rootDbUsername, rootDbPassword);
+
+      DatabaseContext dbCtx = dbCtxBuilder.build();
+
+      // if a CREATE migraiton is not being execute, then initialize the database
+      if (!migrationType.equals(MigrationType.CREATE)) {
+        try {
+          dbCtx.setConnection(databaseService.connect(dbCtx.getFullyQualifiedJdbcUri(), dbCtx.getUsername(),
+            dbCtx.getPassword(), dbCtx.getDatabaseType()));
+        } catch (DatabaseException e) {
+          throw new MigrationException("Unable to establish a connection to the database for jdbc uri:" +
+            baseJdbcUriStr + ", username: " + username + ", password: " + password + ".  Please make sure that " +
+            "the database exists and that that the user permissions are set appropriately.", e);
+        }
       }
 
       // initialize project context
@@ -175,14 +177,6 @@ public class Main {
       // load sql scripts
       SQLScriptService sqlScriptService = injector.getInstance(SQLScriptService.class);
       List<SQLScript> sqlScripts = sqlScriptService.load(migrationDir);
-
-      // set the migration type
-      MigrationType migrationType = null;
-      try {
-        migrationType = MigrationType.valueOf(migrationTypeOpt);
-      } catch (IllegalArgumentException e) {
-        throw new MigrationException("Invalid migrationType: " + migrationTypeOpt + ".  The list of valid migration types are:\n" + MigrationType.description());
-      }
 
       // initialize the runtime
       MigrationRuntime migrationRuntime = new MigrationRuntimeImpl(dbCtx, pCtx, sqlScripts, migrationType);
@@ -216,7 +210,7 @@ public class Main {
 
     Options options = new Options();
 
-    public Option jdbcUrlOpt = new Option("jdbc", "jdbcUrl", true, "JDBC URL");
+    public Option jdbcUrlOpt = new Option("jdbc", "jdbcUrl", true, "The JDBC URL.  This url should not contain the database name. Please provide the database name via the 'databaseName' option.");
     public Option dbNameOpt = new Option("dbn", "databaseName", true, "The database name");
     public Option usernameOpt = new Option("dbu", "dbUsername", true, "The database username");
     public Option passwordOpt = new Option("dbp", "dbPassword", true, "The database password");
@@ -231,6 +225,9 @@ public class Main {
       "and the script must be available in the classpath.  If this option is specified, then any values defined for migrateFromDate and migrateToDate will be ignored.");
     public Option migrationsDirOpt = new Option("md", "migrationsDir", true, "The directory where Staccato will search for migration scripts.  " +
       "This directory must be in the classpath.  If not defined, the default is: " + MigrationService.DEFAULT_MIGRATION_DIR);
+    public Option rootDbNameOpt = new Option("rdbn", "rootDbName", true, "The name of the root database to use when creating a new database");
+    public Option rootDbUsernameDirOpt = new Option("rdbu", "rootDbUsername", true, "The root database username to use when creating a new database");
+    public Option rootDbPasswordOpt = new Option("rdbp", "rootDbPassword", true, "The root database password to use when creating a new database");;
 
     private OptionSet() {
       jdbcUrlOpt.setRequired(true);
@@ -265,6 +262,15 @@ public class Main {
 
       migrationsDirOpt.setRequired(false);
       options.addOption(migrationsDirOpt);
+
+      rootDbNameOpt.setRequired(false);
+      options.addOption(rootDbNameOpt);
+
+      rootDbUsernameDirOpt.setRequired(false);
+      options.addOption(rootDbUsernameDirOpt);
+
+      rootDbPasswordOpt.setRequired(false);
+      options.addOption(rootDbPasswordOpt);
     }
   }
 }

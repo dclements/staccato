@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.apache.log4j.Logger;
 
 import com.google.inject.Inject;
+import com.readytalk.staccato.Main;
 import com.readytalk.staccato.database.migration.MigrationException;
 import com.readytalk.staccato.database.migration.MigrationResult;
 import com.readytalk.staccato.database.migration.MigrationRuntime;
@@ -56,7 +57,7 @@ public class MigrationWorkflowServiceImpl<T extends Annotation> implements Migra
         if (executor != null) {
           // instantiate and execute the step
           try {
-            WorkflowStepExecutor<T> stepExecutorInstance = executor.newInstance();
+            WorkflowStepExecutor<T> stepExecutorInstance = Main.injector.getInstance(executor);
             stepExecutorInstance.initialize((T) annotation);
             Object executionResult = stepExecutorInstance.execute(script.getScriptInstance(), new WorkflowContext(annotationParser, migrationRuntime));
             migrationResult.getResultMap().put(annotation.annotationType(), executionResult);
@@ -64,8 +65,6 @@ public class MigrationWorkflowServiceImpl<T extends Annotation> implements Migra
             // if execute is successful, log to the migration versions table
             migrationVersionsService.log(migrationRuntime.getDatabaseContext(), script, workflowStep, annotationParser.getMigrationAnnotation(script.getScriptInstance()));
 
-          } catch (InstantiationException e) {
-            throw new MigrationException("Unable to instantiate workflow step: " + workflowStep.getSimpleName(), e);
           } catch (IllegalAccessException e) {
             throw new MigrationException("Unable to access workflow step class: " + workflowStep.getSimpleName(), e);
           } catch (InvocationTargetException e) {

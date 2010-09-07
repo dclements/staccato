@@ -3,6 +3,10 @@ CREATE USER staccato WITH PASSWORD 'staccato';
 CREATE DATABASE staccato WITH OWNER staccato;
 GRANT ALL PRIVILEGES ON DATABASE staccato TO staccato;
 
+-- this database is used for running @Create unit tests
+CREATE DATABASE staccato_root WITH OWNER staccato;
+GRANT ALL PRIVILEGES ON DATABASE staccato_root TO staccato;
+
 -- connect to the staccato database with the staccato user and run the below scripts
 create table foo (
   id                 serial,

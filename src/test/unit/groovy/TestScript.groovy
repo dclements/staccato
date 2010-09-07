@@ -6,6 +6,7 @@ import com.readytalk.staccato.database.migration.annotation.Migration
 import com.readytalk.staccato.database.migration.annotation.TestWorkflowStepOne
 import com.readytalk.staccato.database.migration.annotation.TestWorkflowStepTwo
 import com.readytalk.staccato.database.migration.MigrationRuntime
+import com.readytalk.staccato.database.migration.annotation.Create
 
 /**
  * @author jhumphrey
@@ -29,6 +30,11 @@ class TestScript {
 
   @TestWorkflowStepTwo
   testMethodTwo() {
+
+  }
+
+  @Create
+  create(MigrationRuntime runtime) {
 
   }
 

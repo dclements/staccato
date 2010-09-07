@@ -3,6 +3,10 @@ CREATE USER 'staccato'@'localhost' IDENTIFIED BY 'staccato';
 CREATE DATABASE staccato;
 GRANT ALL PRIVILEGES ON staccato.* TO 'staccato'@'localhost';
 
+-- this database is used for running @Create unit tests
+CREATE DATABASE staccato_root;
+GRANT ALL PRIVILEGES ON staccato_root.* TO 'staccato'@'localhost';
+
 -- connect to the new staccato database and run the sql below
 create table foo (
   id                 int,

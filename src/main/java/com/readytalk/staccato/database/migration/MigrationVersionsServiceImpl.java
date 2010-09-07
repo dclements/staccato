@@ -64,10 +64,10 @@ public class MigrationVersionsServiceImpl implements MigrationVersionsService {
   public boolean versionTableExists(DatabaseContext context) {
     try {
       if (context.getConnection().isClosed()) {
-        throw new DatabaseException("Connection is closed to: " + context.getJdbcUri());
+        throw new DatabaseException("Connection is closed to: " + context.getFullyQualifiedJdbcUri());
       }
     } catch (SQLException e) {
-      throw new DatabaseException("Unable to determine connection status for: " + context.getJdbcUri(), e);
+      throw new DatabaseException("Unable to determine connection status for: " + context.getFullyQualifiedJdbcUri(), e);
     }
 
     Connection conn = context.getConnection();

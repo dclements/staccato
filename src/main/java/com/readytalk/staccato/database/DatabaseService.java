@@ -1,6 +1,7 @@
 package com.readytalk.staccato.database;
 
 import java.net.URI;
+import java.sql.Connection;
 
 import com.google.inject.ImplementedBy;
 import com.readytalk.staccato.database.migration.script.Script;
@@ -12,22 +13,21 @@ import com.readytalk.staccato.database.migration.script.Script;
 public interface DatabaseService {
 
   /**
-   * Initializes context for a database
+   * Used for building the database context
    *
-   * @param jdbcUri the jdbc URI
-   * @param dbName the database name
-   * @param username the db username
-   * @param password the db password
-   * @return database context
+   * @return database context builder
    */
-  DatabaseContext initialize(URI jdbcUri, String dbName, String username, String password);
+  DatabaseContextBuilder getDatabaseContextBuilder();
 
   /**
-   * Connects to the database using the context specified
-   *
-   * @param context the database context
+   * Connects to the database and returns a jdbc connection
+   * @param jdbcUri the jdbc uri
+   * @param username the username
+   * @param password the password
+   * @param databaseType the database type
+   * @return returns a connection
    */
-  void connect(DatabaseContext context);
+  public Connection connect(URI jdbcUri, String username, String password, DatabaseType databaseType);
 
   /**
    * Disconnects from the database using the context specified
