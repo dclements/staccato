@@ -1,7 +1,5 @@
 package com.readytalk.staccato.database.migration.script;
 
-import java.util.List;
-
 import org.joda.time.DateTime;
 
 import com.readytalk.staccato.utils.Version;

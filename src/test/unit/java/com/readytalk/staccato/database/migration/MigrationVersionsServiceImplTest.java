@@ -19,7 +19,6 @@ import com.readytalk.staccato.database.migration.annotation.Migration;
 import com.readytalk.staccato.database.migration.annotation.PreUp;
 import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
 import com.readytalk.staccato.database.migration.script.groovy.GroovyScriptService;
-import com.readytalk.staccato.utils.Version;
 
 import static com.readytalk.staccato.database.migration.MigrationVersionsService.MIGRATION_VERSIONS_TABLE;
 

@@ -28,7 +28,6 @@ import com.readytalk.staccato.database.migration.validation.MigrationValidator;
 import com.readytalk.staccato.utils.Resource;
 import com.readytalk.staccato.utils.ResourceLoader;
 import com.readytalk.staccato.utils.Version;
-import com.readytalk.staccato.utils.VersionRange;
 import groovy.lang.GroovyClassLoader;
 
 /**
@@ -238,5 +237,5 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
   @Override
   public String getScriptTemplateRawContents() {
     return scriptTemplateRawContents;
-  } 
+  }
 }

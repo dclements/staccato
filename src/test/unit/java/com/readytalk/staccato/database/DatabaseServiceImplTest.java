@@ -1,15 +1,9 @@
 package com.readytalk.staccato.database;
 
 import java.net.URI;
-import java.sql.SQLException;
-import java.sql.Savepoint;
-import java.util.Map;
 
-import org.easymock.EasyMock;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.readytalk.staccato.database.migration.script.Script;
 
 /**
  * @author jhumphrey

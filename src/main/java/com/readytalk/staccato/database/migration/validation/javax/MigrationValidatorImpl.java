@@ -10,7 +10,6 @@ import javax.validation.constraints.NotNull;
 
 import com.google.inject.Inject;
 import com.readytalk.staccato.database.migration.annotation.Migration;
-import com.readytalk.staccato.database.migration.script.groovy.GroovyScript;
 import com.readytalk.staccato.database.migration.validation.MigrationValidationException;
 import com.readytalk.staccato.database.migration.validation.MigrationValidator;
 

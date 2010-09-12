@@ -56,7 +56,6 @@ public class Main {
         throw new MigrationException(e);
       }
 
-
       // extract options values from the command line
       String baseJdbcUriStr = cli.getOptionValue(OPTION_SET.jdbcUrlOpt.getOpt());
       String dbName = cli.getOptionValue(OPTION_SET.dbNameOpt.getOpt());

@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 import java.net.URI;
 
 import org.easymock.EasyMock;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.readytalk.staccato.database.BaseTest;
@@ -74,6 +73,7 @@ public class CreateWorkflowStepExecutorTest extends BaseTest {
       e.printStackTrace();
     }
   }
+
   @Test(dataProvider = "jdbcProvider")
   public void testExecuteWithOutConnection(URI baseJdbcUri) throws IOException, IllegalAccessException, InstantiationException, NoSuchMethodException {
 

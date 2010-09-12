@@ -73,7 +73,6 @@ public class GroovyMigrationService implements MigrationService<GroovyScript> {
 
       migrationWorkflowService.executeWorkflow(script, migrationType.getWorkflowSteps(), migrationRuntime);
 
-
       // todo: add this back in once transactions are figured out
 //          databaseService.endTransaction(databaseContext, script);
     }

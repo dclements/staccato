@@ -119,5 +119,5 @@ public class BaseTest {
       {URI.create(postgresqlJdbcUri.toString() + dbName)},
       {URI.create(mysqlJdbcUri.toString() + dbName)}
     };
-  }  
+  }
 }

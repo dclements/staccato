@@ -6,7 +6,6 @@ import com.google.inject.ImplementedBy;
 import com.readytalk.staccato.database.DatabaseContext;
 import com.readytalk.staccato.database.migration.annotation.Migration;
 import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
-import com.readytalk.staccato.utils.Version;
 
 /**
  * @author jhumphrey

@@ -66,6 +66,7 @@ public class MainTest extends BaseTest {
       deleteVersionsTable(makeConnection(jdbcUri));
     }
   }
+
   /**
    * Tests that Main works when using the --ms (migrateScript) option.  This option
    * runs a migration against a single script only
