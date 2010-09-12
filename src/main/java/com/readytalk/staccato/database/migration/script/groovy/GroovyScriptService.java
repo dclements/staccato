@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.annotation.IncompleteAnnotationException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,11 +24,11 @@ import com.readytalk.staccato.database.migration.annotation.Migration;
 import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationParser;
 import com.readytalk.staccato.database.migration.script.DynamicLanguageScriptService;
 import com.readytalk.staccato.database.migration.script.ScriptTemplate;
-import com.readytalk.staccato.database.migration.script.validation.ScriptValidationException;
-import com.readytalk.staccato.database.migration.script.validation.ScriptValidator;
+import com.readytalk.staccato.database.migration.validation.MigrationValidator;
 import com.readytalk.staccato.utils.Resource;
 import com.readytalk.staccato.utils.ResourceLoader;
 import com.readytalk.staccato.utils.Version;
+import com.readytalk.staccato.utils.VersionRange;
 import groovy.lang.GroovyClassLoader;
 
 /**
@@ -46,11 +45,11 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
   private Version scriptTemplateVersion;
 
   private ResourceLoader loader;
-  private ScriptValidator validator;
+  private MigrationValidator validator;
   private MigrationAnnotationParser annotationParser;
 
   @Inject
-  public GroovyScriptService(ResourceLoader loader, ScriptValidator validator, MigrationAnnotationParser annotationParser) {
+  public GroovyScriptService(ResourceLoader loader, MigrationValidator validator, MigrationAnnotationParser annotationParser) {
     this.loader = loader;
     this.validator = validator;
     this.annotationParser = annotationParser;
@@ -87,59 +86,34 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 
         Migration migrationAnnotation = annotationParser.getMigrationAnnotation(scriptInstance);
 
+        // validate the Migration annotation
+        validator.validate(migrationAnnotation, resource.getFilename());
+
         GroovyScript script = new GroovyScript();
         script.setUrl(resource.getUrl());
         script.setFilename(resource.getFilename());
         script.setScriptClass(scriptClass);
         script.setScriptInstance(scriptInstance);
+        script.setScriptDate(new DateTime(migrationAnnotation.scriptDate()));
+        script.setScriptVersion(new Version(migrationAnnotation.scriptVersion(), Migration.scriptVersionStrictMode));
+        script.setDatabaseVersion(new Version(migrationAnnotation.scriptVersion(), Migration.scriptVersionStrictMode));
+
+        // validate that the script version is equal to the version in the script template
+        if (!script.getScriptVersion().equals(scriptTemplateVersion)) {
+          throw new MigrationException("Cannot load script: " + script.getFilename() + ". Script version '" + migrationAnnotation.scriptVersion() +
+            "' is incompatible with the current script template version '" + scriptTemplateVersion + "'.  Please update your groovy script to " +
+            "the latest version of the template");
+        }
 
         // set the sha1 hash
         try {
           script.setSha1Hash(DigestUtils.shaHex(resource.getUrl().openStream()));
         } catch (IOException e) {
-          throw new MigrationException("Error while opening stream for url: " + resource.getUrl().toExternalForm(), e);
+          // no-op, this will never throw
         }
 
-        // set the script date
-        try {
-          String scriptDateStr = migrationAnnotation.scriptDate();
-          DateTime scriptDate = new DateTime(scriptDateStr);
-          script.setScriptDate(scriptDate);
-        } catch (IllegalArgumentException e) {
-          throw new MigrationException("Script date is an invalid format for script: " + scriptClass.getName());
-        } catch (IncompleteAnnotationException e) {
-          throw new MigrationException(Migration.class.getName() + " script date is required for script: " + script.getFilename(), e);
-        }
-
-        // set the script version
-        try {
-
-          String scriptVersionStr = migrationAnnotation.scriptVersion();
-          Version scriptVersion = new Version(scriptVersionStr, true);
-
-          // first check to make sure that the script version is compatible with the
-          // current script template version
-          if (!scriptVersion.equals(scriptTemplateVersion)) {
-            throw new MigrationException("Cannot load script: " + script.getFilename() + ". Script version '" + scriptVersionStr +
-              "' is incompatible with the current script template version '" + scriptTemplateVersion + "'.  Please update your groovy script to " +
-              "the latest version of the template");
-          }
-
-          script.setScriptVersion(scriptVersion);
-        } catch (IllegalArgumentException e) {
-          throw new MigrationException(Migration.class.getName() + " script version is an invalid format for script: " + script.getFilename(), e);
-        } catch (IncompleteAnnotationException e) {
-          throw new MigrationException(Migration.class.getName() + " script version is required for script: " + script.getFilename(), e);
-        }
-
-        // now validate all fields
-        try {
-          validator.validate(script);
-        } catch (ScriptValidationException e) {
-          throw new MigrationException("Unable to validate script: " + script.getFilename(), e);
-        }
-
-        // if the script isn't already in the set then add it
+        // scripts are uniquely IDed by the script date so check to
+        // see if this script is already in the set
         if (scripts.contains(script)) {
           GroovyScript firstScript = null;
           for (GroovyScript aScript : scripts) {
@@ -264,5 +238,5 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
   @Override
   public String getScriptTemplateRawContents() {
     return scriptTemplateRawContents;
-  }
+  } 
 }

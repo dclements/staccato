@@ -2,12 +2,14 @@ package com.readytalk.staccato.database.migration.script;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 import org.joda.time.DateTime;
 
 import com.google.inject.ImplementedBy;
 import com.readytalk.staccato.database.migration.script.groovy.GroovyScriptService;
 import com.readytalk.staccato.utils.Version;
+import com.readytalk.staccato.utils.VersionRange;
 
 /**
  * Interface for scripts that can be converted to classes

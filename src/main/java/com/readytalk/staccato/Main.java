@@ -1,6 +1,5 @@
 package com.readytalk.staccato;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,63 +49,45 @@ public class Main {
       printHelp(OPTION_SET.options);
     } else {
 
-      CommandLine line;
+      CommandLine cli;
       try {
-        line = parseArgs(args);
+        cli = parseArgs(args);
       } catch (ParseException e) {
         throw new MigrationException(e);
       }
 
+
       // extract options values from the command line
-      String baseJdbcUriStr = line.getOptionValue(OPTION_SET.jdbcUrlOpt.getOpt());
-      String dbName = line.getOptionValue(OPTION_SET.dbNameOpt.getOpt());
-      String username = line.getOptionValue(OPTION_SET.usernameOpt.getOpt());
-      String password = line.getOptionValue(OPTION_SET.passwordOpt.getOpt());
-      String projectName = line.getOptionValue(OPTION_SET.projectNameOpt.getOpt());
-      String projectVersion = line.getOptionValue(OPTION_SET.projectVersionOpt.getOpt());
-      String migrationTypeOpt = line.getOptionValue(OPTION_SET.migrationTypeOpt.getOpt());
-      String migrateFromDateOpt = line.getOptionValue(OPTION_SET.migrateFromDateOpt.getOpt());
-      String migrateToDateOpt = line.getOptionValue(OPTION_SET.migrateToDateOpt.getOpt());
-      String migrateScript = line.getOptionValue(OPTION_SET.migrateScriptOpt.getOpt());
-      String migrationDir = line.getOptionValue(OPTION_SET.migrationsDirOpt.getOpt());
-      String rootDbName = line.getOptionValue(OPTION_SET.rootDbNameOpt.getOpt());
-      String rootDbUsername = line.getOptionValue(OPTION_SET.rootDbUsernameDirOpt.getOpt());
-      String rootDbPassword = line.getOptionValue(OPTION_SET.rootDbPasswordOpt.getOpt());
+      String baseJdbcUriStr = cli.getOptionValue(OPTION_SET.jdbcUrlOpt.getOpt());
+      String dbName = cli.getOptionValue(OPTION_SET.dbNameOpt.getOpt());
+      String username = cli.getOptionValue(OPTION_SET.usernameOpt.getOpt());
+      String password = cli.getOptionValue(OPTION_SET.passwordOpt.getOpt());
+      String projectName = cli.getOptionValue(OPTION_SET.projectNameOpt.getOpt());
+      String projectVersion = cli.getOptionValue(OPTION_SET.projectVersionOpt.getOpt());
+      String migrationTypeOpt = cli.getOptionValue(OPTION_SET.migrationTypeOpt.getOpt());
+      String migrateFromDateOpt = cli.getOptionValue(OPTION_SET.migrateFromDateOpt.getOpt());
+      String migrateToDateOpt = cli.getOptionValue(OPTION_SET.migrateToDateOpt.getOpt());
+      String migrateScript = cli.getOptionValue(OPTION_SET.migrateScriptOpt.getOpt());
+      String migrationDir = cli.getOptionValue(OPTION_SET.migrationsDirOpt.getOpt());
+      String rootDbName = cli.getOptionValue(OPTION_SET.rootDbNameOpt.getOpt());
+      String rootDbUsername = cli.getOptionValue(OPTION_SET.rootDbUsernameDirOpt.getOpt());
+      String rootDbPassword = cli.getOptionValue(OPTION_SET.rootDbPasswordOpt.getOpt());
 
       // set the migration dir
       if (StringUtils.isEmpty(migrationDir)) {
         migrationDir = MigrationService.DEFAULT_MIGRATION_DIR;
       }
 
-      // check the migrate to and from dates
-      DateTime migrateFromDate = null;
-      if (migrateFromDateOpt != null && !migrateFromDateOpt.equals("")) {
-        try {
-          migrateFromDate = new DateTime(migrateFromDateOpt);
-        } catch (Exception e) {
-          throw new MigrationException(OPTION_SET.migrateFromDateOpt.getArgName() + " value must be in ISO-8601 format: " + OPTION_SET.migrateFromDateOpt.getOpt());
-        }
-      }
-
-      DateTime migrateToDate = null;
-      if (migrateToDateOpt != null && !migrateToDateOpt.equals("")) {
-        try {
-          migrateToDate = new DateTime(migrateToDateOpt);
-        } catch (Exception e) {
-          throw new MigrationException(OPTION_SET.migrateToDateOpt.getArgName() + " value must be in ISO-8601 format: " + OPTION_SET.migrateToDateOpt.getOpt());
-        }
-      }
-
-      // load groovy scripts
+      // load all groovy scripts
       GroovyScriptService scriptService = injector.getInstance(GroovyScriptService.class);
-      List<GroovyScript> loadedScripts = scriptService.load(migrationDir);
+      List<GroovyScript> allScripts = scriptService.load(migrationDir);
 
       // stores the scripts to run
       List<GroovyScript> scriptsToRun = new ArrayList<GroovyScript>();
 
       // the migrateScript option takes precedence so filter on it first
       if (!StringUtils.isEmpty(migrateScript)) {
-        for (GroovyScript script : loadedScripts) {
+        for (GroovyScript script : allScripts) {
           if (script.getFilename().equals(migrateScript)) {
             scriptsToRun.add(script);
             break;
@@ -114,16 +95,29 @@ public class Main {
         }
 
         if (scriptsToRun.size() == 0) {
-          throw new MigrationException("The script to migrate was not found: " + migrateScript);
+          throw new MigrationException("The migration script was not found: " + migrateScript);
         }
 
       } else {
 
+        // make sure dates are valid (if provided)
+        validateDateOptions(migrateFromDateOpt, migrateToDateOpt);
+
+        DateTime migrateFromDate = null;
+        if (!StringUtils.isEmpty(migrateFromDateOpt)) {
+          migrateFromDate = new DateTime(migrateFromDateOpt);
+        }
+
+        DateTime migrateToDate = null;
+        if (!StringUtils.isEmpty(migrateToDateOpt)) {
+          migrateToDate = new DateTime(migrateToDateOpt);
+        }
+
         // if the migrate script option isn't defined, then filter on dates
         if (migrateFromDate == null && migrateToDate == null) {
-          scriptsToRun.addAll(loadedScripts);
+          scriptsToRun.addAll(allScripts);
         } else {
-          for (GroovyScript loadedScript : loadedScripts) {
+          for (GroovyScript loadedScript : allScripts) {
             DateTime loadedScriptDate = loadedScript.getScriptDate();
             boolean include = false;
             if (migrateFromDate != null && (loadedScriptDate.isEqual(migrateFromDate) || loadedScriptDate.isAfter(migrateFromDate))) {
@@ -193,6 +187,30 @@ public class Main {
     }
   }
 
+  /**
+   * Helper method to validate date options
+   *
+   * @param migrateFromDateOpt the migrate from date
+   * @param migrateToDateOpt the migrate to date
+   */
+  private static void validateDateOptions(String migrateFromDateOpt, String migrateToDateOpt) {
+    if (!StringUtils.isEmpty(migrateFromDateOpt)) {
+      try {
+        new DateTime(migrateFromDateOpt);
+      } catch (Exception e) {
+        throw new MigrationException(OPTION_SET.migrateFromDateOpt.getArgName() + " value must be in ISO-8601 format: " + OPTION_SET.migrateFromDateOpt.getOpt());
+      }
+    }
+
+    if (!StringUtils.isEmpty(migrateToDateOpt)) {
+      try {
+        new DateTime(migrateToDateOpt);
+      } catch (Exception e) {
+        throw new MigrationException(OPTION_SET.migrateToDateOpt.getArgName() + " value must be in ISO-8601 format: " + OPTION_SET.migrateToDateOpt.getOpt());
+      }
+    }
+  }
+
   public static CommandLine parseArgs(String... args) throws ParseException {
     CommandLineParser parser = new BasicParser();
     return parser.parse(OPTION_SET.options, args);
@@ -227,7 +245,8 @@ public class Main {
       "This directory must be in the classpath.  If not defined, the default is: " + MigrationService.DEFAULT_MIGRATION_DIR);
     public Option rootDbNameOpt = new Option("rdbn", "rootDbName", true, "The name of the root database to use when creating a new database");
     public Option rootDbUsernameDirOpt = new Option("rdbu", "rootDbUsername", true, "The root database username to use when creating a new database");
-    public Option rootDbPasswordOpt = new Option("rdbp", "rootDbPassword", true, "The root database password to use when creating a new database");;
+    public Option rootDbPasswordOpt = new Option("rdbp", "rootDbPassword", true, "The root database password to use when creating a new database");
+    ;
 
     private OptionSet() {
       jdbcUrlOpt.setRequired(true);

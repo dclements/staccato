@@ -1,5 +1,7 @@
 package com.readytalk.staccato.database.migration.script;
 
+import java.util.List;
+
 import org.joda.time.DateTime;
 
 import com.readytalk.staccato.utils.Version;
@@ -47,4 +49,11 @@ public interface DynamicLanguageScript<T> extends Script<T> {
    * @return the SHA1 hash
    */
   String getSHA1Hash();
+
+  /**
+   * Returns the database version
+   *
+   * @return the database version
+   */
+  Version getDatabaseVersion();
 }

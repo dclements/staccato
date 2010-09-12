@@ -1,7 +1,6 @@
 package com.readytalk.staccato.database.migration.script.groovy;
 
 import java.net.URL;
-import javax.validation.constraints.NotNull;
 
 import org.joda.time.DateTime;
 
@@ -17,25 +16,20 @@ import com.readytalk.staccato.utils.Version;
  */
 public class GroovyScript implements DynamicLanguageScript<GroovyScript> {
 
-  @NotNull
   private String filename;
 
-  @NotNull
   private Class<?> scriptClass;
 
-  @NotNull
   private Object scriptInstance;
 
-  @NotNull
   private URL url;
 
-  @NotNull
   private DateTime scriptDate;
 
-  @NotNull
   private Version scriptVersion;
 
-  @NotNull
+  private Version databaseVersion;
+
   private String sha1Hash;
 
   @Override
@@ -66,6 +60,15 @@ public class GroovyScript implements DynamicLanguageScript<GroovyScript> {
   @Override
   public Version getScriptVersion() {
     return scriptVersion;
+  }
+
+  @Override
+  public Version getDatabaseVersion() {
+    return databaseVersion;
+  }
+
+  public void setDatabaseVersion(Version databaseVersion) {
+    this.databaseVersion = databaseVersion;
   }
 
   @Override

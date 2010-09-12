@@ -24,7 +24,7 @@ import com.readytalk.staccato.database.migration.annotation.Migration;
 import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationParser;
 import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationParserImpl;
 import com.readytalk.staccato.database.migration.script.ScriptTemplate;
-import com.readytalk.staccato.database.migration.script.validation.ScriptValidator;
+import com.readytalk.staccato.database.migration.validation.MigrationValidator;
 import com.readytalk.staccato.utils.Resource;
 import com.readytalk.staccato.utils.ResourceLoader;
 import com.readytalk.staccato.utils.Version;
@@ -75,7 +75,7 @@ public class GroovyScriptServiceTest {
     EasyMock.replay(loader);
 
     // don't care about validation so create a nice mock
-    ScriptValidator validator = EasyMock.createNiceMock(ScriptValidator.class);
+    MigrationValidator validator = EasyMock.createNiceMock(MigrationValidator.class);
 
     MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
 
@@ -123,7 +123,7 @@ public class GroovyScriptServiceTest {
     EasyMock.replay(loader);
 
     // don't care about validation so create a nice mock
-    ScriptValidator validator = EasyMock.createNiceMock(ScriptValidator.class);
+    MigrationValidator validator = EasyMock.createNiceMock(MigrationValidator.class);
 
     MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
 
@@ -150,7 +150,7 @@ public class GroovyScriptServiceTest {
     String expectedDatabaseVersion = "1.0";
 
     ResourceLoader loader = EasyMock.createMock(ResourceLoader.class);
-    ScriptValidator validator = EasyMock.createMock(ScriptValidator.class);
+    MigrationValidator validator = EasyMock.createMock(MigrationValidator.class);
     MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
     GroovyScriptService service = new GroovyScriptService(loader, validator, annotationParser);
     ScriptTemplate template = service.getScriptTemplate(expectedScriptDate, expectedUser, expectedDatabaseVersion);
@@ -181,7 +181,7 @@ public class GroovyScriptServiceTest {
   public void testTemplateVersion() throws IOException {
 
     ResourceLoader loader = EasyMock.createMock(ResourceLoader.class);
-    ScriptValidator validator = EasyMock.createMock(ScriptValidator.class);
+    MigrationValidator validator = EasyMock.createMock(MigrationValidator.class);
     MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
 
     GroovyScriptService service = null;

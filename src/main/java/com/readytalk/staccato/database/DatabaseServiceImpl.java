@@ -31,7 +31,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
       Class.forName(databaseType.getDriver());
 
-      logger.debug("Connecting to database: " + jdbcUri.toString());
+      logger.info("Connecting to database: " + jdbcUri.toString());
 
       connection = DriverManager.getConnection(jdbcUri.toString(), username, password);
 

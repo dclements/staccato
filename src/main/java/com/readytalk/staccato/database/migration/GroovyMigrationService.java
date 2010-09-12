@@ -37,6 +37,7 @@ public class GroovyMigrationService implements MigrationService<GroovyScript> {
   public void run(List<GroovyScript> migrationScripts, MigrationRuntime migrationRuntime) {
 
     DatabaseContext databaseContext = migrationRuntime.getDatabaseContext();
+
     MigrationType migrationType = migrationRuntime.getMigrationType();
 
     String workflowOutput = "workflow: ";
@@ -44,7 +45,8 @@ public class GroovyMigrationService implements MigrationService<GroovyScript> {
       workflowOutput += aClass.getSimpleName() + " ";
     }
 
-    logger.info("Running " + databaseContext.getDatabaseType() + " migration: " + migrationType.name() + ", " + workflowOutput);
+    logger.info("Running " + databaseContext.getDatabaseType() + " migration: " + migrationType.name() + ", " + workflowOutput + " for database: " +
+      databaseContext.getFullyQualifiedJdbcUri());
 
     // iterate through the groovy scripts for invocation
     for (GroovyScript script : migrationScripts) {

@@ -1,6 +1,4 @@
-/*
- * Copyright (c) 2005-2006, Inversoft, All Rights Reserved
- */
+
 package com.readytalk.staccato.utils;
 
 import java.io.Serializable;
