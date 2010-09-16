@@ -15,17 +15,16 @@ public class DatabaseServiceImplTest extends BaseTest {
 
     DatabaseService service = new DatabaseServiceImpl();
     DatabaseContextBuilder dbCtxBuilder = service.getDatabaseContextBuilder();
-    dbCtxBuilder.setBaseJdbcContext(baseJdbcUri.toString(), dbName, dbUsername, dbPassword);
-    dbCtxBuilder.setRootJdbcContext(rootDbName, rootDbUsername, rootDbPassword);
+    dbCtxBuilder.setContext(baseJdbcUri.toString(), dbName, dbUser, dbPwd, dbSuperUser, dbSuperUserPwd, rootDbName);
 
     DatabaseContext context = dbCtxBuilder.build();
     Assert.assertEquals(context.getFullyQualifiedJdbcUri(), URI.create(baseJdbcUri.toString() + dbName));
-    Assert.assertEquals(context.getUsername(), dbUsername);
-    Assert.assertEquals(context.getPassword(), dbPassword);
+    Assert.assertEquals(context.getUsername(), dbUser);
+    Assert.assertEquals(context.getPassword(), dbPwd);
     Assert.assertEquals(context.getDbName(), dbName);
     Assert.assertEquals(context.getRootDbName(), rootDbName);
-    Assert.assertEquals(context.getRootPassword(), rootDbPassword);
-    Assert.assertEquals(context.getRootUsername(), rootDbUsername);
+    Assert.assertEquals(context.getSuperUserPwd(), dbSuperUserPwd);
+    Assert.assertEquals(context.getSuperUser(), dbSuperUser);
 
     try {
       service.connect(context.getFullyQualifiedJdbcUri(), context.getUsername(), context.getPassword(), context.getDatabaseType());

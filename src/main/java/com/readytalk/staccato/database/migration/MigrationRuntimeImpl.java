@@ -19,13 +19,11 @@ public class MigrationRuntimeImpl implements MigrationRuntime {
   public static final Logger logger = Logger.getLogger(MigrationRuntimeImpl.class);
 
   private DatabaseContext databaseContext;
-  private ProjectContext projectContext;
   private List<SQLScript> sqlScripts;
   private MigrationType migrationType;
 
-  public MigrationRuntimeImpl(DatabaseContext databaseContext, ProjectContext projectContext, List<SQLScript> sqlScripts, MigrationType migrationType) {
+  public MigrationRuntimeImpl(DatabaseContext databaseContext, List<SQLScript> sqlScripts, MigrationType migrationType) {
     this.databaseContext = databaseContext;
-    this.projectContext = projectContext;
     this.sqlScripts = sqlScripts;
     this.migrationType = migrationType;
   }
@@ -33,11 +31,6 @@ public class MigrationRuntimeImpl implements MigrationRuntime {
   @Override
   public DatabaseContext getDatabaseContext() {
     return databaseContext;
-  }
-
-  @Override
-  public ProjectContext getProjectContext() {
-    return projectContext;
   }
 
   @Override

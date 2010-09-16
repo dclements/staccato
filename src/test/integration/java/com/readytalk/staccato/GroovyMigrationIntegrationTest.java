@@ -48,16 +48,12 @@ public class GroovyMigrationIntegrationTest extends BaseTest {
 
   @Test(dataProvider = "jdbcProvider")
   public void testMigrationVersionLoggingWithPostgres(URI baseJdbcUri) throws SQLException {
-    DatabaseContext dbCtx = dbService.getDatabaseContextBuilder().setBaseJdbcContext(baseJdbcUri.toString(), dbName, dbUsername, dbPassword).build();
+    DatabaseContext dbCtx = dbService.getDatabaseContextBuilder().setContext(baseJdbcUri.toString(), dbName, dbUser, dbPwd, dbSuperUser, dbSuperUserPwd, rootDbName).build();
     dbCtx.setConnection(dbService.connect(dbCtx.getFullyQualifiedJdbcUri(), dbCtx.getUsername(), dbCtx.getPassword(), dbCtx.getDatabaseType()));
-
-    ProjectContext pCtx = new ProjectContext();
-    pCtx.setName("foo");
-    pCtx.setVersion("1.0");
 
     List<SQLScript> sqlScripts = sqlScriptService.load(migrationDir);
 
-    MigrationRuntime migrationRuntime = new MigrationRuntimeImpl(dbCtx, pCtx, sqlScripts, MigrationType.SCHEMA_UP);
+    MigrationRuntime migrationRuntime = new MigrationRuntimeImpl(dbCtx, sqlScripts, MigrationType.SCHEMA_UP);
 
     List<GroovyScript> migrationScripts = groovyScriptService.load(migrationDir);
     migrationService.run(migrationScripts, migrationRuntime);

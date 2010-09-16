@@ -20,13 +20,6 @@ public interface MigrationRuntime {
   DatabaseContext getDatabaseContext();
 
   /**
-   * Returns the {@link ProjectContext}
-   *
-   * @return the project contedt
-   */
-  ProjectContext getProjectContext();
-
-  /**
    * Returns the migration type for this runtime
    *
    * @return the migration type
@@ -50,6 +43,7 @@ public interface MigrationRuntime {
    *
    * @param sql the sql string (e.g. select * from foo)
    * @return the result set
+   * @throws java.sql.SQLException on sql exception
    */
   ResultSet executeSQL(String sql) throws SQLException;
 
@@ -58,6 +52,7 @@ public interface MigrationRuntime {
    *
    * @param filename the name of the file to execute sql from
    * @return the result set
+   * @throws java.sql.SQLException on sql exception
    */
   ResultSet executeSQLFile(String filename) throws SQLException;
 }

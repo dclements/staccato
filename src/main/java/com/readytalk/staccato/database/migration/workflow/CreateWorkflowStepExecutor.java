@@ -44,8 +44,8 @@ public class CreateWorkflowStepExecutor implements WorkflowStepExecutor<Create> 
     }
 
     String baseJdbc = dbCtx.getBaseJdbcUri().toString();
-    String rootUser = dbCtx.getRootUsername();
-    String rootPwd = dbCtx.getRootPassword();
+    String rootUser = dbCtx.getSuperUser();
+    String rootPwd = dbCtx.getSuperUserPwd();
     String rootDb = dbCtx.getRootDbName();
 
     String fullyQualifiedRootJdbcUriStr = baseJdbc;

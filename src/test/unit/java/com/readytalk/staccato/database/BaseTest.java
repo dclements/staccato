@@ -30,10 +30,10 @@ public class BaseTest {
   public final URI postgresqlJdbcUri = URI.create("jdbc:postgresql://localhost:5432/");
   public final String rootDbName = "staccato_root";
   public final String dbName = "staccato";
-  public final String dbUsername = "staccato";
-  public final String dbPassword = "staccato";
-  public final String rootDbUsername = dbUsername;
-  public final String rootDbPassword = dbPassword;
+  public final String dbUser = "staccato";
+  public final String dbPwd = "staccato";
+  public final String dbSuperUser = dbUser;
+  public final String dbSuperUserPwd = dbPwd;
 
   protected Injector injector;
 
@@ -47,7 +47,7 @@ public class BaseTest {
     return "The JDBC url [" + jdbcUri + "] is not reachable." +
       " This test requires that the database type be " +
       "installed on the system and that a database called '" + dbName + "' " +
-      "is created with grants for username '" + dbUsername + "' with password '" + dbPassword + "'.  " +
+      "is created with grants for username '" + dbUser + "' with password '" + dbPwd + "'.  " +
       "Please refer to the src/test/database directory for sql scripts to " +
       "help with this setup";
   }
@@ -59,8 +59,8 @@ public class BaseTest {
 
       Class.forName(dbType.getDriver());
 
-      String username = dbUsername;
-      String password = dbPassword;
+      String username = dbUser;
+      String password = dbPwd;
 
       return DriverManager.getConnection(jdbcUri.toString(), username, password);
 

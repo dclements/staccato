@@ -2,6 +2,8 @@ package com.readytalk.staccato.database;
 
 import java.net.URI;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author jhumphrey
  */
@@ -21,34 +23,18 @@ public class DatabaseContextBuilder {
   /**
    * Sets the base jdbc context
    *
-   * @param rootDbName the database name
-   * @param rootUsername the database username
-   * @param rootPassword the database password
-   * @return this builder
-   */
-
-  public DatabaseContextBuilder setRootJdbcContext(String rootDbName, String rootUsername, String rootPassword) {
-
-    ctx.setRootDbName(rootDbName);
-    ctx.setRootPassword(rootPassword);
-    ctx.setRootUsername(rootUsername);
-
-    return this;
-  }
-
-  /**
-   * Sets the base jdbc context
-   *
-   * @param baseJdbcUri the base jdbc uri
+   * @param jdbcUri the base jdbc uri
    * @param dbName the database name
    * @param username the database username
    * @param password the database password
+   * @param superUser the db super user
+   * @param superUserPwd the db super user pwd
    * @return this builder
    */
 
-  public DatabaseContextBuilder setBaseJdbcContext(String baseJdbcUri, String dbName, String username, String password) {
+  public DatabaseContextBuilder setContext(String jdbcUri, String dbName, String username, String password, String superUser, String superUserPwd, String rootDbName) {
 
-    String fullyQualifiedJdbcUriStr = baseJdbcUri.toString();
+    String fullyQualifiedJdbcUriStr = jdbcUri.toString();
 
     if (fullyQualifiedJdbcUriStr.endsWith("/")) {
       fullyQualifiedJdbcUriStr += dbName;
@@ -58,7 +44,7 @@ public class DatabaseContextBuilder {
 
     URI fullyQualifiedJdbcUri = URI.create(fullyQualifiedJdbcUriStr);
 
-    ctx.setBaseJdbcUri(URI.create(baseJdbcUri));
+    ctx.setBaseJdbcUri(URI.create(jdbcUri));
     ctx.setFullyQualifiedJdbcUri(fullyQualifiedJdbcUri);
     ctx.setDbName(dbName);
     ctx.setUsername(username);
@@ -66,6 +52,20 @@ public class DatabaseContextBuilder {
 
     DatabaseType databaseType = DatabaseType.getTypeFromJDBCUri(fullyQualifiedJdbcUri);
     ctx.setDatabaseType(databaseType);
+
+    if (StringUtils.isEmpty(rootDbName)) {
+      ctx.setRootDbName(databaseType.getRoot());
+    } else {
+      ctx.setRootDbName(rootDbName);
+    }
+
+    if (StringUtils.isEmpty(superUser)) {
+      ctx.setSuperUser(databaseType.getRoot());
+    } else {
+      ctx.setSuperUser(superUser);
+    }
+
+    ctx.setSuperUserPwd(superUserPwd);
 
     return this;
   }

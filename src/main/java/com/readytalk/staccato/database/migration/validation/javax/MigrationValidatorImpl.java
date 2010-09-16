@@ -9,6 +9,7 @@ import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 
 import com.google.inject.Inject;
+import com.readytalk.staccato.StaccatoOptions;
 import com.readytalk.staccato.database.migration.annotation.Migration;
 import com.readytalk.staccato.database.migration.validation.MigrationValidationException;
 import com.readytalk.staccato.database.migration.validation.MigrationValidator;
@@ -28,29 +29,36 @@ public class MigrationValidatorImpl implements MigrationValidator {
   }
 
   @Override
+  public void validate(StaccatoOptions options) {
+    this.processConstraintViolations(options);
+  }
+
+  @Override
   public void validate(Migration migrationAnnotation, String scriptFilename) throws MigrationValidationException {
 
     MigrationAnnotationStruct struct = new MigrationAnnotationStruct();
 
+    List<MigrationValidationException.Violation> violations = new ArrayList<MigrationValidationException.Violation>();
+
     try {
       struct.databaseVersion = migrationAnnotation.databaseVersion();
     } catch (IncompleteAnnotationException e) {
-      handleIncompleteAnnotationException("databaseVersion");
+      violations.add(handleIncompleteAnnotationException("databaseVersion"));
     }
 
     try {
       struct.scriptDate = migrationAnnotation.scriptDate();
     } catch (IncompleteAnnotationException e) {
-      handleIncompleteAnnotationException("scriptDate");
+      violations.add(handleIncompleteAnnotationException("scriptDate"));
     }
 
     try {
       struct.scriptVersion = migrationAnnotation.scriptVersion();
     } catch (IncompleteAnnotationException e) {
-      handleIncompleteAnnotationException("scriptVersion");
+      violations.add(handleIncompleteAnnotationException("scriptVersion"));
     }
 
-    List<MigrationValidationException.Violation> violations = processConstraintViolations(struct);
+    violations.addAll(processConstraintViolations(struct));
 
     if (violations.size() > 0) {
       throw new MigrationValidationException("@Migration annotation invalid for script: " + scriptFilename, violations);
@@ -61,13 +69,14 @@ public class MigrationValidatorImpl implements MigrationValidator {
    * Helper method for handling incomplete annotation exceptions
    *
    * @param propertyName the property name
+   * @return a violation
    */
-  private void handleIncompleteAnnotationException(String propertyName) {
+  private MigrationValidationException.Violation handleIncompleteAnnotationException(String propertyName) {
     MigrationValidationException.Violation violation = new MigrationValidationException.Violation();
-    violation.message = propertyName + " is undefined but is a required field";
+    violation.message = propertyName + " is undefined but is a required field.";
     violation.propertyValue = "undefined";
     violation.propertyName = propertyName;
-    throw new MigrationValidationException("@Migration property is required", violation);
+    return violation;
   }
 
   /**

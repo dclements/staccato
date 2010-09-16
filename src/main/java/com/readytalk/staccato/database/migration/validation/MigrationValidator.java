@@ -1,6 +1,7 @@
 package com.readytalk.staccato.database.migration.validation;
 
 import com.google.inject.ImplementedBy;
+import com.readytalk.staccato.StaccatoOptions;
 import com.readytalk.staccato.database.migration.annotation.Migration;
 import com.readytalk.staccato.database.migration.script.Script;
 import com.readytalk.staccato.database.migration.validation.javax.MigrationValidatorImpl;
@@ -12,6 +13,13 @@ import com.readytalk.staccato.database.migration.validation.javax.MigrationValid
  */
 @ImplementedBy(MigrationValidatorImpl.class)
 public interface MigrationValidator {
+
+  /**
+   * Validates staccato options
+   *
+   * @param options staccato options
+   */
+  public void validate(StaccatoOptions options);
 
   /**
    * Validates a migration annotation

@@ -2,6 +2,7 @@ package com.readytalk.staccato.database.migration.script;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 import org.joda.time.DateTime;
 
@@ -55,4 +56,24 @@ public interface DynamicLanguageScriptService<T extends DynamicLanguageScript> e
    * @return the raw contents
    */
   String getScriptTemplateRawContents();
+
+  /**
+   * Filters scripts by from and to dates
+   *
+   * @param scriptsToFilter the scripts to filter
+   * @param fromDate the from date
+   * @param toDate the to date
+   * @return list of filtered scripts
+   */
+  List<T> filterByDate(List<T> scriptsToFilter, DateTime fromDate, DateTime toDate);
+
+  /**
+   * Filters scripts by from and to version
+   *
+   * @param scriptsToFilter the scripts to filter
+   * @param fromVer the from version
+   * @param toVer the to version
+   * @return list of filtered scripts
+   */
+  List<T> filterByDatabaseVersion(List<T> scriptsToFilter, Version fromVer, Version toVer);
 }

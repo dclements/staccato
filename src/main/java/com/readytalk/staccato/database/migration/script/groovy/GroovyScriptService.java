@@ -13,6 +13,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -237,5 +238,69 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
   @Override
   public String getScriptTemplateRawContents() {
     return scriptTemplateRawContents;
+  }
+
+  @Override
+  public List<GroovyScript> filterByDate(List<GroovyScript> scriptsToFilter, DateTime fromDate, DateTime toDate) {
+
+    List<GroovyScript> filteredScripts = new ArrayList<GroovyScript>();
+
+    // if both null, then add all
+    if (fromDate == null && toDate == null) {
+      filteredScripts.addAll(scriptsToFilter);
+    } else {
+      for (GroovyScript scriptToFilter : scriptsToFilter) {
+        DateTime loadedScriptDate = scriptToFilter.getScriptDate();
+
+        // if both from and to dates are defined
+        if (fromDate != null && toDate != null &&
+            (loadedScriptDate.isEqual(fromDate) || loadedScriptDate.isAfter(fromDate)) &&
+            (loadedScriptDate.isEqual(toDate) || loadedScriptDate.isBefore(toDate))
+          ) {
+          filteredScripts.add(scriptToFilter);
+        }
+        // if just from date is defined
+        else if (fromDate != null && toDate == null && (loadedScriptDate.isEqual(fromDate) || loadedScriptDate.isAfter(fromDate))) {
+          filteredScripts.add(scriptToFilter);
+        }
+        // if just to date is defined
+        else if (toDate != null && fromDate == null && (loadedScriptDate.isEqual(toDate) || loadedScriptDate.isBefore(toDate))) {
+          filteredScripts.add(scriptToFilter);
+        }
+      }
+    }
+
+    return filteredScripts;
+  }
+
+  public List<GroovyScript> filterByDatabaseVersion(List<GroovyScript> allScripts, Version fromVer, Version toVer) {
+    List<GroovyScript> filteredScripts = new ArrayList<GroovyScript>();
+
+    // if both null, then add all
+    if (fromVer == null && toVer == null) {
+      filteredScripts.addAll(allScripts);
+    } else {
+      for (GroovyScript scriptToFilter : allScripts) {
+        Version scriptToFilterVersion = scriptToFilter.getDatabaseVersion();
+
+        // if both from and to dates are defined
+        if (fromVer != null && toVer != null &&
+            (scriptToFilterVersion.equals(fromVer) || scriptToFilterVersion.compareTo(fromVer) > 0) &&
+            (scriptToFilterVersion.equals(toVer) || scriptToFilterVersion.compareTo(toVer) < 0)
+          ) {
+          filteredScripts.add(scriptToFilter);
+        }
+        // if just from ver is defined
+        else if (fromVer != null && toVer == null && (scriptToFilterVersion.equals(fromVer) || scriptToFilterVersion.compareTo(fromVer) > 0)) {
+          filteredScripts.add(scriptToFilter);
+        }
+        // if just to date is defined
+        else if (toVer != null && fromVer == null && (scriptToFilterVersion.equals(toVer) || scriptToFilterVersion.compareTo(toVer) < 0)) {
+          filteredScripts.add(scriptToFilter);
+        }
+      }
+    }
+
+    return filteredScripts;
   }
 }

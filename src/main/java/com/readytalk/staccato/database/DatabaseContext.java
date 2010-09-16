@@ -20,8 +20,8 @@ public class DatabaseContext {
   private String password;
   private String dbName;
   private String rootDbName;
-  private String rootUsername;
-  private String rootPassword;
+  private String superUser;
+  private String superUserPwd;
   private DatabaseType databaseType;
   private Map<String, Savepoint> txnSavepoints = new HashMap<String, Savepoint>();
 
@@ -81,20 +81,20 @@ public class DatabaseContext {
     this.rootDbName = rootDbName;
   }
 
-  public String getRootPassword() {
-    return rootPassword;
+  public String getSuperUserPwd() {
+    return superUserPwd;
   }
 
-  public void setRootPassword(String rootPassword) {
-    this.rootPassword = rootPassword;
+  public void setSuperUserPwd(String superUserPwd) {
+    this.superUserPwd = superUserPwd;
   }
 
-  public String getRootUsername() {
-    return rootUsername;
+  public String getSuperUser() {
+    return superUser;
   }
 
-  public void setRootUsername(String rootUsername) {
-    this.rootUsername = rootUsername;
+  public void setSuperUser(String superUser) {
+    this.superUser = superUser;
   }
 
   public DatabaseType getDatabaseType() {

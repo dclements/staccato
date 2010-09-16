@@ -53,11 +53,11 @@ public class CreateWorkflowStepExecutorTest extends BaseTest {
 
     DatabaseContext context = new DatabaseContext();
     context.setDbName(dbName);
-    context.setUsername(dbUsername);
-    context.setPassword(dbPassword);
+    context.setUsername(dbUser);
+    context.setPassword(dbPwd);
     context.setRootDbName(rootDbName);
-    context.setRootUsername(rootDbUsername);
-    context.setRootPassword(rootDbPassword);
+    context.setSuperUser(dbSuperUser);
+    context.setSuperUserPwd(dbSuperUserPwd);
     context.setFullyQualifiedJdbcUri(URI.create(baseJdbcUri + dbName));
     context.setBaseJdbcUri(baseJdbcUri);
     context.setConnection(makeConnection(URI.create(baseJdbcUri.toString() + dbName)));
@@ -103,11 +103,11 @@ public class CreateWorkflowStepExecutorTest extends BaseTest {
 
     DatabaseContext context = new DatabaseContext();
     context.setDbName(dbName);
-    context.setUsername(dbUsername);
-    context.setPassword(dbPassword);
+    context.setUsername(dbUser);
+    context.setPassword(dbPwd);
     context.setRootDbName(rootDbName);
-    context.setRootUsername(rootDbUsername);
-    context.setRootPassword(rootDbPassword);
+    context.setSuperUser(dbSuperUser);
+    context.setSuperUserPwd(dbSuperUserPwd);
     context.setFullyQualifiedJdbcUri(URI.create(baseJdbcUri + dbName));
     context.setBaseJdbcUri(baseJdbcUri);
     context.setDatabaseType(DatabaseType.getTypeFromJDBCUri(baseJdbcUri));

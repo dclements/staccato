@@ -5,15 +5,18 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.TimeZone;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.easymock.EasyMock;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -71,7 +74,7 @@ public class GroovyScriptServiceTest {
     resources.add(resourceThree);
 
     ResourceLoader loader = EasyMock.createStrictMock(ResourceLoader.class);
-    EasyMock.expect(loader.loadRecursively(MigrationService.DEFAULT_MIGRATION_DIR, "groovy")).andReturn(resources);
+    EasyMock.expect(loader.loadRecursively(MigrationService.DEFAULT_MIGRATIONS_DIR, "groovy")).andReturn(resources);
     EasyMock.replay(loader);
 
     // don't care about validation so create a nice mock
@@ -81,7 +84,7 @@ public class GroovyScriptServiceTest {
 
     GroovyScriptService service = new GroovyScriptService(loader, validator, annotationParser);
 
-    List<GroovyScript> actualScripts = service.load(MigrationService.DEFAULT_MIGRATION_DIR);
+    List<GroovyScript> actualScripts = service.load(MigrationService.DEFAULT_MIGRATIONS_DIR);
 
     Assert.assertEquals(actualScripts.size(), 3);
 
@@ -119,7 +122,7 @@ public class GroovyScriptServiceTest {
     resources.add(resourceTwo);
 
     ResourceLoader loader = EasyMock.createStrictMock(ResourceLoader.class);
-    EasyMock.expect(loader.loadRecursively(MigrationService.DEFAULT_MIGRATION_DIR, "groovy")).andReturn(resources);
+    EasyMock.expect(loader.loadRecursively(MigrationService.DEFAULT_MIGRATIONS_DIR, "groovy")).andReturn(resources);
     EasyMock.replay(loader);
 
     // don't care about validation so create a nice mock
@@ -130,7 +133,7 @@ public class GroovyScriptServiceTest {
     GroovyScriptService service = new GroovyScriptService(loader, validator, annotationParser);
 
     try {
-      service.load(MigrationService.DEFAULT_MIGRATION_DIR);
+      service.load(MigrationService.DEFAULT_MIGRATIONS_DIR);
       Assert.fail("should have thrown an exception due to the unique date violation");
     } catch (MigrationException e) {
       Assert.assertTrue(true, e.getMessage());
@@ -216,5 +219,211 @@ public class GroovyScriptServiceTest {
     String actualHash = DigestUtils.shaHex(scriptTemplate.toURI().toURL().openStream());
 
     Assert.assertEquals(actualHash, expectedHash, "The SHA1 hash defined in the properties file does not equal the actual hash of the contents of GroovyScriptTemplate");
+  }
+
+  @Test
+  public void testFilterByDates() {
+
+    String timezoneId = "America/Denver";
+    DateTimeZone timezone = DateTimeZone.forTimeZone(TimeZone.getTimeZone(timezoneId));
+
+    // dates to represent each month of 2010
+    String[] dates = new String[]{
+      "2010-01-01T00:00:00",
+      "2010-02-01T00:00:00",
+      "2010-03-01T00:00:00",
+      "2010-04-01T00:00:00",
+      "2010-05-01T00:00:00",
+      "2010-06-01T00:00:00",
+      "2010-07-01T00:00:00",
+      "2010-08-01T00:00:00",
+      "2010-09-01T00:00:00",
+      "2010-10-01T00:00:00",
+      "2010-11-01T00:00:00",
+      "2010-12-01T00:00:00"};
+
+    // create a set of mock scripts for each month
+    List<GroovyScript> expectedScripts = new ArrayList<GroovyScript>();
+    for (String date : dates) {
+      GroovyScript groovyScript = new GroovyScript();
+      groovyScript.setScriptDate(new DateTime(date, timezone));
+      expectedScripts.add(groovyScript);
+    }
+
+    // mock the service
+    ResourceLoader loader = EasyMock.createStrictMock(ResourceLoader.class);
+    MigrationValidator validator = EasyMock.createNiceMock(MigrationValidator.class);
+    MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
+    GroovyScriptService service = new GroovyScriptService(loader, validator, annotationParser);
+
+    // test 1:  setting both dates to null, all scripts should return in list
+    {
+      List<GroovyScript> actualScripts = service.filterByDate(expectedScripts, null, null);
+      Assert.assertEquals(actualScripts.size(), expectedScripts.size());
+    }
+
+    // test 2: setting just the fromDate
+    {
+      DateTime fromDate = new DateTime("2010-06-01", timezone);
+      List<GroovyScript> actualScripts = service.filterByDate(expectedScripts, fromDate, null);
+
+      // should return all scripts where scripts dates are equal to or greater than "2010-06-01"
+      Assert.assertEquals(actualScripts.size(), 7);
+    }
+
+    // test 3: another setting just the fromDate
+    {
+      DateTime fromDate = new DateTime("2010-11-01", timezone);
+      List<GroovyScript> actualScripts = service.filterByDate(expectedScripts, fromDate, null);
+
+      // should return all scripts where scripts dates are equal to or greater than "2010-06-01"
+      Assert.assertEquals(actualScripts.size(), 2);
+    }
+
+    // test 4: another setting just the fromDate
+    {
+      DateTime fromDate = new DateTime("2010-01-01", timezone);
+      List<GroovyScript> actualScripts = service.filterByDate(expectedScripts, fromDate, null);
+
+      // should return all scripts where scripts dates are equal to or greater than "2010-06-01"
+      Assert.assertEquals(actualScripts.size(), 12);
+    }
+
+    // test 5: now test just the toDate
+    {
+      DateTime toDate = new DateTime("2010-01-01", timezone);
+      List<GroovyScript> actualScripts = service.filterByDate(expectedScripts, null, toDate);
+
+      // should return all scripts where scripts dates are equal to or greater than "2010-06-01"
+      Assert.assertEquals(actualScripts.size(), 1);
+    }
+
+    // test 6: another toDate
+    {
+      DateTime toDate = new DateTime("2010-12-01", timezone);
+      List<GroovyScript> actualScripts = service.filterByDate(expectedScripts, null, toDate);
+
+      // should return all scripts where scripts dates are equal to or greater than "2010-06-01"
+      Assert.assertEquals(actualScripts.size(), 12);
+    }
+
+    // test 7: another toDate
+    {
+      DateTime toDate = new DateTime("2010-06-01", timezone);
+      List<GroovyScript> actualScripts = service.filterByDate(expectedScripts, null, toDate);
+
+      // should return all scripts where scripts dates are equal to or greater than "2010-06-01"
+      Assert.assertEquals(actualScripts.size(), 6);
+    }
+
+    // test 8: test both from and to dates
+    {
+      DateTime fromDate = new DateTime("2010-03-01", timezone);
+      DateTime toDate = new DateTime("2010-06-01", timezone);
+      List<GroovyScript> actualScripts = service.filterByDate(expectedScripts, fromDate, toDate);
+
+      // should return all scripts where scripts dates are equal to or greater than "2010-06-01"
+      Assert.assertEquals(actualScripts.size(), 4);
+    }
+
+    // test 9: test both from and to dates
+    {
+      DateTime fromDate = new DateTime("2010-01-01", timezone);
+      DateTime toDate = new DateTime("2010-10-01", timezone);
+      List<GroovyScript> actualScripts = service.filterByDate(expectedScripts, fromDate, toDate);
+
+      // should return all scripts where scripts dates are equal to or greater than "2010-06-01"
+      Assert.assertEquals(actualScripts.size(), 10);
+    }
+  }
+
+  @Test
+  public void testFilterByDatabaseVersion() {
+
+    // dates to represent each month of 2010
+    String[] versions = new String[]{
+      "1.0",
+      "1.1",
+      "1.2",
+      "2.0",
+      "3.0",
+      "3.1",
+      "3.2",
+      "3.2.1",
+      "3.2.2",
+      "3.3.3",
+      "4.0",
+      "4.0.1"};
+
+    // create a set of mock scripts for each month
+    List<GroovyScript> expectedScripts = new ArrayList<GroovyScript>();
+    for (String version : versions) {
+      GroovyScript groovyScript = new GroovyScript();
+      groovyScript.setDatabaseVersion(new Version(version));
+      expectedScripts.add(groovyScript);
+    }
+
+    // mock the service
+    ResourceLoader loader = EasyMock.createStrictMock(ResourceLoader.class);
+    MigrationValidator validator = EasyMock.createNiceMock(MigrationValidator.class);
+    MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
+    GroovyScriptService service = new GroovyScriptService(loader, validator, annotationParser);
+
+    // test 1:  setting both dates to null, all scripts should return in list
+    {
+      List<GroovyScript> actualScripts = service.filterByDatabaseVersion(expectedScripts, null, null);
+      Assert.assertEquals(actualScripts.size(), expectedScripts.size());
+    }
+
+    // test 2:  setting just from ver
+    {
+      Version fromVer = new Version("1.1");
+      List<GroovyScript> actualScripts = service.filterByDatabaseVersion(expectedScripts, fromVer, null);
+      Assert.assertEquals(actualScripts.size(), 11);
+    }
+
+    // test 2:  setting just from ver
+    {
+      Version fromVer = new Version("3.0");
+      List<GroovyScript> actualScripts = service.filterByDatabaseVersion(expectedScripts, fromVer, null);
+      Assert.assertEquals(actualScripts.size(), 8);
+    }
+
+    // test 3:  setting just from ver
+    {
+      Version fromVer = new Version("1.0");
+      List<GroovyScript> actualScripts = service.filterByDatabaseVersion(expectedScripts, fromVer, null);
+      Assert.assertEquals(actualScripts.size(), 12);
+    }
+
+    // test 4:  setting just to ver
+    {
+      Version toVer = new Version("1.1");
+      List<GroovyScript> actualScripts = service.filterByDatabaseVersion(expectedScripts, null, toVer);
+      Assert.assertEquals(actualScripts.size(), 2);
+    }
+
+    // test 5:  setting just to ver
+    {
+      Version toVer = new Version("3.0");
+      List<GroovyScript> actualScripts = service.filterByDatabaseVersion(expectedScripts, null, toVer);
+      Assert.assertEquals(actualScripts.size(), 5);
+    }
+
+    // test 6:  setting just to ver
+    {
+      Version fromVer = new Version("1.0");
+      Version toVer = new Version("3.0");
+      List<GroovyScript> actualScripts = service.filterByDatabaseVersion(expectedScripts, fromVer, toVer);
+      Assert.assertEquals(actualScripts.size(), 5);
+    }
+
+    // test 6:  setting just to ver
+    {
+      Version fromVer = new Version("1.1");
+      Version toVer = new Version("3.2.2");
+      List<GroovyScript> actualScripts = service.filterByDatabaseVersion(expectedScripts, fromVer, toVer);
+      Assert.assertEquals(actualScripts.size(), 8);
+    }
   }
 }

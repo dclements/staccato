@@ -10,15 +10,17 @@ import com.readytalk.staccato.database.migration.MigrationException;
  * @author jhumphrey
  */
 public enum DatabaseType {
-  MYSQL("mysql", "com.mysql.jdbc.Driver"),
-  POSTGRESQL("postgresql", "org.postgresql.Driver");
+  MYSQL("mysql", "com.mysql.jdbc.Driver", "mysql"),
+  POSTGRESQL("postgresql", "org.postgresql.Driver", "postgres");
 
   private String type;
   private String driver;
+  private String root;
 
-  DatabaseType(String type, String driver) {
+  DatabaseType(String type, String driver, String root) {
     this.type = type;
     this.driver = driver;
+    this.root = root;
   }
 
   /**
@@ -37,6 +39,10 @@ public enum DatabaseType {
    */
   public String getType() {
     return type;
+  }
+
+  public String getRoot() {
+    return root;
   }
 
   /**
