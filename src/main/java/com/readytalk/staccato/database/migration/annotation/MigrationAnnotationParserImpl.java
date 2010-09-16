@@ -63,4 +63,20 @@ public class MigrationAnnotationParserImpl implements MigrationAnnotationParser 
 
     return annotatedMethod;
   }
+
+  @Override
+  public boolean containsWorkflowSteps(Object scriptInstance, Class<? extends Annotation>[] workflowSteps) {
+
+    for (Class<? extends Annotation> workflowStep : workflowSteps) {
+      Method[] methods = scriptInstance.getClass().getMethods();
+
+      for (Method method : methods) {
+        if (method.isAnnotationPresent(workflowStep)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
 }

@@ -36,47 +36,51 @@ public class GroovyMigrationService implements MigrationService<GroovyScript> {
   @Override
   public void run(List<GroovyScript> migrationScripts, MigrationRuntime migrationRuntime) {
 
-    DatabaseContext databaseContext = migrationRuntime.getDatabaseContext();
+    if (migrationScripts.size() > 0) {
+      DatabaseContext databaseContext = migrationRuntime.getDatabaseContext();
 
-    MigrationType migrationType = migrationRuntime.getMigrationType();
+      MigrationType migrationType = migrationRuntime.getMigrationType();
 
-    String workflowOutput = "workflow: ";
-    for (Class<? extends Annotation> aClass : migrationType.getWorkflowSteps()) {
-      workflowOutput += aClass.getSimpleName() + " ";
-    }
-
-    logger.info("Running " + databaseContext.getDatabaseType() + " migration: " + migrationType.name() + ", " + workflowOutput + " for database: " +
-      databaseContext.getFullyQualifiedJdbcUri());
-
-    // iterate through the groovy scripts for invocation
-    for (GroovyScript script : migrationScripts) {
-      logger.info("Executing script: " + script.getFilename());
-
-      Migration migrationAnnotation = annotationParser.getMigrationAnnotation(script.getScriptInstance());
-
-      // print the description to the logs if it's not null
-      String description = getDescription(migrationAnnotation);
-      if (getDescription(migrationAnnotation) != null) {
-        logger.info("Description: " + description);
+      String workflowOutput = "workflow: ";
+      for (Class<? extends Annotation> aClass : migrationType.getWorkflowSteps()) {
+        workflowOutput += aClass.getSimpleName() + " ";
       }
 
-      // validate database type
-      if (!isValidDatabaseType(script, migrationAnnotation, databaseContext)) {
-        continue;
+      logger.info("Running " + databaseContext.getDatabaseType() + " migration: " + migrationType.name() + ", " + workflowOutput + "for database: " +
+        databaseContext.getFullyQualifiedJdbcUri());
+
+      // iterate through the groovy scripts for invocation
+      for (GroovyScript script : migrationScripts) {
+
+        Migration migrationAnnotation = annotationParser.getMigrationAnnotation(script.getScriptInstance());
+
+        // validate database type
+        if (!isValidDatabaseType(script, migrationAnnotation, databaseContext)) {
+          continue;
+        }
+
+        // todo: Figure out transactions
+        // i'd like to create a transaction prior to each individual script execution so that if
+        // there are errors, I can rollback anything that was done.
+        // I spent a ton of time trying to get transactions to work without luck.
+        // databaseService.startTransaction(databaseContext, script);
+
+        if (annotationParser.containsWorkflowSteps(script.getScriptInstance(), migrationType.getWorkflowSteps())) {
+          logger.info("Executing script: " + script.getFilename());
+
+          // print the description to the logs if it's not null
+          String description = getDescription(migrationAnnotation);
+          if (getDescription(migrationAnnotation) != null) {
+            logger.info("Description: " + description);
+          }
+
+          migrationWorkflowService.executeWorkflow(script, migrationType.getWorkflowSteps(), migrationRuntime);
+        }
+
+        // todo: add this back in once transactions are figured out
+        //databaseService.endTransaction(databaseContext, script);
       }
-
-      // todo: Figure out transactions
-      // i'd like to create a transaction prior to each individual script execution so that if
-      // there are errors, I can rollback anything that was done.
-      // I spent a ton of time trying to get transactions to work without luck.
-      // databaseService.startTransaction(databaseContext, script);
-
-      migrationWorkflowService.executeWorkflow(script, migrationType.getWorkflowSteps(), migrationRuntime);
-
-      // todo: add this back in once transactions are figured out
-//          databaseService.endTransaction(databaseContext, script);
     }
-
   }
 
   /**

@@ -29,11 +29,11 @@ public class SQLScriptService implements ScriptService<SQLScript> {
   }
 
   @Override
-  public List<SQLScript> load(String migrationDir) {
+  public List<SQLScript> load(String migrationDir, ClassLoader classLoader) {
 
     logger.debug("Loading sql scripts from migration directory: " + migrationDir);
 
-    Set<Resource> resources = loader.loadRecursively(migrationDir, getScriptFileExtension());
+    Set<Resource> resources = loader.loadRecursively(migrationDir, getScriptFileExtension(), classLoader);
 
     List<SQLScript> scripts = new ArrayList<SQLScript>();
 

@@ -74,7 +74,7 @@ public class GroovyScriptServiceTest {
     resources.add(resourceThree);
 
     ResourceLoader loader = EasyMock.createStrictMock(ResourceLoader.class);
-    EasyMock.expect(loader.loadRecursively(MigrationService.DEFAULT_MIGRATIONS_DIR, "groovy")).andReturn(resources);
+    EasyMock.expect(loader.loadRecursively(MigrationService.DEFAULT_MIGRATIONS_DIR, "groovy", this.getClass().getClassLoader())).andReturn(resources);
     EasyMock.replay(loader);
 
     // don't care about validation so create a nice mock
@@ -84,7 +84,7 @@ public class GroovyScriptServiceTest {
 
     GroovyScriptService service = new GroovyScriptService(loader, validator, annotationParser);
 
-    List<GroovyScript> actualScripts = service.load(MigrationService.DEFAULT_MIGRATIONS_DIR);
+    List<GroovyScript> actualScripts = service.load(MigrationService.DEFAULT_MIGRATIONS_DIR, this.getClass().getClassLoader());
 
     Assert.assertEquals(actualScripts.size(), 3);
 
@@ -122,7 +122,7 @@ public class GroovyScriptServiceTest {
     resources.add(resourceTwo);
 
     ResourceLoader loader = EasyMock.createStrictMock(ResourceLoader.class);
-    EasyMock.expect(loader.loadRecursively(MigrationService.DEFAULT_MIGRATIONS_DIR, "groovy")).andReturn(resources);
+    EasyMock.expect(loader.loadRecursively(MigrationService.DEFAULT_MIGRATIONS_DIR, "groovy", this.getClass().getClassLoader())).andReturn(resources);
     EasyMock.replay(loader);
 
     // don't care about validation so create a nice mock
@@ -133,7 +133,7 @@ public class GroovyScriptServiceTest {
     GroovyScriptService service = new GroovyScriptService(loader, validator, annotationParser);
 
     try {
-      service.load(MigrationService.DEFAULT_MIGRATIONS_DIR);
+      service.load(MigrationService.DEFAULT_MIGRATIONS_DIR, this.getClass().getClassLoader());
       Assert.fail("should have thrown an exception due to the unique date violation");
     } catch (MigrationException e) {
       Assert.assertTrue(true, e.getMessage());

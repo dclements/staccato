@@ -38,12 +38,12 @@ public class SQLScriptServiceTest {
     resources.add(resourceThree);
 
     ResourceLoader loader = EasyMock.createStrictMock(ResourceLoader.class);
-    EasyMock.expect(loader.loadRecursively(MigrationService.DEFAULT_MIGRATIONS_DIR, "sql")).andReturn(resources);
+    EasyMock.expect(loader.loadRecursively(MigrationService.DEFAULT_MIGRATIONS_DIR, "sql", this.getClass().getClassLoader())).andReturn(resources);
     EasyMock.replay(loader);
 
     SQLScriptService service = new SQLScriptService(loader);
 
-    List<SQLScript> actualScripts = service.load(MigrationService.DEFAULT_MIGRATIONS_DIR);
+    List<SQLScript> actualScripts = service.load(MigrationService.DEFAULT_MIGRATIONS_DIR, this.getClass().getClassLoader());
 
     Assert.assertNotNull(actualScripts);
 
@@ -76,13 +76,13 @@ public class SQLScriptServiceTest {
     resources.add(resourceTwo);
 
     ResourceLoader loader = EasyMock.createStrictMock(ResourceLoader.class);
-    EasyMock.expect(loader.loadRecursively(MigrationService.DEFAULT_MIGRATIONS_DIR, "sql")).andReturn(resources);
+    EasyMock.expect(loader.loadRecursively(MigrationService.DEFAULT_MIGRATIONS_DIR, "sql", this.getClass().getClassLoader())).andReturn(resources);
     EasyMock.replay(loader);
 
     SQLScriptService service = new SQLScriptService(loader);
 
     try {
-      service.load(MigrationService.DEFAULT_MIGRATIONS_DIR);
+      service.load(MigrationService.DEFAULT_MIGRATIONS_DIR, this.getClass().getClassLoader());
       Assert.fail("should fail because the filenames are the same");
     } catch (Exception e) {
       // no-op, success

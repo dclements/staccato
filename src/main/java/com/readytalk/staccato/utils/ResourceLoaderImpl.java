@@ -25,7 +25,7 @@ public class ResourceLoaderImpl implements ResourceLoader {
   public static final Logger logger = Logger.getLogger(ResourceLoaderImpl.class);
 
   @Override
-  public Set<Resource> loadRecursively(String directory, String fileExtension) {
+  public Set<Resource> loadRecursively(String directory, String fileExtension, ClassLoader classLoader) {
 
     logger.debug("Searching directory [" + directory + "] for resources with file extension [" + fileExtension + "]");
 
@@ -34,7 +34,7 @@ public class ResourceLoaderImpl implements ResourceLoader {
     Enumeration<URL> urlResources;
 
     try {
-      urlResources = this.getClass().getClassLoader().getResources(directory);
+      urlResources = classLoader.getResources(directory);
       while (urlResources.hasMoreElements()) {
         URL resourceUrl = urlResources.nextElement();
         String protocol = resourceUrl.getProtocol();
@@ -47,6 +47,12 @@ public class ResourceLoaderImpl implements ResourceLoader {
       }
     } catch (IOException e) {
       throw new ResourceLoaderException(e);
+    }
+
+    logger.debug("Found " + resources.size() + " resources in directory: " + directory);
+
+    if (resources.size() > 0) {
+      logger.debug("\t" + resources);
     }
 
     return resources;

@@ -51,11 +51,11 @@ public class GroovyMigrationIntegrationTest extends BaseTest {
     DatabaseContext dbCtx = dbService.getDatabaseContextBuilder().setContext(baseJdbcUri.toString(), dbName, dbUser, dbPwd, dbSuperUser, dbSuperUserPwd, rootDbName).build();
     dbCtx.setConnection(dbService.connect(dbCtx.getFullyQualifiedJdbcUri(), dbCtx.getUsername(), dbCtx.getPassword(), dbCtx.getDatabaseType()));
 
-    List<SQLScript> sqlScripts = sqlScriptService.load(migrationDir);
+    List<SQLScript> sqlScripts = sqlScriptService.load(migrationDir, this.getClass().getClassLoader());
 
     MigrationRuntime migrationRuntime = new MigrationRuntimeImpl(dbCtx, sqlScripts, MigrationType.SCHEMA_UP);
 
-    List<GroovyScript> migrationScripts = groovyScriptService.load(migrationDir);
+    List<GroovyScript> migrationScripts = groovyScriptService.load(migrationDir, this.getClass().getClassLoader());
     migrationService.run(migrationScripts, migrationRuntime);
 
     Assert.assertTrue(versionsService.versionTableExists(dbCtx));

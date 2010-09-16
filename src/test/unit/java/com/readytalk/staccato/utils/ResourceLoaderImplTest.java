@@ -78,7 +78,7 @@ public class ResourceLoaderImplTest {
 
     ResourceLoaderImpl loader = new ResourceLoaderImpl();
 
-    Set<Resource> actualScripts = loader.loadRecursively(MigrationService.DEFAULT_MIGRATIONS_DIR, "groovy");
+    Set<Resource> actualScripts = loader.loadRecursively(MigrationService.DEFAULT_MIGRATIONS_DIR, "groovy", this.getClass().getClassLoader());
 
     // should be 3 groovy scripts, only those scripts in the test/resources/migrations dir are loaded
     Assert.assertEquals(3, actualScripts.size());
@@ -89,7 +89,7 @@ public class ResourceLoaderImplTest {
 
     ResourceLoaderImpl loader = new ResourceLoaderImpl();
 
-    Set<Resource> actualScripts = loader.loadRecursively(MigrationService.DEFAULT_MIGRATIONS_DIR, "sql");
+    Set<Resource> actualScripts = loader.loadRecursively(MigrationService.DEFAULT_MIGRATIONS_DIR, "sql", this.getClass().getClassLoader());
 
     // should be 4 sql scripts.  Only those scripts that are in the test/resources/migrations directory are loaded
     Assert.assertEquals(3, actualScripts.size());

@@ -17,7 +17,8 @@ public interface ResourceLoader {
    *
    * @param directory the directory to load from
    * @param fileExtension the file extension to load
+   * @param classLoader the classloader to load from
    * @return a set of resource objects
    */
-  public Set<Resource> loadRecursively(String directory, String fileExtension);
+  public Set<Resource> loadRecursively(String directory, String fileExtension, ClassLoader classLoader);
 }

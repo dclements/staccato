@@ -61,11 +61,11 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
    * {@inheritDoc}
    */
   @Override
-  public List<GroovyScript> load(String migrationDir) {
+  public List<GroovyScript> load(String migrationDir, ClassLoader classLoader) {
 
     logger.debug("Loading groovy scripts from migration directory: " + migrationDir);
 
-    Set<Resource> resources = loader.loadRecursively(migrationDir, getScriptFileExtension());
+    Set<Resource> resources = loader.loadRecursively(migrationDir, getScriptFileExtension(), classLoader);
 
     SortedSet<GroovyScript> scripts = new TreeSet<GroovyScript>();
 

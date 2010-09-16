@@ -18,9 +18,10 @@ public interface ScriptService<T extends Script> {
    * is the first script to load when running a migration
    *
    * @param migrationDir the migration directory to load the script from
+   * @param classLoader the class loader
    * @return a set of {@link com.readytalk.staccato.database.migration.script.groovy.GroovyScript} objects
    */
-  List<T> load(String migrationDir);
+  List<T> load(String migrationDir, ClassLoader classLoader);
 
   /**
    * Returns the filename extension of the script

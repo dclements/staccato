@@ -47,4 +47,14 @@ public interface MigrationAnnotationParser {
    * @return the method annotated with the specified annotation
    */
   public Method getAnnotatedMethod(Object scriptInstance, Class<? extends Annotation> annotation);
+
+
+  /**
+   * Checks whether or not the script instance contains any of the workflow steps
+   *
+   * @param scriptInstance the script instance
+   * @param workflowSteps the workflow steps
+   * @return true or false
+   */
+  boolean containsWorkflowSteps(Object scriptInstance, Class<? extends Annotation>[] workflowSteps);
 }

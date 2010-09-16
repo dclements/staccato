@@ -64,7 +64,7 @@ public class Staccato {
     }
 
     // load all groovy scripts
-    List<GroovyScript> allScripts = groovyScriptService.load(options.migrationsDir);
+    List<GroovyScript> allScripts = groovyScriptService.load(options.migrationsDir, this.getClass().getClassLoader());
 
     // stores the scripts to run
     List<GroovyScript> scriptsToRun = new ArrayList<GroovyScript>();
@@ -126,10 +126,12 @@ public class Staccato {
           options.jdbcUrl + ", user: " + options.dbUser + ", pwd: " + options.dbPwd + ".  Please make sure that " +
           "the database exists and that that the user permissions are set appropriately.", e);
       }
+    } else if (StringUtils.isEmpty(options.dbSuperUserPwd)) {
+        throw new MigrationException("Database superuser password is required when executing a " + MigrationType.CREATE);
     }
 
     // load sql scripts
-    List<SQLScript> sqlScripts = sqlScriptService.load(options.migrationsDir);
+    List<SQLScript> sqlScripts = sqlScriptService.load(options.migrationsDir, this.getClass().getClassLoader());
 
     // initialize the runtime
     MigrationRuntime migrationRuntime = new MigrationRuntimeImpl(dbCtx, sqlScripts, migrationType);
