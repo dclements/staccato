@@ -52,33 +52,36 @@ public class StaccatoOptions {
   public String migrateToVer;
 
   public static enum Arg {
-    JDBC_URL("j", "The JDBC URL.  This url should not contain the database name. Please provide the database name via the 'dn' option.", true),
-    DB_NAME("dn", "The database name", true),
-    DB_USER("du", "The database user", true),
-    DB_PWD("dp", "The database password", true),
-    MIGRATION_TYPE("m", "The migration type:\n" + MigrationType.description(), true),
-    MIGRATE_FROM_DATE("mfd", "The date to migrate from.  Must be defined using the ISO-8601 format:  " +
+    JDBC_URL("j", "jdbc", "The JDBC URL.  This url should not contain the database name. Please provide the database name via the 'n' option.", true),
+    DB_NAME("n", "dbName", "The name of the database migrations are being run on", true),
+    DB_USER("u", "dbUser", "The database user used when connecting to the database", true),
+    DB_PWD("p", "dbPwd", "The database password used when connecting to the database", true),
+    MIGRATION_TYPE("m", "migration", "The migration type:\n" + MigrationType.description(), true),
+    MIGRATE_FROM_DATE("fd", "fromDate", "The date to migrate from.  Must be defined using the ISO-8601 format:  " +
       "If not specified, and the migrateScript option is undefined, then Staccato will run the migration starting from the script with the earliest date", false),
-    MIGRATE_TO_DATE("mtd", "The date to migrate to.  Must be defined using ISO-8601 format.  This option is only interpreted " +
+    MIGRATE_TO_DATE("td", "toDate", "The date to migrate to.  Must be defined using ISO-8601 format.  This option is only interpreted " +
       "if the migrationFromDate is specified. If the migrateFromDate is specified and this field is not specified, then the system will migrate to the current date/time", false),
-    MIGRATE_SCRIPT("ms", "Runs a single migration script only.  Option must be equal to the name of the script (e.g. ScriptFoo.groovy) " +
-      "and the script must be available in the classpath.  If this option is specified, then any values defined for migrateFromDate and migrateToDate will be ignored.", false),
-    MIGRATIONS_DIR("md", "The directory where Staccato will search for migration scripts.  " +
+    MIGRATE_SCRIPT("s", "script", "The script to run the migration on.  Must be equal to the name of the script (e.g. ScriptFoo.groovy) " +
+      "and the script must be available in the classpath.  If this option is specified, then any values defined for fromDate and toDate will be ignored.", false),
+    MIGRATIONS_DIR("d", "directory", "The directory where Staccato will search for migration scripts.  " +
       "This directory must be in the classpath.  If not defined, the default is: " + MigrationService.DEFAULT_MIGRATIONS_DIR, false),
-    ROOT_DB("drn", "The root database name.  Defaults to user 'postgres' or 'mysql' if not specified", false),
-    DB_SUPERUSER("dsu", "The superuser to use when creating a new database.  Defaults to user 'postgres' or 'mysql' if not specified", false),
-    DB_SUPERUSER_PWD("dsup", "The superuser password to use when creating a new database.", false),
-    MIGRATE_FROM_VER("mfv", "The version to migrate from", false),
-    MIGRATE_TO_VER("mtv", "The version to migrate to", false);
+    ROOT_DB("rn", "rootDbName", "The root database name.  Defaults to user 'postgres' or 'mysql' if not specified", false),
+    DB_SUPERUSER("su", "dbSuperUser", "The superuser to use when creating a new database.  Defaults to user 'postgres' or 'mysql' if not specified", false),
+    DB_SUPERUSER_PWD("sup", "dbSuperPwd", "The superuser password to use when creating a new database.", false),
+    MIGRATE_FROM_VER("fv", "fromVersion", "The version to migrate from", false),
+    MIGRATE_TO_VER("tv", "toVersion", "The version to migrate to", false);
 
     String opt;
+
+    String longOpt;
 
     String desc;
 
     boolean required;
 
-    Arg(String opt, String desc, boolean required) {
+    Arg(String opt, String longOpt, String desc, boolean required) {
       this.opt = opt;
+      this.longOpt = longOpt;
       this.desc = desc;
       this.required = required;
     }
@@ -89,6 +92,10 @@ public class StaccatoOptions {
 
     public String getDesc() {
       return desc;
+    }
+
+    public String getLongOpt() {
+      return longOpt;
     }
 
     public boolean isRequired() {

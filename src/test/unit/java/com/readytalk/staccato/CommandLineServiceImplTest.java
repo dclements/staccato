@@ -51,18 +51,32 @@ public class CommandLineServiceImplTest extends BaseTest {
   }
 
   @Test
-  public void testParse() {
+  public void testParseValidShortOpts() {
     CommandLineServiceImpl service = new CommandLineServiceImpl(parser, helpFormatter);
 
-    String[] args = new String[]{"-j", "jdbcUri", "-dn", "dbName", "-du", "dbUser", "-dp", dbPwd,
-      "-m", "UP", "mfd", "fromDate", "mtd", "toDate", "-ms", "test.groovy", "-md", "migrations/",
-      "-dsu", "superuser", "-dsup", "superuserPwd", "-mfd", "fromVer", "-mtv", "toVer"};
+    String[] args = new String[]{"-j", "jdbcUri", "-n", "dbName", "-u", "dbUser", "-p", dbPwd,
+      "-m", "UP", "fd", "fromDate", "td", "toDate", "-s", "test.groovy", "-d", "migrations/",
+      "rn", "rootDbName", "-su", "superuser", "-sup", "superuserPwd", "-fv", "fromVer", "-tv", "toVer"};
 
     try {
       service.parse(args);
     } catch (MigrationException e) {
       Assert.fail("Should not have thrown", e);
     }
+  }
 
+  @Test
+  public void testParseLongOpts() {
+    CommandLineServiceImpl service = new CommandLineServiceImpl(parser, helpFormatter);
+
+    String[] args = new String[]{"-jdbc", "jdbcUri", "-dbName", "dbName", "-dbUser", "dbUser", "-dbPwd", dbPwd,
+      "-migration", "UP", "fromDate", "fromDate", "toDate", "toDate", "-script", "test.groovy", "-directory", "migrations/",
+      "rootDbName", "rootDbName", "-dbSuperUser", "superuser", "-dbSuperPwd", "superuserPwd", "-fromVersion", "fromVer", "-tv", "toVersion"};
+
+    try {
+      service.parse(args);
+    } catch (MigrationException e) {
+      Assert.fail("Should not have thrown", e);
+    }
   }
 }

@@ -34,7 +34,7 @@ public class CommandLineServiceImpl implements CommandLineService {
     StaccatoOptions.Arg[] staccatoArgs = StaccatoOptions.Arg.values();
 
     for (StaccatoOptions.Arg staccatoArg : staccatoArgs) {
-      Option opt = new Option(staccatoArg.opt, true, staccatoArg.desc);
+      Option opt = new Option(staccatoArg.opt, staccatoArg.longOpt, true, staccatoArg.desc);
       opt.setRequired(staccatoArg.required);
       options.addOption(opt);
     }
