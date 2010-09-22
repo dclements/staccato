@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
 import com.google.inject.Inject;
@@ -28,6 +29,8 @@ import com.readytalk.staccato.utils.Version;
  * @author jhumphrey
  */
 public class Staccato {
+
+  private Logger logger = Logger.getLogger(Staccato.class);
 
   DynamicLanguageScriptService<GroovyScript> groovyScriptService;
   ScriptService<SQLScript> sqlScriptService;
@@ -71,6 +74,9 @@ public class Staccato {
 
     // process the migrateScript, dates and versions to filter the script list
     if (!StringUtils.isEmpty(options.migrateScript)) {
+
+      logger.info("Running a migration for script: " + options.migrateScript);
+
       for (GroovyScript script : allScripts) {
         if (script.getFilename().equals(options.migrateScript)) {
           scriptsToRun.add(script);
@@ -94,6 +100,14 @@ public class Staccato {
         toDate = new DateTime(toDate);
       }
 
+      if (fromDate != null && toDate == null) {
+        logger.info("Running a migration for all scripts with script dates equal to or after: " + options.migrateFromDate);
+      } else if (fromDate == null && toDate != null) {
+        logger.info("Running a migration for all scripts with script dates equal to or before: " + options.migrateToDate);
+      } else {
+        logger.info("Running a migration for all scripts in the date range: " + options.migrateFromDate + " - " + options.migrateToDate);
+      }
+
       scriptsToRun = groovyScriptService.filterByDate(allScripts, fromDate, toDate);
     } else if (!StringUtils.isEmpty(options.migrateFromVer) || !StringUtils.isEmpty(options.migrateToVer)) {
 
@@ -107,8 +121,17 @@ public class Staccato {
         toVer = new Version(options.migrateToVer, Migration.databaseVersionStrictMode);
       }
 
+      if (fromVer != null && toVer == null) {
+        logger.info("Running a migration for all scripts with database versions equal to or greater than: " + options.migrateFromVer);
+      } else if (fromVer == null && toVer != null) {
+        logger.info("Running a migration for all scripts with database versions equal to or less than : " + options.migrateToVer);
+      } else {
+        logger.info("Running a migration for all scripts in the version range: " + options.migrateFromVer + " - " + options.migrateToVer);
+      }
+
       groovyScriptService.filterByDatabaseVersion(allScripts, fromVer, toVer);
     } else {
+      logger.info("Running a migration on all scripts");
       scriptsToRun.addAll(allScripts);
     }
 
@@ -127,7 +150,7 @@ public class Staccato {
           "the database exists and that that the user permissions are set appropriately.", e);
       }
     } else if (StringUtils.isEmpty(options.dbSuperUserPwd)) {
-        throw new MigrationException("Database superuser password is required when executing a " + MigrationType.CREATE);
+      throw new MigrationException("Database superuser password is required when executing a " + MigrationType.CREATE);
     }
 
     // load sql scripts
