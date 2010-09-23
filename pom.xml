@@ -4,11 +4,39 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <!--
+  To deploy, use the following:
+
+    mvn clean deploy -Dgpg.passphrase=passphrse
+  -->
+
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>5</version>
+  </parent>
+
   <groupId>com.readytalk</groupId>
   <artifactId>staccato</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0-SNAPSHOT</version>
 
+  <version>1.0.0-SNAPSHOT</version>
+  <name>Staccato</name>
+  <description>Database migration management for Java</description>
+  <url>http://github.com/ReadyTalk/staccato</url>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:git@github.com:ReadyTalk/staccato.git</connection>
+    <developerConnection>scm:git:git@github.com:ReadyTalk/staccato.git</developerConnection>
+    <url>http://github.com/ReadyTalk/staccato.git</url>
+  </scm>
 
   <properties>
     <dbName>staccato</dbName>
@@ -192,7 +220,7 @@
                        debug="on"
                        source="1.6"
                        executable="${env.JAVA_HOME}/bin/javac"
-		       fork="true"
+                       fork="true"
                        includeantruntime="false">
                   <classpath>
                     <path refid="maven.test.classpath"/>
@@ -233,50 +261,64 @@
         </configuration>
       </plugin>
 
-        <plugin>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.2-beta-5</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>single</goal>
-              </goals>
-              <phase>package</phase>
-            </execution>
-          </executions>
-          <configuration>
-            <descriptorRefs>
-              <descriptorRef>jar-with-dependencies</descriptorRef>
-            </descriptorRefs>
-            <archive>
-              <manifest>
-                <addClasspath>true</addClasspath>
-                <mainClass>com.readytalk.staccato.Main</mainClass>
-              </manifest>
-            </archive>
-          </configuration>
-        </plugin>
-
-      <!-- <plugin>
-        <groupId>com.readytalk</groupId>
-        <artifactId>staccato-maven-plugin</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
-        <configuration>
-          <jdbcUrl>jdbc:postgresql://localhost:5432/${dbName}</jdbcUrl>
-          <dbUsername>tomcat</dbUsername>
-          <dbPassword>tomcat</dbPassword>
-          <migrationType>UP</migrationType>
-          <migrationsDir>${basedir}/src/test/integration/resources/groovy</migrationsDir>
-        </configuration>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-5</version>
         <executions>
           <execution>
-            <phase/>
             <goals>
-              <goal>create-script</goal>
+              <goal>single</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <mainClass>com.readytalk.staccato.Main</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
             </goals>
           </execution>
         </executions>
-      </plugin> -->
+      </plugin>
+
+      <!-- <plugin>
+       <groupId>com.readytalk</groupId>
+       <artifactId>staccato-maven-plugin</artifactId>
+       <version>1.0.0-SNAPSHOT</version>
+       <configuration>
+         <jdbcUrl>jdbc:postgresql://localhost:5432/${dbName}</jdbcUrl>
+         <dbUsername>tomcat</dbUsername>
+         <dbPassword>tomcat</dbPassword>
+         <migrationType>UP</migrationType>
+         <migrationsDir>${basedir}/src/test/integration/resources/groovy</migrationsDir>
+       </configuration>
+       <executions>
+         <execution>
+           <phase/>
+           <goals>
+             <goal>create-script</goal>
+           </goals>
+         </execution>
+       </executions>
+     </plugin> -->
 
     </plugins>
   </build>
