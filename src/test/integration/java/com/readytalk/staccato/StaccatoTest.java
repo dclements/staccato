@@ -1,23 +1,38 @@
 package com.readytalk.staccato;
 
-import java.net.URI;
-import java.sql.SQLException;
-import java.util.List;
-
-import org.joda.time.DateTime;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.google.inject.Inject;
 import com.readytalk.staccato.database.BaseTest;
-import com.readytalk.staccato.database.migration.MigrationException;
 import com.readytalk.staccato.database.migration.MigrationType;
-import com.readytalk.staccato.database.migration.script.groovy.GroovyScript;
 
 /**
  * @author jhumphrey
  */
 public class StaccatoTest extends BaseTest {
+
+  Staccato staccato;
+
+  @Inject
+  public void setStaccato(Staccato staccato) {
+    this.staccato = staccato;
+  }
+
+  @Test
+//  @DataProvider(name = "jdbcUrlProvider")
+  public void testVersionMigrations() {
+    StaccatoOptions options = new StaccatoOptions();
+    options.jdbcUrl = postgresqlJdbcUri.toString();
+    options.dbName = dbName;
+    options.dbUser = dbUser;
+    options.dbPwd = dbPwd;
+    options.migrationType = MigrationType.UP.name();
+    options.migrateFromVer = "1.0";
+    options.migrateToVer = "2.0";
+    staccato.execute(options);
+  }
+
 //
 //  /**
 //   * Tests that Main works when using the --ms (migrateScript) option.  This option

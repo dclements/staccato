@@ -129,7 +129,7 @@ public class Staccato {
         logger.info("Running a migration for all scripts in the version range: " + options.migrateFromVer + " - " + options.migrateToVer);
       }
 
-      groovyScriptService.filterByDatabaseVersion(allScripts, fromVer, toVer);
+      scriptsToRun = groovyScriptService.filterByDatabaseVersion(allScripts, fromVer, toVer);
     } else {
       logger.info("Running a migration on all scripts");
       scriptsToRun.addAll(allScripts);
