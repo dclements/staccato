@@ -52,9 +52,15 @@ public class Staccato {
     this.validator = validator;
   }
 
+  /**
+   * Executes Staccato via the {@link com.readytalk.staccato.StaccatoOptions} provided
+   *
+   * @param options
+   */
   public void execute(StaccatoOptions options) {
 
-    // set the migration dir to the default if not defined by user
+    // set the migration dir to the default if not defined by user.  This has to
+    // be done prior to validating the staccato option set since it's a required field
     if (StringUtils.isEmpty(options.migrationsDir)) {
       options.migrationsDir = MigrationService.DEFAULT_MIGRATIONS_DIR;
     }
@@ -62,17 +68,11 @@ public class Staccato {
     // validate options
     validator.validate(options);
 
-    // validate the migration type.  Not easy to do it via jsr 303 so doing it here
-    MigrationType migrationType;
-    try {
-      migrationType = MigrationType.valueOf(options.migrationType);
-    } catch (IllegalArgumentException e) {
-      throw new MigrationException("Invalid migrationType: " + options.migrationType + ".  The list of valid migration types are:\n" + MigrationType.description());
-    }
+    // get the migration type from the migrationType string option
+    MigrationType migrationType = MigrationType.valueOf(options.migrationType);
 
+    // set the classloader.  If they specified a path to the migration jar, then load that jar into a classloader
     ClassLoader cl = this.getClass().getClassLoader();
-
-    // check to see if they provided a migration jar file path, if so, create a new classloader with this path url
     if (!StringUtils.isEmpty(options.migrationJarPath)) {
       File file = new File(options.migrationJarPath);
       if (!file.exists()) {
@@ -89,9 +89,54 @@ public class Staccato {
     List<GroovyScript> allScripts = groovyScriptService.load(options.migrationsDir, cl);
 
     // stores the scripts to run
+    List<GroovyScript> scriptsToRun = determineScriptsToRun(allScripts, options);
+
+    // set the database context
+    DatabaseContextBuilder dbCtxBuilder = databaseService.getDatabaseContextBuilder();
+    DatabaseContext dbCtx = dbCtxBuilder.setContext(options.jdbcUrl, options.dbName, options.dbUser, options.dbPwd,
+      options.dbSuperUser, options.dbSuperUserPwd, options.rootDb).build();
+
+    // if a CREATE migraiton is not being executed, then initialize the database
+    if (!migrationType.equals(MigrationType.CREATE)) {
+      try {
+        dbCtx.setConnection(databaseService.connect(dbCtx.getFullyQualifiedJdbcUri(), dbCtx.getUsername(), dbCtx.getPassword(), dbCtx.getDatabaseType()));
+      } catch (DatabaseException e) {
+        throw new MigrationException("Unable to establish a connection to the database for jdbc uri:" +
+          options.jdbcUrl + ", user: " + options.dbUser + ", pwd: " + options.dbPwd + ".  Please make sure that " +
+          "the database exists and that that the user permissions are set appropriately.", e);
+      }
+    } else if (options.dbSuperUserPwd == null) {
+      throw new MigrationException("Database superuser password is required when executing a " + MigrationType.CREATE);
+    }
+
+    // load sql scripts
+    List<SQLScript> sqlScripts = sqlScriptService.load(options.migrationsDir, cl);
+
+    // initialize the runtime.
+    // This runtime object eventually gets passed to the scripts themselves as a method argument
+    MigrationRuntime migrationRuntime = new MigrationRuntimeImpl(dbCtx, sqlScripts, migrationType);
+
+    try {
+      migrationService.run(scriptsToRun, migrationRuntime);
+    } finally {
+      // make sure we disconnect no matter what
+      databaseService.disconnect(dbCtx);
+    }
+  }
+
+  private List<GroovyScript> determineScriptsToRun(List<GroovyScript> allScripts, StaccatoOptions options) {
     List<GroovyScript> scriptsToRun = new ArrayList<GroovyScript>();
 
-    // process the migrateScript, dates and versions to filter the script list
+    /**
+     * The following if-block processes based on the following criteria:
+     *
+     * 1.  if the migrateScript option is defined, then then this option takes precedence
+     *      and a migration is run on just that script
+     *
+     * 2.  If the from/to dates are defined, then a migration is executed on the date range
+     * 3.  Finally, if the from/to version is defined, a migration is executed on the version range
+     *
+     */
     if (!StringUtils.isEmpty(options.migrateScript)) {
 
       logger.info("Running a migration for script: " + options.migrateScript);
@@ -154,35 +199,6 @@ public class Staccato {
       scriptsToRun.addAll(allScripts);
     }
 
-    // set the database context
-    DatabaseContextBuilder dbCtxBuilder = databaseService.getDatabaseContextBuilder();
-    DatabaseContext dbCtx = dbCtxBuilder.setContext(options.jdbcUrl, options.dbName, options.dbUser, options.dbPwd,
-      options.dbSuperUser, options.dbSuperUserPwd, options.rootDb).build();
-
-    // if a CREATE migraiton is not being executed, then initialize the database
-    if (!migrationType.equals(MigrationType.CREATE)) {
-      try {
-        dbCtx.setConnection(databaseService.connect(dbCtx.getFullyQualifiedJdbcUri(), dbCtx.getUsername(), dbCtx.getPassword(), dbCtx.getDatabaseType()));
-      } catch (DatabaseException e) {
-        throw new MigrationException("Unable to establish a connection to the database for jdbc uri:" +
-          options.jdbcUrl + ", user: " + options.dbUser + ", pwd: " + options.dbPwd + ".  Please make sure that " +
-          "the database exists and that that the user permissions are set appropriately.", e);
-      }
-    } else if (options.dbSuperUserPwd == null) {
-      throw new MigrationException("Database superuser password is required when executing a " + MigrationType.CREATE);
-    }
-
-    // load sql scripts
-    List<SQLScript> sqlScripts = sqlScriptService.load(options.migrationsDir, cl);
-
-    // initialize the runtime
-    MigrationRuntime migrationRuntime = new MigrationRuntimeImpl(dbCtx, sqlScripts, migrationType);
-
-    try {
-      migrationService.run(scriptsToRun, migrationRuntime);
-    } finally {
-      // make sure we disconnect no matter what
-      databaseService.disconnect(dbCtx);
-    }
+    return scriptsToRun;
   }
 }

@@ -6,6 +6,7 @@ import com.readytalk.staccato.database.migration.MigrationService;
 import com.readytalk.staccato.database.migration.MigrationType;
 import com.readytalk.staccato.database.migration.annotation.Migration;
 import com.readytalk.staccato.database.migration.validation.javax.DateFormat;
+import com.readytalk.staccato.database.migration.validation.javax.MigrationTypeConstraint;
 import com.readytalk.staccato.database.migration.validation.javax.Version;
 
 /**
@@ -25,7 +26,7 @@ public class StaccatoOptions {
   @NotNull
   public String dbPwd;
 
-  @NotNull
+  @MigrationTypeConstraint
   public String migrationType;
 
   @DateFormat

@@ -35,7 +35,7 @@ public class StaccatoTest extends BaseTest {
   }
 
   @Test
-  public void testOptionFailures() {
+  public void testInvalidMigrationType() {
     try {
       StaccatoOptions options = new StaccatoOptions();
       options.jdbcUrl = mysqlJdbcUri.toString();
@@ -44,6 +44,7 @@ public class StaccatoTest extends BaseTest {
       options.dbPwd = dbPwd;
       staccato.execute(options);
     } catch (MigrationValidationException e) {
+      e.printStackTrace();
       // no-op
     }
   }
