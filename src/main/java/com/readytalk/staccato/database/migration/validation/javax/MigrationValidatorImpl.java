@@ -30,7 +30,10 @@ public class MigrationValidatorImpl implements MigrationValidator {
 
   @Override
   public void validate(StaccatoOptions options) {
-    this.processConstraintViolations(options);
+    List<MigrationValidationException.Violation> violations = processConstraintViolations(options);
+    if (violations.size() > 0) {
+      throw new MigrationValidationException("One or more Staccato options are invalid", violations);
+    }
   }
 
   @Override
@@ -83,7 +86,7 @@ public class MigrationValidatorImpl implements MigrationValidator {
    * Helper method for converting javax constraint violations to a MigrationExceptionValidation.Violation
    *
    * @param objectToValidate the object to validate
-   * @return a list of {@link com.readytalk.staccato.database.migration.validation.MigrationValidationException.Violation}
+   * @return a list of violations
    */
   private List<MigrationValidationException.Violation> processConstraintViolations(Object objectToValidate) {
 

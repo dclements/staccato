@@ -54,7 +54,12 @@ public class Staccato {
 
   public void execute(StaccatoOptions options) {
 
-    // validate the options
+    // set the migration dir to the default if not defined by user
+    if (StringUtils.isEmpty(options.migrationsDir)) {
+      options.migrationsDir = MigrationService.DEFAULT_MIGRATIONS_DIR;
+    }
+
+    // validate options
     validator.validate(options);
 
     // validate the migration type.  Not easy to do it via jsr 303 so doing it here
@@ -63,11 +68,6 @@ public class Staccato {
       migrationType = MigrationType.valueOf(options.migrationType);
     } catch (IllegalArgumentException e) {
       throw new MigrationException("Invalid migrationType: " + options.migrationType + ".  The list of valid migration types are:\n" + MigrationType.description());
-    }
-
-    // set the migration dir
-    if (StringUtils.isEmpty(options.migrationsDir)) {
-      options.migrationsDir = MigrationService.DEFAULT_MIGRATIONS_DIR;
     }
 
     ClassLoader cl = this.getClass().getClassLoader();

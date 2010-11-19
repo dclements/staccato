@@ -1,16 +1,15 @@
 package com.readytalk.staccato;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.inject.Inject;
 import com.readytalk.staccato.database.BaseTest;
 import com.readytalk.staccato.database.migration.MigrationType;
+import com.readytalk.staccato.database.migration.validation.MigrationValidationException;
 
 /**
  * @author jhumphrey
@@ -25,8 +24,33 @@ public class StaccatoTest extends BaseTest {
   }
 
   @Test
+  public void testNoOptions() {
+    try {
+      StaccatoOptions options = new StaccatoOptions();
+      staccato.execute(options);
+      Assert.fail("should have thrown an exception because required options aren't set");
+    } catch (Exception e) {
+      // no-op, test successful
+    }
+  }
+
+  @Test
+  public void testOptionFailures() {
+    try {
+      StaccatoOptions options = new StaccatoOptions();
+      options.jdbcUrl = mysqlJdbcUri.toString();
+      options.dbName = dbName;
+      options.dbUser = dbUser;
+      options.dbPwd = dbPwd;
+      staccato.execute(options);
+    } catch (MigrationValidationException e) {
+      // no-op
+    }
+  }
+
+  @Test
 //  @DataProvider(name = "jdbcUrlProvider")
-  public void testVersionMigrations() {
+public void testVersionMigrations() {
     StaccatoOptions options = new StaccatoOptions();
     options.jdbcUrl = mysqlJdbcUri.toString();
     options.dbName = dbName;

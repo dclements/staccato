@@ -14,15 +14,20 @@ public class MigrationValidationException extends RuntimeException {
   String message;
 
   public MigrationValidationException(String message, List<Violation> violations) {
+    this.violations.addAll(violations);
     this.message = message;
-    for (Violation violation : violations) {
-      addViolation(violation);
-    }
   }
 
-  public MigrationValidationException(String message, Violation violation) {
-    this.message = message;
-    addViolation(violation);
+  public MigrationValidationException(String s) {
+    super(s);
+  }
+
+  public MigrationValidationException(String s, Throwable throwable) {
+    super(s, throwable);
+  }
+
+  public MigrationValidationException(Throwable throwable) {
+    super(throwable);
   }
 
   private void addViolation(Violation violation) {
@@ -38,7 +43,7 @@ public class MigrationValidationException extends RuntimeException {
   @Override
   public String getMessage() {
     StringBuilder builder = new StringBuilder();
-    builder.append("The following migration violations occurred:\n");
+    builder.append(message).append("\n");
     for (Violation violation : violations) {
       builder.append("Property: ").append(violation.propertyName).append("\n");
       builder.append("Value: ").append(violation.propertyValue).append("\n");
