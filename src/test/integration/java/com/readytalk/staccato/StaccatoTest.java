@@ -1,5 +1,10 @@
 package com.readytalk.staccato;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -23,13 +28,17 @@ public class StaccatoTest extends BaseTest {
 //  @DataProvider(name = "jdbcUrlProvider")
   public void testVersionMigrations() {
     StaccatoOptions options = new StaccatoOptions();
-    options.jdbcUrl = postgresqlJdbcUri.toString();
+    options.jdbcUrl = mysqlJdbcUri.toString();
     options.dbName = dbName;
     options.dbUser = dbUser;
     options.dbPwd = dbPwd;
-    options.migrationType = MigrationType.UP.name();
-    options.migrateFromVer = "1.0";
-    options.migrateToVer = "2.0";
+    options.dbSuperUser = "root";
+    options.dbSuperUserPwd = "Pazwurd1";
+    options.migrationType = MigrationType.CREATE.name();
+
+    File file = new File("/Users/jhumphrey/dev/inversoft/internal/inversoft.com/target/inversoft-db-migrations.jar");
+
+    options.migrationJarPath = file.getAbsolutePath();
     staccato.execute(options);
   }
 

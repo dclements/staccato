@@ -45,6 +45,8 @@ public class StaccatoOptions {
 
   public String rootDb;
 
+  public String migrationJarPath;
+
   @Version(strictMode = Migration.databaseVersionStrictMode)
   public String migrateFromVer;
 
@@ -69,7 +71,8 @@ public class StaccatoOptions {
     DB_SUPERUSER("su", "dbSuperUser", "The superuser to use when creating a new database.  Defaults to user 'postgres' or 'mysql' if not specified", false),
     DB_SUPERUSER_PWD("sup", "dbSuperPwd", "The superuser password to use when creating a new database.", false),
     MIGRATE_FROM_VER("fv", "fromVersion", "The version to migrate from", false),
-    MIGRATE_TO_VER("tv", "toVersion", "The version to migrate to", false);
+    MIGRATE_TO_VER("tv", "toVersion", "The version to migrate to", false),
+    MIGRATION_JAR_PATH("mj", "migrationJar", "The path to the migration jar", false);
 
     String opt;
 

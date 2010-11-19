@@ -52,12 +52,4 @@ public class MainTest extends BaseTest {
 
     }
   }
-
-  public void testClassLoading() throws MalformedURLException {
-    File file = new File("target/migration.jar");
-    URL url = file.toURI().toURL();
-    ClassLoader classLoader = new URLClassLoader(new URL[]{url});
-
-
-  }
 }

@@ -24,7 +24,7 @@ import groovy.lang.GroovyCodeSource;
  */
 public class CreateWorkflowStepExecutorTest extends BaseTest {
 
-  @Test(dataProvider = "jdbcProvider")
+  @Test(dataProvider = "jdbcProvider", enabled = true)
   public void testExecuteWithConnection(URI baseJdbcUri) throws IOException, IllegalAccessException, InstantiationException, NoSuchMethodException {
 
     File file = new File("src/test/unit/groovy/TestScript.groovy");
@@ -64,7 +64,7 @@ public class CreateWorkflowStepExecutorTest extends BaseTest {
     context.setDatabaseType(DatabaseType.getTypeFromJDBCUri(baseJdbcUri));
 
     MigrationRuntime runtime = EasyMock.createMock(MigrationRuntime.class);
-    EasyMock.expect(runtime.getDatabaseContext()).andReturn(context);
+    EasyMock.expect(runtime.getDatabaseContext()).andReturn(context).times(2);
     EasyMock.replay(runtime);
 
     try {
@@ -74,7 +74,7 @@ public class CreateWorkflowStepExecutorTest extends BaseTest {
     }
   }
 
-  @Test(dataProvider = "jdbcProvider")
+  @Test(dataProvider = "jdbcProvider", enabled = true)
   public void testExecuteWithOutConnection(URI baseJdbcUri) throws IOException, IllegalAccessException, InstantiationException, NoSuchMethodException {
 
     File file = new File("src/test/unit/groovy/TestScript.groovy");
@@ -113,7 +113,7 @@ public class CreateWorkflowStepExecutorTest extends BaseTest {
     context.setDatabaseType(DatabaseType.getTypeFromJDBCUri(baseJdbcUri));
 
     MigrationRuntime runtime = EasyMock.createMock(MigrationRuntime.class);
-    EasyMock.expect(runtime.getDatabaseContext()).andReturn(context);
+    EasyMock.expect(runtime.getDatabaseContext()).andReturn(context).times(2);
     EasyMock.replay(runtime);
 
     try {

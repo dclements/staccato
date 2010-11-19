@@ -57,8 +57,11 @@ public class CreateWorkflowStepExecutor implements WorkflowStepExecutor<Create> 
 
     // connect to root db as root user
     try {
+      Class.forName(context.getMigrationRuntime().getDatabaseContext().getDatabaseType().getDriver());
       connection = DriverManager.getConnection(fullyQualifiedRootJdbcUriStr, rootUser, rootPwd);
     } catch (SQLException e) {
+      e.printStackTrace();
+    } catch (ClassNotFoundException e) {
       e.printStackTrace();
     }
 

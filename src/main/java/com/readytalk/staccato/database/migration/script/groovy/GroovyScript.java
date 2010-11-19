@@ -4,6 +4,7 @@ import java.net.URL;
 
 import org.joda.time.DateTime;
 
+import com.readytalk.staccato.database.DatabaseType;
 import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
 import com.readytalk.staccato.utils.Version;
 
@@ -31,6 +32,8 @@ public class GroovyScript implements DynamicLanguageScript<GroovyScript> {
   private Version databaseVersion;
 
   private String sha1Hash;
+
+  private DatabaseType databaseType;
 
   @Override
   public String getFilename() {
@@ -65,6 +68,11 @@ public class GroovyScript implements DynamicLanguageScript<GroovyScript> {
   @Override
   public Version getDatabaseVersion() {
     return databaseVersion;
+  }
+
+  @Override
+  public DatabaseType getDatabaseType() {
+    return databaseType;
   }
 
   public void setDatabaseVersion(Version databaseVersion) {
@@ -104,26 +112,38 @@ public class GroovyScript implements DynamicLanguageScript<GroovyScript> {
     this.sha1Hash = sha1Hash;
   }
 
+  public void setDatabaseType(DatabaseType databaseType) {
+    this.databaseType = databaseType;
+  }
+
   @Override
   public int compareTo(GroovyScript groovyScript) {
-    return groovyScript.getScriptDate().compareTo(this.getScriptDate());
+    if (groovyScript.databaseType != null && this.databaseType != null && !groovyScript.databaseType.equals(this.databaseType)) {
+      return 1;
+    } else {
+      return groovyScript.getScriptDate().compareTo(this.getScriptDate());
+    }
   }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (!(o instanceof GroovyScript)) return false;
 
     GroovyScript that = (GroovyScript) o;
 
-    if (!scriptDate.equals(that.scriptDate)) return false;
-
-    return true;
+    if (databaseType == that.databaseType && scriptDate.equals(that.scriptDate)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @Override
   public int hashCode() {
-    return scriptDate.hashCode();
+    int result = scriptDate.hashCode();
+    result = 31 * result + databaseType.hashCode();
+    return result;
   }
 
   @Override

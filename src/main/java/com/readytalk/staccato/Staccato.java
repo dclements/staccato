@@ -1,5 +1,9 @@
 package com.readytalk.staccato;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,8 +70,23 @@ public class Staccato {
       options.migrationsDir = MigrationService.DEFAULT_MIGRATIONS_DIR;
     }
 
+    ClassLoader cl = this.getClass().getClassLoader();
+
+    // check to see if they provided a migration jar file path, if so, create a new classloader with this path url
+    if (!StringUtils.isEmpty(options.migrationJarPath)) {
+      File file = new File(options.migrationJarPath);
+      if (!file.exists()) {
+        throw new MigrationException("Migration jar path [" + options.migrationJarPath + "] does not exist");
+      }
+      try {
+        cl = URLClassLoader.newInstance(new URL[]{file.toURI().toURL()});
+      } catch (MalformedURLException e) {
+        throw new MigrationException(e);
+      }
+    }
+
     // load all groovy scripts
-    List<GroovyScript> allScripts = groovyScriptService.load(options.migrationsDir, this.getClass().getClassLoader());
+    List<GroovyScript> allScripts = groovyScriptService.load(options.migrationsDir, cl);
 
     // stores the scripts to run
     List<GroovyScript> scriptsToRun = new ArrayList<GroovyScript>();
@@ -149,12 +168,12 @@ public class Staccato {
           options.jdbcUrl + ", user: " + options.dbUser + ", pwd: " + options.dbPwd + ".  Please make sure that " +
           "the database exists and that that the user permissions are set appropriately.", e);
       }
-    } else if (StringUtils.isEmpty(options.dbSuperUserPwd)) {
+    } else if (options.dbSuperUserPwd == null) {
       throw new MigrationException("Database superuser password is required when executing a " + MigrationType.CREATE);
     }
 
     // load sql scripts
-    List<SQLScript> sqlScripts = sqlScriptService.load(options.migrationsDir, this.getClass().getClassLoader());
+    List<SQLScript> sqlScripts = sqlScriptService.load(options.migrationsDir, cl);
 
     // initialize the runtime
     MigrationRuntime migrationRuntime = new MigrationRuntimeImpl(dbCtx, sqlScripts, migrationType);

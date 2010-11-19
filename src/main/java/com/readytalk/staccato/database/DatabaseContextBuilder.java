@@ -65,7 +65,11 @@ public class DatabaseContextBuilder {
       ctx.setSuperUser(superUser);
     }
 
-    ctx.setSuperUserPwd(superUserPwd);
+    if (StringUtils.isEmpty(superUserPwd)) {
+      ctx.setSuperUserPwd("");
+    } else {
+      ctx.setSuperUserPwd(superUserPwd);
+    }
 
     return this;
   }

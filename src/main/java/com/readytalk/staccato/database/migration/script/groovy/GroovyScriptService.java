@@ -13,7 +13,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -89,44 +88,46 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
         // validate the Migration annotation
         validator.validate(migrationAnnotation, resource.getFilename());
 
-        GroovyScript script = new GroovyScript();
-        script.setUrl(resource.getUrl());
-        script.setFilename(resource.getFilename());
-        script.setScriptClass(scriptClass);
-        script.setScriptInstance(scriptInstance);
-        script.setScriptDate(new DateTime(migrationAnnotation.scriptDate()));
-        script.setScriptVersion(new Version(migrationAnnotation.scriptVersion(), Migration.scriptVersionStrictMode));
-        script.setDatabaseVersion(new Version(migrationAnnotation.scriptVersion(), Migration.scriptVersionStrictMode));
+        GroovyScript thisScript = new GroovyScript();
+        thisScript.setUrl(resource.getUrl());
+        thisScript.setFilename(resource.getFilename());
+        thisScript.setScriptClass(scriptClass);
+        thisScript.setScriptInstance(scriptInstance);
+        thisScript.setScriptDate(new DateTime(migrationAnnotation.scriptDate()));
+        thisScript.setScriptVersion(new Version(migrationAnnotation.scriptVersion(), Migration.scriptVersionStrictMode));
+        thisScript.setDatabaseVersion(new Version(migrationAnnotation.scriptVersion(), Migration.scriptVersionStrictMode));
+        try {
+          thisScript.setDatabaseType(migrationAnnotation.databaseType());
+        } catch (Exception e) {
+          // no-op, just ignore
+        }
 
         // validate that the script version is equal to the version in the script template
-        if (!script.getScriptVersion().equals(scriptTemplateVersion)) {
-          throw new MigrationException("Cannot load script: " + script.getFilename() + ". Script version '" + migrationAnnotation.scriptVersion() +
+        if (!thisScript.getScriptVersion().equals(scriptTemplateVersion)) {
+          throw new MigrationException("Cannot load script: " + thisScript.getFilename() + ". Script version '" + migrationAnnotation.scriptVersion() +
             "' is incompatible with the current script template version '" + scriptTemplateVersion + "'.  Please update your groovy script to " +
             "the latest version of the template");
         }
 
         // set the sha1 hash
         try {
-          script.setSha1Hash(DigestUtils.shaHex(resource.getUrl().openStream()));
+          thisScript.setSha1Hash(DigestUtils.shaHex(resource.getUrl().openStream()));
         } catch (IOException e) {
           // no-op, this will never throw
         }
 
         // scripts are uniquely IDed by the script date so check to
         // see if this script is already in the set
-        if (scripts.contains(script)) {
-          GroovyScript firstScript = null;
-          for (GroovyScript aScript : scripts) {
-            if (aScript.equals(script)) {
-              firstScript = aScript;
-            }
+        for (GroovyScript thatScript : scripts) {
+          if (thisScript.equals(thatScript)) {
+            throw new MigrationException("Unique script violation.  Groovy script [" + thisScript.getUrl() + "] violates" +
+              " unique date and database type constraint.  It defines the same date and database type as [" +
+              thatScript.getUrl().toExternalForm() + "]");
           }
-          throw new MigrationException("Unique script violation.  Groovy script [" + script.getUrl() + "] violates" +
-            " unique date constraint.  Script [" + firstScript.getUrl().toExternalForm() + "] already contains the same date");
         }
 
-        scripts.add(script);
-        logger.debug("Added groovy script to migration: " + script.getFilename());
+        scripts.add(thisScript);
+        logger.debug("Added groovy script to migration: " + thisScript.getFilename());
       } else {
         logger.warn("Unable to load script [" + resource.getFilename() + "].  Not marked for migration with the annotation: " + Migration.class.getName());
       }
@@ -254,8 +255,8 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 
         // if both from and to dates are defined
         if (fromDate != null && toDate != null &&
-            (loadedScriptDate.isEqual(fromDate) || loadedScriptDate.isAfter(fromDate)) &&
-            (loadedScriptDate.isEqual(toDate) || loadedScriptDate.isBefore(toDate))
+          (loadedScriptDate.isEqual(fromDate) || loadedScriptDate.isAfter(fromDate)) &&
+          (loadedScriptDate.isEqual(toDate) || loadedScriptDate.isBefore(toDate))
           ) {
           filteredScripts.add(scriptToFilter);
         }
@@ -285,8 +286,8 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 
         // if both from and to dates are defined
         if (fromVer != null && toVer != null &&
-            (scriptToFilterVersion.equals(fromVer) || scriptToFilterVersion.compareTo(fromVer) > 0) &&
-            (scriptToFilterVersion.equals(toVer) || scriptToFilterVersion.compareTo(toVer) < 0)
+          (scriptToFilterVersion.equals(fromVer) || scriptToFilterVersion.compareTo(fromVer) > 0) &&
+          (scriptToFilterVersion.equals(toVer) || scriptToFilterVersion.compareTo(toVer) < 0)
           ) {
           filteredScripts.add(scriptToFilter);
         }

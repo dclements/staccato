@@ -2,6 +2,7 @@ package com.readytalk.staccato.database.migration.script;
 
 import org.joda.time.DateTime;
 
+import com.readytalk.staccato.database.DatabaseType;
 import com.readytalk.staccato.utils.Version;
 
 /**
@@ -54,4 +55,11 @@ public interface DynamicLanguageScript<T> extends Script<T> {
    * @return the database version
    */
   Version getDatabaseVersion();
+
+  /**
+   * Returns the database type
+   *
+   * @return the database type
+   */
+  DatabaseType getDatabaseType();
 }
