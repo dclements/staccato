@@ -56,7 +56,7 @@ public class CommandLineServiceImplTest extends BaseTest {
 
     String[] args = new String[]{"-j", "jdbcUri", "-n", "dbName", "-u", "dbUser", "-p", dbPwd,
       "-m", "UP", "fd", "fromDate", "td", "toDate", "-s", "test.groovy", "-d", "migrations/",
-      "rn", "rootDbName", "-su", "superuser", "-sup", "superuserPwd", "-fv", "fromVer", "-tv", "toVer", "-l", "FALSE"};
+      "rn", "rootDbName", "-su", "superuser", "-sup", "superuserPwd", "-fv", "fromVer", "-tv", "toVer", "-l", "true"};
 
     try {
       StaccatoOptions options = service.parse(args);
