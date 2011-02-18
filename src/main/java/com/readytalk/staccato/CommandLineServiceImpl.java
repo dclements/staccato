@@ -86,15 +86,12 @@ public class CommandLineServiceImpl implements CommandLineService {
         staccatoOptions.rootDb = rootDb;
         staccatoOptions.migrationJarPath = migrationJarPath;
 
-        boolean enableLogging = true;
-
         try {
-          enableLogging = Boolean.getBoolean(logging);
+          Boolean loggingEnabled = new Boolean(logging);
+          staccatoOptions.enableLogging = loggingEnabled;
         } catch (Exception e) {
-          // no-op, leave it set to true
+          staccatoOptions.enableLogging = true;
         }
-
-        staccatoOptions.enableLogging = enableLogging;
 
         return staccatoOptions;
       } catch (ParseException e) {

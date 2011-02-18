@@ -56,10 +56,13 @@ public class CommandLineServiceImplTest extends BaseTest {
 
     String[] args = new String[]{"-j", "jdbcUri", "-n", "dbName", "-u", "dbUser", "-p", dbPwd,
       "-m", "UP", "fd", "fromDate", "td", "toDate", "-s", "test.groovy", "-d", "migrations/",
-      "rn", "rootDbName", "-su", "superuser", "-sup", "superuserPwd", "-fv", "fromVer", "-tv", "toVer"};
+      "rn", "rootDbName", "-su", "superuser", "-sup", "superuserPwd", "-fv", "fromVer", "-tv", "toVer", "-l", "FALSE"};
 
     try {
-      service.parse(args);
+      StaccatoOptions options = service.parse(args);
+
+      Assert.assertTrue(options.enableLogging);
+
     } catch (MigrationException e) {
       Assert.fail("Should not have thrown", e);
     }
