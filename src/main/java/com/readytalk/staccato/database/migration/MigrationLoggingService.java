@@ -10,8 +10,8 @@ import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
 /**
  * @author jhumphrey
  */
-@ImplementedBy(MigrationVersionsServiceImpl.class)
-public interface MigrationVersionsService {
+@ImplementedBy(MigrationLoggingServiceImpl.class)
+public interface MigrationLoggingService {
 
   public static final String MIGRATION_VERSIONS_TABLE = "STACCATO_MIGRATIONS";
 

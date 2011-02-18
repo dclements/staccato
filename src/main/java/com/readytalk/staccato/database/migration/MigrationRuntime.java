@@ -27,6 +27,13 @@ public interface MigrationRuntime {
   MigrationType getMigrationType();
 
   /**
+   * Returns true if Staccato is logging script execution
+   *
+   * @return true or false
+   */
+  boolean isLoggingEnabled();
+
+  /**
    * The list of sql scripts for the migration runtime
    *
    * @return list of sql scripts

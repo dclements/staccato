@@ -114,7 +114,7 @@ public class Staccato {
 
     // initialize the runtime.
     // This runtime object eventually gets passed to the scripts themselves as a method argument
-    MigrationRuntime migrationRuntime = new MigrationRuntimeImpl(dbCtx, sqlScripts, migrationType);
+    MigrationRuntime migrationRuntime = new MigrationRuntimeImpl(dbCtx, sqlScripts, migrationType, options.enableLogging);
 
     try {
       migrationService.run(scriptsToRun, migrationRuntime);

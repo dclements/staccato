@@ -66,6 +66,8 @@ public class CommandLineServiceImpl implements CommandLineService {
         String migrateFromVer = cli.getOptionValue(StaccatoOptions.Arg.MIGRATE_FROM_VER.opt);
         String migrateToVer = cli.getOptionValue(StaccatoOptions.Arg.MIGRATE_TO_VER.opt);
         String rootDb = cli.getOptionValue(StaccatoOptions.Arg.ROOT_DB.opt);
+        String migrationJarPath = cli.getOptionValue(StaccatoOptions.Arg.MIGRATION_JAR_PATH.opt);
+        String logging = cli.getOptionValue(StaccatoOptions.Arg.LOGGING.opt);
 
         StaccatoOptions staccatoOptions = new StaccatoOptions();
         staccatoOptions.jdbcUrl = jdbcUrl;
@@ -82,7 +84,17 @@ public class CommandLineServiceImpl implements CommandLineService {
         staccatoOptions.migrateFromVer = migrateFromVer;
         staccatoOptions.migrateToVer = migrateToVer;
         staccatoOptions.rootDb = rootDb;
+        staccatoOptions.migrationJarPath = migrationJarPath;
 
+        boolean enableLogging = true;
+
+        try {
+          enableLogging = Boolean.getBoolean(logging);
+        } catch (Exception e) {
+          // no-op, leave it set to true
+        }
+
+        staccatoOptions.enableLogging = enableLogging;
 
         return staccatoOptions;
       } catch (ParseException e) {

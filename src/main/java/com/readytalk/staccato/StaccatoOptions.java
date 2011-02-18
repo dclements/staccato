@@ -54,6 +54,8 @@ public class StaccatoOptions {
   @Version(strictMode = Migration.databaseVersionStrictMode)
   public String migrateToVer;
 
+  public boolean enableLogging = true;
+
   public static enum Arg {
     JDBC_URL("j", "jdbc", "The JDBC URL.  This url should not contain the database name. Please provide the database name via the 'n' option.", true),
     DB_NAME("n", "dbName", "The name of the database migrations are being run on", true),
@@ -73,7 +75,10 @@ public class StaccatoOptions {
     DB_SUPERUSER_PWD("sup", "dbSuperPwd", "The superuser password to use when creating a new database.", false),
     MIGRATE_FROM_VER("fv", "fromVersion", "The version to migrate from", false),
     MIGRATE_TO_VER("tv", "toVersion", "The version to migrate to", false),
-    MIGRATION_JAR_PATH("mj", "migrationJar", "The path to the migration jar", false);
+    MIGRATION_JAR_PATH("mj", "migrationJar", "The path to the migration jar", false),
+    LOGGING("l", "logging", "Toggles the migration logging system, which logs script " +
+      "execution to the 'staccato_migrations' table in the database.  Set to 'false' if you don't " +
+      "want Staccato to create a 'staccato_migrations' table in your database.  Defaults to 'true' if anything other than 'false' is specified.", false);
 
     String opt;
 

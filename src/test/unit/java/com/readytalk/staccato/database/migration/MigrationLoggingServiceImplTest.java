@@ -20,17 +20,17 @@ import com.readytalk.staccato.database.migration.annotation.PreUp;
 import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
 import com.readytalk.staccato.database.migration.script.groovy.GroovyScriptService;
 
-import static com.readytalk.staccato.database.migration.MigrationVersionsService.MIGRATION_VERSIONS_TABLE;
+import static com.readytalk.staccato.database.migration.MigrationLoggingService.MIGRATION_VERSIONS_TABLE;
 
 /**
  * @author jhumphrey
  */
-public class MigrationVersionsServiceImplTest extends BaseTest {
+public class MigrationLoggingServiceImplTest extends BaseTest {
 
   @Test(dataProvider = "fullyQualifiedJdbcProvider")
   public void testAPI(URI jdbcUri) {
 
-    MigrationVersionsServiceImpl service = new MigrationVersionsServiceImpl();
+    MigrationLoggingServiceImpl service = new MigrationLoggingServiceImpl();
 
     DatabaseContext context = new DatabaseContext();
     context.setConnection(makeConnection(jdbcUri));

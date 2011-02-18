@@ -21,11 +21,15 @@ public class MigrationRuntimeImpl implements MigrationRuntime {
   private DatabaseContext databaseContext;
   private List<SQLScript> sqlScripts;
   private MigrationType migrationType;
+  private boolean loggingEnabled;
 
-  public MigrationRuntimeImpl(DatabaseContext databaseContext, List<SQLScript> sqlScripts, MigrationType migrationType) {
+  public MigrationRuntimeImpl(DatabaseContext databaseContext, List<SQLScript> sqlScripts,
+    MigrationType migrationType, boolean loggingEnabled) {
+
     this.databaseContext = databaseContext;
     this.sqlScripts = sqlScripts;
     this.migrationType = migrationType;
+    this.loggingEnabled = loggingEnabled;
   }
 
   @Override
@@ -36,6 +40,11 @@ public class MigrationRuntimeImpl implements MigrationRuntime {
   @Override
   public MigrationType getMigrationType() {
     return migrationType;
+  }
+
+  @Override
+  public boolean isLoggingEnabled() {
+    return loggingEnabled;
   }
 
   @Override

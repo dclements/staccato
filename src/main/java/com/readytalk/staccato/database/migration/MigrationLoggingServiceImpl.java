@@ -18,9 +18,9 @@ import com.readytalk.staccato.utils.SQLUtils;
 /**
  * @author jhumphrey
  */
-public class MigrationVersionsServiceImpl implements MigrationVersionsService {
+public class MigrationLoggingServiceImpl implements MigrationLoggingService {
 
-  public static final Logger logger = Logger.getLogger(MigrationVersionsServiceImpl.class);
+  public static final Logger logger = Logger.getLogger(MigrationLoggingServiceImpl.class);
 
   /**
    * {@inheritDoc}
@@ -83,6 +83,7 @@ public class MigrationVersionsServiceImpl implements MigrationVersionsService {
 
   @Override
   public void log(DatabaseContext databaseContext, DynamicLanguageScript script, Class<? extends Annotation> workflowStep, Migration migrationAnnotation) {
+
     // create the migration versions table
     createVersionsTable(databaseContext);
 

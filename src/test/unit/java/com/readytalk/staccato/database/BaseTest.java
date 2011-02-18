@@ -16,7 +16,7 @@ import org.testng.annotations.DataProvider;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.readytalk.staccato.database.migration.MigrationVersionsService;
+import com.readytalk.staccato.database.migration.MigrationLoggingService;
 import com.readytalk.staccato.database.migration.guice.MigrationModule;
 import com.readytalk.staccato.database.migration.script.groovy.GroovyScript;
 import com.readytalk.staccato.utils.SQLUtils;
@@ -77,7 +77,7 @@ public class BaseTest {
     try {
       Statement st = connection.createStatement();
 
-      st.execute("drop table " + MigrationVersionsService.MIGRATION_VERSIONS_TABLE);
+      st.execute("drop table " + MigrationLoggingService.MIGRATION_VERSIONS_TABLE);
 
     } catch (Exception e) {
       // this should only throw if the table doesnt exist, which is OK
@@ -90,7 +90,7 @@ public class BaseTest {
 
     try {
       ResultSet rs;
-      rs = SQLUtils.execute(connection, "select script_date, script_filename, script_hash from " + MigrationVersionsService.MIGRATION_VERSIONS_TABLE);
+      rs = SQLUtils.execute(connection, "select script_date, script_filename, script_hash from " + MigrationLoggingService.MIGRATION_VERSIONS_TABLE);
       while (rs.next()) {
         GroovyScript groovyScript = new GroovyScript();
         groovyScript.setScriptDate(new DateTime(rs.getTimestamp(1)));

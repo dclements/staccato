@@ -8,9 +8,9 @@ import org.apache.log4j.Logger;
 import com.google.inject.Inject;
 import com.readytalk.staccato.Main;
 import com.readytalk.staccato.database.migration.MigrationException;
+import com.readytalk.staccato.database.migration.MigrationLoggingService;
 import com.readytalk.staccato.database.migration.MigrationResult;
 import com.readytalk.staccato.database.migration.MigrationRuntime;
-import com.readytalk.staccato.database.migration.MigrationVersionsService;
 import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationParser;
 import com.readytalk.staccato.database.migration.annotation.WorkflowStep;
 import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
@@ -26,12 +26,12 @@ public class MigrationWorkflowServiceImpl<T extends Annotation> implements Migra
 
   private MigrationAnnotationParser annotationParser;
 
-  private MigrationVersionsService migrationVersionsService;
+  private MigrationLoggingService migrationLoggingService;
 
   @Inject
-  public MigrationWorkflowServiceImpl(MigrationAnnotationParser annotationParser, MigrationVersionsService migrationVersionsService) {
+  public MigrationWorkflowServiceImpl(MigrationAnnotationParser annotationParser, MigrationLoggingService migrationLoggingService) {
     this.annotationParser = annotationParser;
-    this.migrationVersionsService = migrationVersionsService;
+    this.migrationLoggingService = migrationLoggingService;
   }
 
   @Override
@@ -62,8 +62,10 @@ public class MigrationWorkflowServiceImpl<T extends Annotation> implements Migra
             Object executionResult = stepExecutorInstance.execute(script.getScriptInstance(), new WorkflowContext(annotationParser, migrationRuntime));
             migrationResult.getResultMap().put(annotation.annotationType(), executionResult);
 
-            // if execute is successful, log to the migration versions table
-            migrationVersionsService.log(migrationRuntime.getDatabaseContext(), script, workflowStep, annotationParser.getMigrationAnnotation(script.getScriptInstance()));
+            // if enabled, log successful script execution
+            if (migrationRuntime.isLoggingEnabled()) {
+              migrationLoggingService.log(migrationRuntime.getDatabaseContext(), script, workflowStep, annotationParser.getMigrationAnnotation(script.getScriptInstance()));
+            }
 
           } catch (IllegalAccessException e) {
             throw new MigrationException("Unable to access workflow step class: " + workflowStep.getSimpleName(), e);
