@@ -8,6 +8,7 @@ CREATE DATABASE staccato_root WITH OWNER staccato;
 GRANT ALL PRIVILEGES ON DATABASE staccato_root TO staccato;
 
 -- connect to the staccato database with the staccato user and run the below scripts
+--  > psql -u staccato
 create table foo (
   id                 serial,
   bar                varchar(50) not null,

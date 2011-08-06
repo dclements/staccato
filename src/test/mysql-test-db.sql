@@ -8,6 +8,7 @@ CREATE DATABASE staccato_root;
 GRANT ALL PRIVILEGES ON staccato_root.* TO 'staccato'@'localhost';
 
 -- connect to the new staccato database and run the sql below
+-- use staccato;
 create table foo (
   id                 int,
   bar                varchar(50) not null,
