@@ -1,12 +1,12 @@
 package com.readytalk.staccato.database.migration.workflow;
 
+import static org.mockito.Mockito.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 
-import org.easymock.EasyMock;
 import org.testng.annotations.Test;
 
 import com.readytalk.staccato.database.BaseTest;
@@ -30,23 +30,21 @@ public class CreateWorkflowStepExecutorTest extends BaseTest {
     File file = new File("src/test/unit/groovy/TestScript.groovy");
 
     // test with a groovy script
-    DynamicLanguageScript script = EasyMock.createStrictMock(DynamicLanguageScript.class);
-    EasyMock.expect(script.getUrl()).andReturn(file.toURI().toURL());
-    EasyMock.expect(script.getFilename()).andReturn(file.getName());
-    EasyMock.expect(script.getUrl()).andReturn(file.toURI().toURL());
-    EasyMock.replay(script);
+    DynamicLanguageScript<?> script = mock(DynamicLanguageScript.class);
+    when(script.getUrl()).thenReturn(file.toURI().toURL());
+    when(script.getFilename()).thenReturn(file.getName());
+    when(script.getUrl()).thenReturn(file.toURI().toURL());
 
     GroovyClassLoader gcl = new GroovyClassLoader(this.getClass().getClassLoader());
-    Class scriptClass = gcl.parseClass(new GroovyCodeSource(script.getUrl()));
+    Class<?> scriptClass = gcl.parseClass(new GroovyCodeSource(script.getUrl()));
 
     Object scriptInstance = scriptClass.newInstance();
     Method testMethod = scriptInstance.getClass().getMethod("create", MigrationRuntime.class);
 
     Create createWorkflowStep = testMethod.getAnnotation(Create.class);
 
-    MigrationAnnotationParser annotationParser = EasyMock.createStrictMock(MigrationAnnotationParser.class);
-    EasyMock.expect(annotationParser.getAnnotatedMethod(scriptInstance, createWorkflowStep.annotationType())).andReturn(testMethod);
-    EasyMock.replay(annotationParser);
+    MigrationAnnotationParser annotationParser = mock(MigrationAnnotationParser.class);
+    when(annotationParser.getAnnotatedMethod(eq(scriptInstance), eq(createWorkflowStep.annotationType()))).thenReturn(testMethod);
 
     CreateWorkflowStepExecutor executor = new CreateWorkflowStepExecutor();
     executor.initialize(createWorkflowStep);
@@ -63,9 +61,8 @@ public class CreateWorkflowStepExecutorTest extends BaseTest {
     context.setConnection(makeConnection(URI.create(baseJdbcUri.toString() + dbName)));
     context.setDatabaseType(DatabaseType.getTypeFromJDBCUri(baseJdbcUri));
 
-    MigrationRuntime runtime = EasyMock.createMock(MigrationRuntime.class);
-    EasyMock.expect(runtime.getDatabaseContext()).andReturn(context).times(2);
-    EasyMock.replay(runtime);
+    MigrationRuntime runtime = mock(MigrationRuntime.class);
+    when(runtime.getDatabaseContext()).thenReturn(context, context);
 
     try {
       executor.execute(scriptInstance, new WorkflowContext(annotationParser, runtime));
@@ -80,23 +77,21 @@ public class CreateWorkflowStepExecutorTest extends BaseTest {
     File file = new File("src/test/unit/groovy/TestScript.groovy");
 
     // test with a groovy script
-    DynamicLanguageScript script = EasyMock.createStrictMock(DynamicLanguageScript.class);
-    EasyMock.expect(script.getUrl()).andReturn(file.toURI().toURL());
-    EasyMock.expect(script.getFilename()).andReturn(file.getName());
-    EasyMock.expect(script.getUrl()).andReturn(file.toURI().toURL());
-    EasyMock.replay(script);
+    DynamicLanguageScript<?> script = mock(DynamicLanguageScript.class);
+    when(script.getUrl()).thenReturn(file.toURI().toURL());
+    when(script.getFilename()).thenReturn(file.getName());
+    when(script.getUrl()).thenReturn(file.toURI().toURL());
 
     GroovyClassLoader gcl = new GroovyClassLoader(this.getClass().getClassLoader());
-    Class scriptClass = gcl.parseClass(new GroovyCodeSource(script.getUrl()));
+    Class<?> scriptClass = gcl.parseClass(new GroovyCodeSource(script.getUrl()));
 
     Object scriptInstance = scriptClass.newInstance();
     Method testMethod = scriptInstance.getClass().getMethod("create", MigrationRuntime.class);
 
     Create createWorkflowStep = testMethod.getAnnotation(Create.class);
 
-    MigrationAnnotationParser annotationParser = EasyMock.createStrictMock(MigrationAnnotationParser.class);
-    EasyMock.expect(annotationParser.getAnnotatedMethod(scriptInstance, createWorkflowStep.annotationType())).andReturn(testMethod);
-    EasyMock.replay(annotationParser);
+    MigrationAnnotationParser annotationParser = mock(MigrationAnnotationParser.class);
+    when(annotationParser.getAnnotatedMethod(eq(scriptInstance), eq(createWorkflowStep.annotationType()))).thenReturn(testMethod);
 
     CreateWorkflowStepExecutor executor = new CreateWorkflowStepExecutor();
     executor.initialize(createWorkflowStep);
@@ -112,9 +107,8 @@ public class CreateWorkflowStepExecutorTest extends BaseTest {
     context.setBaseJdbcUri(baseJdbcUri);
     context.setDatabaseType(DatabaseType.getTypeFromJDBCUri(baseJdbcUri));
 
-    MigrationRuntime runtime = EasyMock.createMock(MigrationRuntime.class);
-    EasyMock.expect(runtime.getDatabaseContext()).andReturn(context).times(2);
-    EasyMock.replay(runtime);
+    MigrationRuntime runtime = mock(MigrationRuntime.class);
+    when(runtime.getDatabaseContext()).thenReturn(context, context);
 
     try {
       executor.execute(scriptInstance, new WorkflowContext(annotationParser, runtime));

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.easymock.EasyMock;
+import static org.mockito.Mockito.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -27,14 +27,13 @@ public class WorkflowStepExecutorImplTest {
     File file = new File("src/test/unit/groovy/TestScript.groovy");
 
     // test with a groovy script
-    DynamicLanguageScript script = EasyMock.createStrictMock(DynamicLanguageScript.class);
-    EasyMock.expect(script.getUrl()).andReturn(file.toURI().toURL());
-    EasyMock.expect(script.getFilename()).andReturn(file.getName());
-    EasyMock.expect(script.getUrl()).andReturn(file.toURI().toURL());
-    EasyMock.replay(script);
+    DynamicLanguageScript<?> script = mock(DynamicLanguageScript.class);
+    when(script.getUrl()).thenReturn(file.toURI().toURL());
+    when(script.getFilename()).thenReturn(file.getName());
+    when(script.getUrl()).thenReturn(file.toURI().toURL());
 
     GroovyClassLoader gcl = new GroovyClassLoader(this.getClass().getClassLoader());
-    Class scriptClass = gcl.parseClass(new GroovyCodeSource(script.getUrl()));
+    Class<?> scriptClass = gcl.parseClass(new GroovyCodeSource(script.getUrl()));
 
     Object scriptInstance = scriptClass.newInstance();
     Method testMethod = scriptInstance.getClass().getMethod("testMethodOne", MigrationRuntime.class);
@@ -43,14 +42,13 @@ public class WorkflowStepExecutorImplTest {
 
     Assert.assertEquals(testWorkflowStepOne.value(), "foo");
 
-    MigrationAnnotationParser annotationParser = EasyMock.createStrictMock(MigrationAnnotationParser.class);
-    EasyMock.expect(annotationParser.getAnnotatedMethod(scriptInstance, testWorkflowStepOne.annotationType())).andReturn(testMethod);
-    EasyMock.replay(annotationParser);
+    MigrationAnnotationParser annotationParser = mock(MigrationAnnotationParser.class);
+    when(annotationParser.getAnnotatedMethod(eq(scriptInstance), eq(testWorkflowStepOne.annotationType()))).thenReturn(testMethod);
 
     WorkflowStepExecutorImpl<TestWorkflowStepOne> executor = new WorkflowStepExecutorImpl<TestWorkflowStepOne>();
     executor.initialize(testWorkflowStepOne);
 
-    MigrationRuntime runtime = EasyMock.createMock(MigrationRuntime.class);
+    MigrationRuntime runtime = mock(MigrationRuntime.class);
 
     try {
       Object result = executor.execute(scriptInstance, new WorkflowContext(annotationParser, runtime));

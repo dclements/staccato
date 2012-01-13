@@ -1,6 +1,6 @@
 package com.readytalk.staccato.database.migration.validation.javax;
 
-import org.easymock.EasyMock;
+import static org.mockito.Mockito.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -58,6 +58,6 @@ public class VersionValidatorTest {
    * @return and DateFormat constraint
    */
   private Version makeConstraint() {
-    return EasyMock.createStrictMock(Version.class);
+    return mock(Version.class);
   }
 }

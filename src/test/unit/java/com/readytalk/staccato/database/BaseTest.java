@@ -108,16 +108,14 @@ public class BaseTest {
   @DataProvider(name = "jdbcProvider")
   public Object[][] jdbcProvider() {
     return new Object[][]{
-      {postgresqlJdbcUri},
-      {mysqlJdbcUri}
+      {postgresqlJdbcUri}
     };
   }
 
   @DataProvider(name = "fullyQualifiedJdbcProvider")
   public Object[][] fullyQualifedJdbcProvider() {
     return new Object[][]{
-      {URI.create(postgresqlJdbcUri.toString() + dbName)},
-      {URI.create(mysqlJdbcUri.toString() + dbName)}
+      {URI.create(postgresqlJdbcUri.toString() + dbName)}
     };
   }
 }

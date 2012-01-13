@@ -1,6 +1,6 @@
 package com.readytalk.staccato.database.migration.validation.javax;
 
-import org.easymock.EasyMock;
+import static org.mockito.Mockito.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -56,9 +56,8 @@ public class DateFormatValidatorTest {
    * @return and DateFormat constraint
    */
   private DateFormat makeConstraint() {
-    DateFormat dateFormat = EasyMock.createStrictMock(DateFormat.class);
-    EasyMock.expect(dateFormat.dateFormat()).andReturn(DateFormat.ISO_DATE_FORMAT);
-    EasyMock.replay(dateFormat);
+    DateFormat dateFormat = mock(DateFormat.class);
+    when(dateFormat.dateFormat()).thenReturn(DateFormat.ISO_DATE_FORMAT);
     return dateFormat;
   }
 }

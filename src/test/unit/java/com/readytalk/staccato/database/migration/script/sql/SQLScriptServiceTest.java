@@ -1,12 +1,11 @@
 package com.readytalk.staccato.database.migration.script.sql;
-
+import static org.mockito.Mockito.*;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.easymock.EasyMock;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -37,9 +36,8 @@ public class SQLScriptServiceTest {
     resources.add(resourceTwo);
     resources.add(resourceThree);
 
-    ResourceLoader loader = EasyMock.createStrictMock(ResourceLoader.class);
-    EasyMock.expect(loader.loadRecursively(MigrationService.DEFAULT_MIGRATIONS_DIR, "sql", this.getClass().getClassLoader())).andReturn(resources);
-    EasyMock.replay(loader);
+    ResourceLoader loader = mock(ResourceLoader.class);
+    when(loader.loadRecursively(eq(MigrationService.DEFAULT_MIGRATIONS_DIR), eq("sql"), eq(this.getClass().getClassLoader()))).thenReturn(resources);
 
     SQLScriptService service = new SQLScriptService(loader);
 
@@ -75,9 +73,8 @@ public class SQLScriptServiceTest {
     resources.add(resourceOne);
     resources.add(resourceTwo);
 
-    ResourceLoader loader = EasyMock.createStrictMock(ResourceLoader.class);
-    EasyMock.expect(loader.loadRecursively(MigrationService.DEFAULT_MIGRATIONS_DIR, "sql", this.getClass().getClassLoader())).andReturn(resources);
-    EasyMock.replay(loader);
+    ResourceLoader loader = mock(ResourceLoader.class);
+    when(loader.loadRecursively(eq(MigrationService.DEFAULT_MIGRATIONS_DIR), eq("sql"), eq(this.getClass().getClassLoader()))).thenReturn(resources);
 
     SQLScriptService service = new SQLScriptService(loader);
 

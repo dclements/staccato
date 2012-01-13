@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.easymock.EasyMock;
+import static org.mockito.Mockito.*;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -40,13 +40,13 @@ public class GroovyScriptServiceTest {
   @Test
   public void testToClass() throws MalformedURLException {
 
-    ResourceLoader loader = EasyMock.createMock(ResourceLoader.class);
+    ResourceLoader loader = mock(ResourceLoader.class);
 
     GroovyScriptService service = new GroovyScriptService(loader, null, new MigrationAnnotationParserImpl());
 
     File file = new File("src/test/unit/groovy/TestScript_1_0.groovy");
 
-    Class groovyClass = service.toClass(file.toURI().toURL());
+    Class<?> groovyClass = service.toClass(file.toURI().toURL());
 
     Assert.assertNotNull(groovyClass);
   }
@@ -73,12 +73,11 @@ public class GroovyScriptServiceTest {
     resources.add(resourceTwo);
     resources.add(resourceThree);
 
-    ResourceLoader loader = EasyMock.createStrictMock(ResourceLoader.class);
-    EasyMock.expect(loader.loadRecursively(MigrationService.DEFAULT_MIGRATIONS_DIR, "groovy", this.getClass().getClassLoader())).andReturn(resources);
-    EasyMock.replay(loader);
+    ResourceLoader loader = mock(ResourceLoader.class);
+    when(loader.loadRecursively(eq(MigrationService.DEFAULT_MIGRATIONS_DIR), eq("groovy"), eq(this.getClass().getClassLoader()))).thenReturn(resources);
 
     // don't care about validation so create a nice mock
-    MigrationValidator validator = EasyMock.createNiceMock(MigrationValidator.class);
+    MigrationValidator validator = mock(MigrationValidator.class);
 
     MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
 
@@ -102,6 +101,8 @@ public class GroovyScriptServiceTest {
     Assert.assertEquals(actualScriptOne.getFilename(), expectedResourceTwoFilename);
     Assert.assertEquals(actualScriptTwo.getFilename(), expectedResourceOneFilename);
     Assert.assertEquals(actualScriptThree.getFilename(), expectedResourceThreeFilename);
+    
+    verify(loader).loadRecursively(eq(MigrationService.DEFAULT_MIGRATIONS_DIR), eq("groovy"), eq(this.getClass().getClassLoader()));
   }
 
   @Test
@@ -121,17 +122,15 @@ public class GroovyScriptServiceTest {
     resources.add(resourceOne);
     resources.add(resourceTwo);
 
-    ResourceLoader loader = EasyMock.createStrictMock(ResourceLoader.class);
-    EasyMock.expect(loader.loadRecursively(MigrationService.DEFAULT_MIGRATIONS_DIR, "groovy", this.getClass().getClassLoader())).andReturn(resources);
-    EasyMock.replay(loader);
-
+    ResourceLoader loader = mock(ResourceLoader.class);
+    when(loader.loadRecursively(eq(MigrationService.DEFAULT_MIGRATIONS_DIR), eq("groovy"), eq(this.getClass().getClassLoader()))).thenReturn(resources);
+    
     // don't care about validation so create a nice mock
-    MigrationValidator validator = EasyMock.createNiceMock(MigrationValidator.class);
+    MigrationValidator validator = mock(MigrationValidator.class);
 
     MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
 
     GroovyScriptService service = new GroovyScriptService(loader, validator, annotationParser);
-
     try {
       service.load(MigrationService.DEFAULT_MIGRATIONS_DIR, this.getClass().getClassLoader());
       Assert.fail("should have thrown an exception due to the unique date violation");
@@ -152,8 +151,8 @@ public class GroovyScriptServiceTest {
     String expectedUser = System.getenv("USER");
     String expectedDatabaseVersion = "1.0";
 
-    ResourceLoader loader = EasyMock.createMock(ResourceLoader.class);
-    MigrationValidator validator = EasyMock.createMock(MigrationValidator.class);
+    ResourceLoader loader = mock(ResourceLoader.class);
+    MigrationValidator validator = mock(MigrationValidator.class);
     MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
     GroovyScriptService service = new GroovyScriptService(loader, validator, annotationParser);
     ScriptTemplate template = service.getScriptTemplate(expectedScriptDate, expectedUser, expectedDatabaseVersion);
@@ -183,8 +182,8 @@ public class GroovyScriptServiceTest {
   @Test
   public void testTemplateVersion() throws IOException {
 
-    ResourceLoader loader = EasyMock.createMock(ResourceLoader.class);
-    MigrationValidator validator = EasyMock.createMock(MigrationValidator.class);
+    ResourceLoader loader = mock(ResourceLoader.class);
+    MigrationValidator validator = mock(MigrationValidator.class);
     MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
 
     GroovyScriptService service = null;
@@ -251,8 +250,8 @@ public class GroovyScriptServiceTest {
     }
 
     // mock the service
-    ResourceLoader loader = EasyMock.createStrictMock(ResourceLoader.class);
-    MigrationValidator validator = EasyMock.createNiceMock(MigrationValidator.class);
+    ResourceLoader loader = mock(ResourceLoader.class);
+    MigrationValidator validator = mock(MigrationValidator.class);
     MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
     GroovyScriptService service = new GroovyScriptService(loader, validator, annotationParser);
 
@@ -364,8 +363,8 @@ public class GroovyScriptServiceTest {
     }
 
     // mock the service
-    ResourceLoader loader = EasyMock.createStrictMock(ResourceLoader.class);
-    MigrationValidator validator = EasyMock.createNiceMock(MigrationValidator.class);
+    ResourceLoader loader = mock(ResourceLoader.class);
+    MigrationValidator validator = mock(MigrationValidator.class);
     MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
     GroovyScriptService service = new GroovyScriptService(loader, validator, annotationParser);
 

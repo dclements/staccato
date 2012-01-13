@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.easymock.EasyMock;
+import static org.mockito.Mockito.*;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.testng.Assert;
@@ -62,15 +62,14 @@ public class MigrationLoggingServiceImplTest extends BaseTest {
     String expectedDatabaseVersion = "1.0";
     Class<? extends Annotation> expectedWorkflowStep = PreUp.class;
 
-    DynamicLanguageScript script = EasyMock.createMock(DynamicLanguageScript.class);
-    EasyMock.expect(script.getScriptDate()).andReturn(expectedScriptDate);
-    EasyMock.expect(script.getFilename()).andReturn(expectedFilename);
-    EasyMock.expect(script.getSHA1Hash()).andReturn(expectedHash);
-    EasyMock.replay(script);
+    DynamicLanguageScript<?> script = mock(DynamicLanguageScript.class);
+    
+    when(script.getScriptDate()).thenReturn(expectedScriptDate);
+    when(script.getFilename()).thenReturn(expectedFilename);
+    when(script.getSHA1Hash()).thenReturn(expectedHash);
 
-    Migration migrationAnnotation = EasyMock.createStrictMock(Migration.class);
-    EasyMock.expect(migrationAnnotation.databaseVersion()).andReturn(expectedDatabaseVersion);
-    EasyMock.replay(migrationAnnotation);
+    Migration migrationAnnotation = mock(Migration.class);
+    when(migrationAnnotation.databaseVersion()).thenReturn(expectedDatabaseVersion);
 
     // test with preup
     service.log(context, script, expectedWorkflowStep, migrationAnnotation);
