@@ -1,0 +1,20 @@
+Needed:
+
+- Unit tests should not require a database.  Need to write a separate set of unit tests that are actually unit tests. 
+- Integration tests (currently called 'unit tests') should work consistently when run back-to-back, which they currently don't always from the command line. 
+
+Future:
+
+- Execute everything in transactions.
+- Separate out dependencies a little more cleanly. 
+- Take better advantage of guice, especially for unit tests. 
+- Re-adding integration tests for MySQL.
+- Better command-line Javadocs/Findbugs/Checkstyle support for CI.
+- Support for Jython, JRuby, and Scala.
+- Add maintenance support.
+- Simplify integration test setup.
+
+Under Consideration:
+
+- Porting from maven to ant, mostly because our growing tools for CI are largely written to facilitate ant+ivy.
+- Moving testing framework from TestNG to JUnit, possibly only for unit testing.  We aren't taking advantage of a lot of TestNG's features, and the two have moved closer together in the features we are using. 
