@@ -30,7 +30,6 @@ import com.readytalk.staccato.database.migration.annotation.Migration
  * Optional field that informs the system which database type the script belongs to.
  * If undefined, the system will assume to queue the script for execution.
  *
- * @author jhumphrey
  */
 @Migration(
 scriptDate = "2007-01-01T00:00:00-06:00",

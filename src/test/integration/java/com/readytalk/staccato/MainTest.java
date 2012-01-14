@@ -12,9 +12,6 @@ import com.readytalk.staccato.database.BaseTest;
 import com.readytalk.staccato.database.migration.MigrationException;
 import com.readytalk.staccato.database.migration.MigrationType;
 
-/**
- * @author jhumphrey
- */
 public class MainTest extends BaseTest {
 
   @Test

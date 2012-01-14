@@ -10,28 +10,25 @@ import org.apache.commons.cli.HelpFormatter;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
-/**
- * @author jhumphrey
- */
 public class MigrationModule extends AbstractModule {
 
-  @Override
-  protected void configure() {
+	@Override
+	protected void configure() {
 
-  }
+	}
 
-  @Provides
-  public Validator provideValidator() {
-    return Validation.buildDefaultValidatorFactory().getValidator();
-  }
+	@Provides
+	public Validator provideValidator() {
+		return Validation.buildDefaultValidatorFactory().getValidator();
+	}
 
-  @Provides
-  public CommandLineParser provideParser() {
-    return new BasicParser();
-  }
+	@Provides
+	public CommandLineParser provideParser() {
+		return new BasicParser();
+	}
 
-  @Provides
-  public HelpFormatter provideHelpFormatter() {
-    return new HelpFormatter();
-  }
+	@Provides
+	public HelpFormatter provideHelpFormatter() {
+		return new HelpFormatter();
+	}
 }

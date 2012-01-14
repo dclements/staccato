@@ -1,19 +1,20 @@
 package com.readytalk.staccato.database.migration.validation.javax;
 
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.CONSTRUCTOR;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
 import javax.validation.Constraint;
 
-import com.readytalk.staccato.database.migration.MigrationType;
-
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 /**
- * Constraint for validating DateRange objects
- *
- * @author jhumphrey
+ * Constraint for validating DateRange objects.
  */
 
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
@@ -22,9 +23,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 public @interface MigrationTypeConstraint {
 
-  String message() default "Invalid migrationType";
+	String message() default "Invalid migrationType";
 
-  Class[] groups() default {};
+	Class<?>[] groups() default {};
 
-  Class[] payload() default {};
+	Class<?>[] payload() default {};
 }

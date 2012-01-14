@@ -1,12 +1,15 @@
 package com.readytalk.staccato.database.migration;
 
+import static com.readytalk.staccato.database.migration.MigrationLoggingService.MIGRATION_VERSIONS_TABLE;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.lang.annotation.Annotation;
 import java.net.URI;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.easymock.EasyMock;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.testng.Assert;
@@ -20,82 +23,76 @@ import com.readytalk.staccato.database.migration.annotation.PreUp;
 import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
 import com.readytalk.staccato.database.migration.script.groovy.GroovyScriptService;
 
-import static com.readytalk.staccato.database.migration.MigrationLoggingService.MIGRATION_VERSIONS_TABLE;
-
-/**
- * @author jhumphrey
- */
 public class MigrationLoggingServiceImplTest extends BaseTest {
 
-  @Test(dataProvider = "fullyQualifiedJdbcProvider")
-  public void testAPI(URI jdbcUri) {
+	@Test(dataProvider = "fullyQualifiedJdbcProvider")
+	public void testAPI(URI jdbcUri) {
 
-    MigrationLoggingServiceImpl service = new MigrationLoggingServiceImpl();
+		MigrationLoggingServiceImpl service = new MigrationLoggingServiceImpl();
 
-    DatabaseContext context = new DatabaseContext();
-    context.setConnection(makeConnection(jdbcUri));
-    context.setDatabaseType(DatabaseType.getTypeFromJDBCUri(jdbcUri));
+		DatabaseContext context = new DatabaseContext();
+		context.setConnection(makeConnection(jdbcUri));
+		context.setDatabaseType(DatabaseType.getTypeFromJDBCUri(jdbcUri));
 
-    if (service.versionTableExists(context)) {
-      try {
-        Statement st = context.getConnection().createStatement();
-        st.execute("drop table " + MIGRATION_VERSIONS_TABLE);
-      } catch (Exception e) {
-        Assert.fail("failed to delete the " + MIGRATION_VERSIONS_TABLE + " table.", e);
-      }
-    }
+		if (service.versionTableExists(context)) {
+			try {
+				Statement st = context.getConnection().createStatement();
+				st.execute("drop table " + MIGRATION_VERSIONS_TABLE);
+			} catch (Exception e) {
+				Assert.fail("failed to delete the " + MIGRATION_VERSIONS_TABLE + " table.", e);
+			}
+		}
 
-    // first test that the migration versions table isn't there
-    Assert.assertFalse(service.versionTableExists(context));
+		// first test that the migration versions table isn't there
+		Assert.assertFalse(service.versionTableExists(context));
 
-    // now create it
-    service.createVersionsTable(context);
+		// now create it
+		service.createVersionsTable(context);
 
-    // now assert it's there
-    Assert.assertTrue(service.versionTableExists(context));
+		// now assert it's there
+		Assert.assertTrue(service.versionTableExists(context));
 
-    // insert a row to it:
-    String expectedScriptDateStr = DateTimeFormat.forPattern(GroovyScriptService.TEMPLATE_SCRIPT_DATE_FORMAT).print(new DateTime());
-    DateTime expectedScriptDate = new DateTime(expectedScriptDateStr);
-    String expectedFilename = "foo.groovy";
-    String expectedHash = "hasheesh";
-    String expectedDatabaseVersion = "1.0";
-    Class<? extends Annotation> expectedWorkflowStep = PreUp.class;
+		// insert a row to it:
+		String expectedScriptDateStr = DateTimeFormat.forPattern(GroovyScriptService.TEMPLATE_SCRIPT_DATE_FORMAT).print(new DateTime());
+		DateTime expectedScriptDate = new DateTime(expectedScriptDateStr);
+		String expectedFilename = "foo.groovy";
+		String expectedHash = "hasheesh";
+		String expectedDatabaseVersion = "1.0";
+		Class<? extends Annotation> expectedWorkflowStep = PreUp.class;
 
-    DynamicLanguageScript script = EasyMock.createMock(DynamicLanguageScript.class);
-    EasyMock.expect(script.getScriptDate()).andReturn(expectedScriptDate);
-    EasyMock.expect(script.getFilename()).andReturn(expectedFilename);
-    EasyMock.expect(script.getSHA1Hash()).andReturn(expectedHash);
-    EasyMock.replay(script);
+		DynamicLanguageScript<?> script = mock(DynamicLanguageScript.class);
 
-    Migration migrationAnnotation = EasyMock.createStrictMock(Migration.class);
-    EasyMock.expect(migrationAnnotation.databaseVersion()).andReturn(expectedDatabaseVersion);
-    EasyMock.replay(migrationAnnotation);
+		when(script.getScriptDate()).thenReturn(expectedScriptDate);
+		when(script.getFilename()).thenReturn(expectedFilename);
+		when(script.getSHA1Hash()).thenReturn(expectedHash);
 
-    // test with preup
-    service.log(context, script, expectedWorkflowStep, migrationAnnotation);
+		Migration migrationAnnotation = mock(Migration.class);
+		when(migrationAnnotation.databaseVersion()).thenReturn(expectedDatabaseVersion);
 
-    // now delete it
-    ResultSet rs;
+		// test with preup
+		service.log(context, script, expectedWorkflowStep, migrationAnnotation);
 
-    // test that it got inserted
-    Statement st;
-    try {
-      st = context.getConnection().createStatement();
-      rs = st.executeQuery("select script_date, script_filename, script_hash, workflow_step, database_version from " + MIGRATION_VERSIONS_TABLE);
+		// now delete it
+		ResultSet rs;
 
-      while (rs.next()) {
-        Assert.assertEquals(new DateTime(rs.getTimestamp(1)), expectedScriptDate);
-        Assert.assertEquals(rs.getString(2), expectedFilename);
-        Assert.assertEquals(rs.getString(3), expectedHash);
-        Assert.assertEquals(rs.getString(4), expectedWorkflowStep.getSimpleName());
-        Assert.assertEquals(rs.getString(5), expectedDatabaseVersion);
-      }
+		// test that it got inserted
+		Statement st;
+		try {
+			st = context.getConnection().createStatement();
+			rs = st.executeQuery("select script_date, script_filename, script_hash, workflow_step, database_version from " + MIGRATION_VERSIONS_TABLE);
 
-    } catch (SQLException e) {
-      Assert.fail("queries failed, test failed", e);
-    }
+			while (rs.next()) {
+				Assert.assertEquals(new DateTime(rs.getTimestamp(1)), expectedScriptDate);
+				Assert.assertEquals(rs.getString(2), expectedFilename);
+				Assert.assertEquals(rs.getString(3), expectedHash);
+				Assert.assertEquals(rs.getString(4), expectedWorkflowStep.getSimpleName());
+				Assert.assertEquals(rs.getString(5), expectedDatabaseVersion);
+			}
 
-    deleteVersionsTable(context.getConnection());
-  }
+		} catch (SQLException e) {
+			Assert.fail("queries failed, test failed", e);
+		}
+
+		deleteVersionsTable(context.getConnection());
+	}
 }

@@ -4,73 +4,70 @@ import java.net.URI;
 
 import org.apache.commons.lang.StringUtils;
 
-/**
- * @author jhumphrey
- */
 public class DatabaseContextBuilder {
 
-  private DatabaseContext ctx = new DatabaseContext();
+	private DatabaseContext ctx = new DatabaseContext();
 
-  /**
-   * Returns the database context
-   *
-   * @return {@link com.readytalk.staccato.database.DatabaseContext}
-   */
-  public DatabaseContext build() {
-    return ctx;
-  }
+	/**
+	 * Returns the database context
+	 *
+	 * @return {@link com.readytalk.staccato.database.DatabaseContext}
+	 */
+	public DatabaseContext build() {
+		return ctx;
+	}
 
-  /**
-   * Sets the base jdbc context
-   *
-   * @param jdbcUri the base jdbc uri
-   * @param dbName the database name
-   * @param username the database username
-   * @param password the database password
-   * @param superUser the db super user
-   * @param superUserPwd the db super user pwd
-   * @return this builder
-   */
+	/**
+	 * Sets the base jdbc context
+	 *
+	 * @param jdbcUri the base jdbc uri
+	 * @param dbName the database name
+	 * @param username the database username
+	 * @param password the database password
+	 * @param superUser the db super user
+	 * @param superUserPwd the db super user pwd
+	 * @return this builder
+	 */
 
-  public DatabaseContextBuilder setContext(String jdbcUri, String dbName, String username, String password, String superUser, String superUserPwd, String rootDbName) {
+	public DatabaseContextBuilder setContext(String jdbcUri, String dbName, String username, String password, String superUser, String superUserPwd, String rootDbName) {
 
-    String fullyQualifiedJdbcUriStr = jdbcUri.toString();
+		String fullyQualifiedJdbcUriStr = jdbcUri.toString();
 
-    if (fullyQualifiedJdbcUriStr.endsWith("/")) {
-      fullyQualifiedJdbcUriStr += dbName;
-    } else {
-      fullyQualifiedJdbcUriStr += "/" + dbName;
-    }
+		if (fullyQualifiedJdbcUriStr.endsWith("/")) {
+			fullyQualifiedJdbcUriStr += dbName;
+		} else {
+			fullyQualifiedJdbcUriStr += "/" + dbName;
+		}
 
-    URI fullyQualifiedJdbcUri = URI.create(fullyQualifiedJdbcUriStr);
+		URI fullyQualifiedJdbcUri = URI.create(fullyQualifiedJdbcUriStr);
 
-    ctx.setBaseJdbcUri(URI.create(jdbcUri));
-    ctx.setFullyQualifiedJdbcUri(fullyQualifiedJdbcUri);
-    ctx.setDbName(dbName);
-    ctx.setUsername(username);
-    ctx.setPassword(password);
+		ctx.setBaseJdbcUri(URI.create(jdbcUri));
+		ctx.setFullyQualifiedJdbcUri(fullyQualifiedJdbcUri);
+		ctx.setDbName(dbName);
+		ctx.setUsername(username);
+		ctx.setPassword(password);
 
-    DatabaseType databaseType = DatabaseType.getTypeFromJDBCUri(fullyQualifiedJdbcUri);
-    ctx.setDatabaseType(databaseType);
+		DatabaseType databaseType = DatabaseType.getTypeFromJDBCUri(fullyQualifiedJdbcUri);
+		ctx.setDatabaseType(databaseType);
 
-    if (StringUtils.isEmpty(rootDbName)) {
-      ctx.setRootDbName(databaseType.getRoot());
-    } else {
-      ctx.setRootDbName(rootDbName);
-    }
+		if (StringUtils.isEmpty(rootDbName)) {
+			ctx.setRootDbName(databaseType.getRoot());
+		} else {
+			ctx.setRootDbName(rootDbName);
+		}
 
-    if (StringUtils.isEmpty(superUser)) {
-      ctx.setSuperUser(databaseType.getRoot());
-    } else {
-      ctx.setSuperUser(superUser);
-    }
+		if (StringUtils.isEmpty(superUser)) {
+			ctx.setSuperUser(databaseType.getRoot());
+		} else {
+			ctx.setSuperUser(superUser);
+		}
 
-    if (StringUtils.isEmpty(superUserPwd)) {
-      ctx.setSuperUserPwd("");
-    } else {
-      ctx.setSuperUserPwd(superUserPwd);
-    }
+		if (StringUtils.isEmpty(superUserPwd)) {
+			ctx.setSuperUserPwd("");
+		} else {
+			ctx.setSuperUserPwd(superUserPwd);
+		}
 
-    return this;
-  }
+		return this;
+	}
 }

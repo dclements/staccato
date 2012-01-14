@@ -6,22 +6,20 @@ import com.readytalk.staccato.database.migration.guice.MigrationModule;
 
 /**
  * Contains the main for running this application.
- *
- * @author jhumphrey
  */
 public class Main {
 
-  public static Injector injector = Guice.createInjector(new MigrationModule());
+	public static Injector injector = Guice.createInjector(new MigrationModule());
 
-  public static void main(String... args) {
+	public static void main(String... args) {
 
-    CommandLineService cls = injector.getInstance(CommandLineService.class);
+		CommandLineService cls = injector.getInstance(CommandLineService.class);
 
-    StaccatoOptions options = cls.parse(args);
+		StaccatoOptions options = cls.parse(args);
 
-    if (options != null) {
-      Staccato staccato = injector.getInstance(Staccato.class);
-      staccato.execute(options);
-    }
-  }
+		if (options != null) {
+			Staccato staccato = injector.getInstance(Staccato.class);
+			staccato.execute(options);
+		}
+	}
 }

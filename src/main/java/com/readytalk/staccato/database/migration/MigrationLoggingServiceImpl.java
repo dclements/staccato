@@ -15,111 +15,108 @@ import com.readytalk.staccato.database.migration.annotation.Migration;
 import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
 import com.readytalk.staccato.utils.SQLUtils;
 
-/**
- * @author jhumphrey
- */
 public class MigrationLoggingServiceImpl implements MigrationLoggingService {
 
-  public static final Logger logger = Logger.getLogger(MigrationLoggingServiceImpl.class);
+	public static final Logger logger = Logger.getLogger(MigrationLoggingServiceImpl.class);
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void createVersionsTable(DatabaseContext context) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void createVersionsTable(DatabaseContext context) {
 
-    if (!versionTableExists(context)) {
+		if (!versionTableExists(context)) {
 
-      URL url = null;
-      String sqlFile = null;
+			URL url = null;
+			String sqlFile = null;
 
-      switch (context.getDatabaseType()) {
-        case MYSQL:
-          sqlFile = "mysql-staccato-migrations.sql";
-          url = this.getClass().getClassLoader().getResource(sqlFile);
-          break;
-        case POSTGRESQL:
-          sqlFile = "postgresql-staccato-migrations.sql";
-          url = this.getClass().getClassLoader().getResource(sqlFile);
-          break;
-      }
+			switch (context.getDatabaseType()) {
+			case MYSQL:
+				sqlFile = "mysql-staccato-migrations.sql";
+				url = this.getClass().getClassLoader().getResource(sqlFile);
+				break;
+			case POSTGRESQL:
+				sqlFile = "postgresql-staccato-migrations.sql";
+				url = this.getClass().getClassLoader().getResource(sqlFile);
+				break;
+			}
 
-      if (url == null) {
-        throw new DatabaseException("Unable to create the " + MIGRATION_VERSIONS_TABLE + ".  Cannot locate the sql file: " + sqlFile);
-      }
+			if (url == null) {
+				throw new DatabaseException("Unable to create the " + MIGRATION_VERSIONS_TABLE + ".  Cannot locate the sql file: " + sqlFile);
+			}
 
-      try {
-        logger.debug("Creating table: " + MIGRATION_VERSIONS_TABLE);
-        SQLUtils.executeSQLFile(context.getConnection(), url);
-      } catch (SQLException e) {
-        throw new DatabaseException("Unable to execute mysql script: " + url.toExternalForm(), e);
-      }
-    }
-  }
+			try {
+				logger.debug("Creating table: " + MIGRATION_VERSIONS_TABLE);
+				SQLUtils.executeSQLFile(context.getConnection(), url);
+			} catch (SQLException e) {
+				throw new DatabaseException("Unable to execute mysql script: " + url.toExternalForm(), e);
+			}
+		}
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public boolean versionTableExists(DatabaseContext context) {
-    try {
-      if (context.getConnection().isClosed()) {
-        throw new DatabaseException("Connection is closed to: " + context.getFullyQualifiedJdbcUri());
-      }
-    } catch (SQLException e) {
-      throw new DatabaseException("Unable to determine connection status for: " + context.getFullyQualifiedJdbcUri(), e);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean versionTableExists(DatabaseContext context) {
+		try {
+			if (context.getConnection().isClosed()) {
+				throw new DatabaseException("Connection is closed to: " + context.getFullyQualifiedJdbcUri());
+			}
+		} catch (SQLException e) {
+			throw new DatabaseException("Unable to determine connection status for: " + context.getFullyQualifiedJdbcUri(), e);
+		}
 
-    Connection conn = context.getConnection();
-    try {
-      logger.debug("Checking for existence of table: " + MIGRATION_VERSIONS_TABLE);
-      ResultSet rs = SQLUtils.execute(conn, "select * from " + MIGRATION_VERSIONS_TABLE);
-      rs.close();
-      return true;
-    } catch (SQLException e) {
-      return false;
-    }
-  }
+		Connection conn = context.getConnection();
+		try {
+			logger.debug("Checking for existence of table: " + MIGRATION_VERSIONS_TABLE);
+			ResultSet rs = SQLUtils.execute(conn, "select * from " + MIGRATION_VERSIONS_TABLE);
+			rs.close();
+			return true;
+		} catch (SQLException e) {
+			return false;
+		}
+	}
 
-  @Override
-  public void log(DatabaseContext databaseContext, DynamicLanguageScript script, Class<? extends Annotation> workflowStep, Migration migrationAnnotation) {
+	@Override
+	public void log(DatabaseContext databaseContext, DynamicLanguageScript<?> script, Class<? extends Annotation> workflowStep, Migration migrationAnnotation) {
 
-    // create the migration versions table
-    createVersionsTable(databaseContext);
+		// create the migration versions table
+		createVersionsTable(databaseContext);
 
-    try {
-      String filename = script.getFilename();
+		try {
+			String filename = script.getFilename();
 
-      String date;
+			String date;
 
-      switch (databaseContext.getDatabaseType()) {
-        case MYSQL:
-          date = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(script.getScriptDate());
-          break;
-        default:
-          date = script.getScriptDate().toString();
-          break;
-      }
+			switch (databaseContext.getDatabaseType()) {
+			case MYSQL:
+				date = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(script.getScriptDate());
+				break;
+			default:
+				date = script.getScriptDate().toString();
+				break;
+			}
 
-      String hash = script.getSHA1Hash();
+			String hash = script.getSHA1Hash();
 
-      StringBuilder sqlBuilder = new StringBuilder();
-      sqlBuilder.append("INSERT INTO ").append(MIGRATION_VERSIONS_TABLE).append(" ");
-      sqlBuilder.append("(database_version, script_date, script_hash, script_filename, workflow_step) ");
-      sqlBuilder.append("values('");
-      sqlBuilder.append(migrationAnnotation.databaseVersion()).append("', '");
-      sqlBuilder.append(date).append("', '");
-      sqlBuilder.append(hash).append("', '");
-      sqlBuilder.append(filename).append("', '");
-      sqlBuilder.append(workflowStep.getSimpleName());
-      sqlBuilder.append("')");
+			StringBuilder sqlBuilder = new StringBuilder();
+			sqlBuilder.append("INSERT INTO ").append(MIGRATION_VERSIONS_TABLE).append(" ");
+			sqlBuilder.append("(database_version, script_date, script_hash, script_filename, workflow_step) ");
+			sqlBuilder.append("values('");
+			sqlBuilder.append(migrationAnnotation.databaseVersion()).append("', '");
+			sqlBuilder.append(date).append("', '");
+			sqlBuilder.append(hash).append("', '");
+			sqlBuilder.append(filename).append("', '");
+			sqlBuilder.append(workflowStep.getSimpleName());
+			sqlBuilder.append("')");
 
-      logger.debug("Logged migration to: " + MIGRATION_VERSIONS_TABLE);
+			logger.debug("Logged migration to: " + MIGRATION_VERSIONS_TABLE);
 
-      SQLUtils.execute(databaseContext.getConnection(), sqlBuilder.toString());
-    } catch (SQLException e) {
-      throw new MigrationException("Unable to execute query", e);
-    }
+			SQLUtils.execute(databaseContext.getConnection(), sqlBuilder.toString());
+		} catch (SQLException e) {
+			throw new MigrationException("Unable to execute query", e);
+		}
 
-  }
+	}
 }

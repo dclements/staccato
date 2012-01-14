@@ -5,18 +5,16 @@ import com.readytalk.staccato.database.migration.validation.MigrationValidationE
 
 /**
  * Interface for Staccato command line
- *
- * @author jhumphrey
  */
 @ImplementedBy(CommandLineServiceImpl.class)
 public interface CommandLineService {
 
-  /**
-   * Called to parse the command line arguments
-   *
-   * @param args the command line arguments
-   * @throws MigrationValidationException if there are errors when parsing the command line arguments
-   * @return staccato options
-   */
-  public StaccatoOptions parse(String... args) throws MigrationValidationException;
+	/**
+	 * Called to parse the command line arguments
+	 *
+	 * @param args the command line arguments
+	 * @throws MigrationValidationException if there are errors when parsing the command line arguments
+	 * @return staccato options
+	 */
+	public StaccatoOptions parse(String... args) throws MigrationValidationException;
 }

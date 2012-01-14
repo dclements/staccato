@@ -1,24 +1,23 @@
 package com.readytalk.staccato.utils;
 
 /**
- * Thrown if there are errors loading resources
- *
- * @author jhumphrey
+ * Thrown if there are errors loading resources.
  */
 public class ResourceLoaderException extends RuntimeException {
-  public ResourceLoaderException() {
-    super();
-  }
+	private static final long serialVersionUID=1L;
+	public ResourceLoaderException() {
+		super();
+	}
 
-  public ResourceLoaderException(Throwable cause) {
-    super(cause);
-  }
+	public ResourceLoaderException(Throwable cause) {
+		super(cause);
+	}
 
-  public ResourceLoaderException(String message) {
-    super(message);
-  }
+	public ResourceLoaderException(String message) {
+		super(message);
+	}
 
-  public ResourceLoaderException(String message, Throwable cause) {
-    super(message, cause);
-  }
+	public ResourceLoaderException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

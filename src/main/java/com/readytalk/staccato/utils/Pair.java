@@ -3,12 +3,9 @@ package com.readytalk.staccato.utils;
 import java.io.Serializable;
 
 /**
- * <p>
  * This class is a simple tuple for storing a pair of values. This
  * defines the values as generics for type safety in 1.5 VMs.
- * </p>
- *
- * @author Brian Pontarelli
+ * 
  * @since 1.0
  */
 public class Pair<T, U> implements Serializable {

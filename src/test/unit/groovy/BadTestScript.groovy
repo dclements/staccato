@@ -2,9 +2,6 @@ import com.readytalk.staccato.database.migration.annotation.DataUp
 import com.readytalk.staccato.database.migration.annotation.PostUp
 import com.readytalk.staccato.database.migration.annotation.SchemaUp
 
-/**
- * @author jhumphrey
- */
 class BadTestScript {
 
   @DataUp

@@ -1,9 +1,13 @@
 package com.readytalk.staccato.database.migration.workflow;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import groovy.lang.GroovyClassLoader;
+import groovy.lang.GroovyCodeSource;
+
 import java.io.File;
 import java.io.IOException;
 
-import org.easymock.EasyMock;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -17,60 +21,43 @@ import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationP
 import com.readytalk.staccato.database.migration.annotation.TestWorkflowStepOne;
 import com.readytalk.staccato.database.migration.annotation.TestWorkflowStepTwo;
 import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
-import groovy.lang.GroovyClassLoader;
-import groovy.lang.GroovyCodeSource;
 
-/**
- * @author jhumphrey
- */
 public class MigrationWorkflowServiceImplTest {
 
-  // Tests running a migration using a test workflow and step
+	// Tests running a migration using a test workflow and step
 
-  @Test
-  @SuppressWarnings("unchecked")
-  public void testExecute() throws IOException, NoSuchMethodException, IllegalAccessException, InstantiationException {
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testExecute() throws IOException, NoSuchMethodException, IllegalAccessException, InstantiationException {
 
-    File file = new File("src/test/unit/groovy/TestScript.groovy");
+		File file = new File("src/test/unit/groovy/TestScript.groovy");
 
-    GroovyClassLoader gcl = new GroovyClassLoader(this.getClass().getClassLoader());
-    Class scriptClass = gcl.parseClass(new GroovyCodeSource(file.toURI().toURL()));
-    Object scriptInstance = scriptClass.newInstance();
+		GroovyClassLoader gcl = new GroovyClassLoader(this.getClass().getClassLoader());
+		Class<?> scriptClass = gcl.parseClass(new GroovyCodeSource(file.toURI().toURL()));
+		Object scriptInstance = scriptClass.newInstance();
 
-    DynamicLanguageScript script = EasyMock.createStrictMock(DynamicLanguageScript.class);
-    EasyMock.expect(script.getScriptInstance()).andReturn(scriptInstance);
-    EasyMock.expect(script.getScriptInstance()).andReturn(scriptInstance);
-    EasyMock.expect(script.getScriptInstance()).andReturn(scriptInstance);
-    EasyMock.expect(script.getScriptInstance()).andReturn(scriptInstance);
-    EasyMock.expect(script.getScriptInstance()).andReturn(scriptInstance);
-    EasyMock.expect(script.getScriptInstance()).andReturn(scriptInstance);
-    EasyMock.expect(script.getScriptInstance()).andReturn(scriptInstance);
-    EasyMock.expect(script.getScriptInstance()).andReturn(scriptInstance);
-    EasyMock.replay(script);
+		DynamicLanguageScript<?> script = mock(DynamicLanguageScript.class);
+		when(script.getScriptInstance()).thenReturn(scriptInstance);
 
-    DatabaseContext dbCtx = EasyMock.createStrictMock(DatabaseContext.class);
-    MigrationRuntime runtime = EasyMock.createMock(MigrationRuntime.class);
-    EasyMock.expect(runtime.getDatabaseContext()).andReturn(dbCtx).times(2);
-    EasyMock.expect(runtime.isLoggingEnabled()).andReturn(true).times(2);
-    EasyMock.replay(runtime);
+		DatabaseContext dbCtx = mock(DatabaseContext.class);
+		MigrationRuntime runtime = mock(MigrationRuntime.class);
+		when(runtime.getDatabaseContext()).thenReturn(dbCtx);
+		when(runtime.isLoggingEnabled()).thenReturn(true);
 
-    MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
+		MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
 
-    Migration migrationAnnotation = EasyMock.createStrictMock(Migration.class);
-    EasyMock.expect(migrationAnnotation.databaseVersion()).andReturn("1.0");
-    EasyMock.expect(migrationAnnotation.databaseVersion()).andReturn("1.0");
-    EasyMock.replay(migrationAnnotation);
+		Migration migrationAnnotation = mock(Migration.class);
+		when(migrationAnnotation.databaseVersion()).thenReturn("1.0");
 
-    MigrationLoggingService migrationLoggingService = EasyMock.createNiceMock(MigrationLoggingService.class);
-    migrationLoggingService.log(dbCtx, script, TestWorkflowStepOne.class, migrationAnnotation);
-    migrationLoggingService.log(dbCtx, script, TestWorkflowStepTwo.class, migrationAnnotation);
-    EasyMock.replay(migrationLoggingService);
+		MigrationLoggingService migrationLoggingService = mock(MigrationLoggingService.class);
+		migrationLoggingService.log(dbCtx, script, TestWorkflowStepOne.class, migrationAnnotation);
+		migrationLoggingService.log(dbCtx, script, TestWorkflowStepTwo.class, migrationAnnotation);
 
-    MigrationWorkflowServiceImpl workflowService = new MigrationWorkflowServiceImpl(annotationParser, migrationLoggingService);
+		MigrationWorkflowServiceImpl<?> workflowService = new MigrationWorkflowServiceImpl(annotationParser, migrationLoggingService);
 
-    MigrationResult result = workflowService.executeWorkflow(script, new Class[]{TestWorkflowStepOne.class, TestWorkflowStepTwo.class}, runtime);
+		MigrationResult result = workflowService.executeWorkflow(script, new Class[]{TestWorkflowStepOne.class, TestWorkflowStepTwo.class}, runtime);
 
-    Assert.assertNotNull(result);
-    Assert.assertEquals(result.getResultMap().get(TestWorkflowStepOne.class), "bar");
-  }
+		Assert.assertNotNull(result);
+		Assert.assertEquals(result.getResultMap().get(TestWorkflowStepOne.class), "bar");
+	}
 }
