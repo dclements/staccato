@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 
 public class DatabaseContextBuilder {
 
-	private DatabaseContext ctx = new DatabaseContext();
+	private final DatabaseContext ctx = new DatabaseContext();
 
 	/**
 	 * Returns the database context

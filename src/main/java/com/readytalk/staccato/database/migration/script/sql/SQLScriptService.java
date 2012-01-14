@@ -16,9 +16,9 @@ import com.readytalk.staccato.utils.ResourceLoader;
 @Singleton
 public class SQLScriptService implements ScriptService<SQLScript> {
 
-	public static final Logger logger = Logger.getLogger(SQLScriptService.class);
+	private static final Logger logger = Logger.getLogger(SQLScriptService.class);
 
-	private ResourceLoader loader;
+	private final ResourceLoader loader;
 
 	@Inject
 	public SQLScriptService(ResourceLoader loader) {

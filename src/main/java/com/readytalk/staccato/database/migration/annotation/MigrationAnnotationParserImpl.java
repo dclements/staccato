@@ -9,7 +9,7 @@ import com.readytalk.staccato.database.migration.MigrationException;
 
 public class MigrationAnnotationParserImpl implements MigrationAnnotationParser {
 
-	public static final Logger logger = Logger.getLogger(MigrationAnnotationParserImpl.class);
+	private static final Logger logger = Logger.getLogger(MigrationAnnotationParserImpl.class);
 
 	@Override
 	public Migration getMigrationAnnotation(Object scriptInstance) {

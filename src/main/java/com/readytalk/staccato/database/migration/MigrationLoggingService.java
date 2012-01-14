@@ -10,14 +10,14 @@ import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
 @ImplementedBy(MigrationLoggingServiceImpl.class)
 public interface MigrationLoggingService {
 
-	public static final String MIGRATION_VERSIONS_TABLE = "STACCATO_MIGRATIONS";
+	static final String MIGRATION_VERSIONS_TABLE = "STACCATO_MIGRATIONS";
 
 	/**
 	 * Creates the migration versions table
 	 *
 	 * @param context the database context
 	 */
-	public void createVersionsTable(DatabaseContext context);
+	void createVersionsTable(DatabaseContext context);
 
 	/**
 	 * Returns true if the migration versions table exists
@@ -25,7 +25,7 @@ public interface MigrationLoggingService {
 	 * @param context the database context
 	 * @return true if exists, false otherwise
 	 */
-	public boolean versionTableExists(DatabaseContext context);
+	boolean versionTableExists(DatabaseContext context);
 
 	/**
 	 * Logs the script and associated workflow to the migrations versions table

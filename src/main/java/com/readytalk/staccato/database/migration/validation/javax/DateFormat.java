@@ -18,7 +18,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 public @interface DateFormat {
 
-	public static final String ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZZ";
+	static final String ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZZ";
 
 	String message() default "date must conform to the ISO8601 format: {dateFormat}";
 

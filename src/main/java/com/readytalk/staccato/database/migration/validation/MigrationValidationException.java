@@ -9,12 +9,11 @@ import java.util.List;
 public class MigrationValidationException extends RuntimeException {
 	private static final long serialVersionUID=1L;
 
-	List<Violation> violations = new ArrayList<Violation>();
-	String message;
+	private final List<Violation> violations = new ArrayList<Violation>();
 
 	public MigrationValidationException(String message, List<Violation> violations) {
+		super(message);
 		this.violations.addAll(violations);
-		this.message = message;
 	}
 
 	public MigrationValidationException(String s) {
@@ -38,7 +37,7 @@ public class MigrationValidationException extends RuntimeException {
 	@Override
 	public String getMessage() {
 		StringBuilder builder = new StringBuilder();
-		builder.append(message).append("\n");
+		builder.append(String.valueOf(this.getMessage())).append("\n");
 		for (Violation violation : violations) {
 			builder.append("Property: ").append(violation.propertyName).append("\n");
 			builder.append("Value: ").append(violation.propertyValue).append("\n");

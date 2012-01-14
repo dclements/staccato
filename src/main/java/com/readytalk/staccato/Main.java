@@ -9,7 +9,7 @@ import com.readytalk.staccato.database.migration.guice.MigrationModule;
  */
 public class Main {
 
-	public static Injector injector = Guice.createInjector(new MigrationModule());
+	public final static Injector injector = Guice.createInjector(new MigrationModule());
 
 	public static void main(String... args) {
 

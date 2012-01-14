@@ -17,7 +17,7 @@ public interface MigrationAnnotationParser {
 	 * @param scriptInstance the script instance
 	 * @return {@link com.readytalk.staccato.database.migration.annotation.Migration}
 	 */
-	public Migration getMigrationAnnotation(Object scriptInstance);
+	Migration getMigrationAnnotation(Object scriptInstance);
 
 	/**
 	 * Determines whether a given class is a migration script.  Migration scripts must
@@ -26,7 +26,7 @@ public interface MigrationAnnotationParser {
 	 * @param scriptClass the script class
 	 * @return true if the script if a migration script, false otherwise
 	 */
-	public boolean isMigrationScript(Class<?> scriptClass);
+	boolean isMigrationScript(Class<?> scriptClass);
 
 	/**
 	 * Parses the given class for a method annotation with the workflow step specified
@@ -35,7 +35,7 @@ public interface MigrationAnnotationParser {
 	 * @param annotation the workflow step annotation
 	 * @return the annotation
 	 */
-	public <T extends Annotation> T getMethodAnnotation(Object scriptInstance, Class<? extends Annotation> annotation);
+	<T extends Annotation> T getMethodAnnotation(Object scriptInstance, Class<? extends Annotation> annotation);
 
 	/**
 	 * Returns the object instance method annotated with the annotated specified
@@ -44,7 +44,7 @@ public interface MigrationAnnotationParser {
 	 * @param annotation the annotated
 	 * @return the method annotated with the specified annotation
 	 */
-	public Method getAnnotatedMethod(Object scriptInstance, Class<? extends Annotation> annotation);
+	Method getAnnotatedMethod(Object scriptInstance, Class<? extends Annotation> annotation);
 
 
 	/**

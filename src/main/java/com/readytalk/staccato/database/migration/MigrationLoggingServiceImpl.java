@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.joda.time.format.DateTimeFormat;
 
@@ -17,7 +19,7 @@ import com.readytalk.staccato.utils.SQLUtils;
 
 public class MigrationLoggingServiceImpl implements MigrationLoggingService {
 
-	public static final Logger logger = Logger.getLogger(MigrationLoggingServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(MigrationLoggingServiceImpl.class);
 
 	/**
 	 * {@inheritDoc}
@@ -63,18 +65,26 @@ public class MigrationLoggingServiceImpl implements MigrationLoggingService {
 			if (context.getConnection().isClosed()) {
 				throw new DatabaseException("Connection is closed to: " + context.getFullyQualifiedJdbcUri());
 			}
-		} catch (SQLException e) {
+		} catch(final SQLException e) {
 			throw new DatabaseException("Unable to determine connection status for: " + context.getFullyQualifiedJdbcUri(), e);
 		}
 
-		Connection conn = context.getConnection();
+		final Connection conn = context.getConnection();
+		ResultSet rs = null;
 		try {
 			logger.debug("Checking for existence of table: " + MIGRATION_VERSIONS_TABLE);
-			ResultSet rs = SQLUtils.execute(conn, "select * from " + MIGRATION_VERSIONS_TABLE);
-			rs.close();
+			rs = SQLUtils.execute(conn, "select * from " + MIGRATION_VERSIONS_TABLE);
 			return true;
-		} catch (SQLException e) {
+		} catch(final SQLException e) {
 			return false;
+		} finally {
+			try {
+				if(rs != null) {
+					rs.close();
+				}
+			} catch(final SQLException sqe) {
+				logger.log(Level.WARN, "Exception trying to close ResultSet.", sqe);
+			}
 		}
 	}
 

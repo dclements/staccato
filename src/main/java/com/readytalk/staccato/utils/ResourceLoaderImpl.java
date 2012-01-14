@@ -19,16 +19,16 @@ import com.readytalk.staccato.database.migration.MigrationException;
 
 public class ResourceLoaderImpl implements ResourceLoader {
 
-	public static final Logger logger = Logger.getLogger(ResourceLoaderImpl.class);
+	private static final Logger logger = Logger.getLogger(ResourceLoaderImpl.class);
 
 	@Override
 	public Set<Resource> loadRecursively(String directory, String fileExtension, ClassLoader classLoader) {
 
 		logger.debug("Searching directory [" + directory + "] for resources with file extension [" + fileExtension + "]");
 
-		Set<Resource> resources = new HashSet<Resource>();
+		final Set<Resource> resources = new HashSet<Resource>();
 
-		Enumeration<URL> urlResources;
+		final Enumeration<URL> urlResources;
 
 		try {
 			urlResources = classLoader.getResources(directory);
@@ -57,15 +57,14 @@ public class ResourceLoaderImpl implements ResourceLoader {
 
 	// helper method for loading file resources
 
-	Collection<? extends Resource> readFromFileDir(URL resourceUrl, String fileExtension) {
+	public Collection<? extends Resource> readFromFileDir(URL resourceUrl, String fileExtension) {
 
-		Set<Resource> resources = new HashSet<Resource>();
+		final Set<Resource> resources = new HashSet<Resource>();
 
 		try {
-			File dir = new File(resourceUrl.toURI());
+			final File dir = new File(resourceUrl.toURI());
 
-			@SuppressWarnings("unchecked")
-			Collection<File> files = (Collection<File>) FileUtils.listFiles(dir, new String[]{fileExtension}, true);
+			Collection<File> files = FileUtils.listFiles(dir, new String[]{fileExtension}, true);
 
 			for (File file : files) {
 				Resource resource = new Resource();
@@ -89,22 +88,22 @@ public class ResourceLoaderImpl implements ResourceLoader {
 
 	// helper method for loading jar resources
 
-	Collection<? extends Resource> readFromJarDir(URL resourceUrl, String directory, String fileExtension) throws IOException {
+	public Collection<? extends Resource> readFromJarDir(URL resourceUrl, String directory, String fileExtension) throws IOException {
 
 		if (!new JarEntry(resourceUrl.toExternalForm()).isDirectory()) {
 			throw new ResourceLoaderException("jar resource [" + resourceUrl.toExternalForm() + "] is not a directory");
 		}
 
-		Set<Resource> resources = new HashSet<Resource>();
+		final Set<Resource> resources = new HashSet<Resource>();
 
-		String jarLocation = resourceUrl.toExternalForm().replace("jar:file:", "").replace("!/" + directory, "");
-		File file = new File(jarLocation);
+		final String jarLocation = resourceUrl.toExternalForm().replace("jar:file:", "").replace("!/" + directory, "");
+		final File file = new File(jarLocation);
 		if (!file.exists()) {
 			throw new MigrationException("jar resource [" + jarLocation + "] does not exist");
 		}
 
-		JarFile jarFile = new JarFile(file);
-		Enumeration<JarEntry> jarEntries = jarFile.entries();
+		final JarFile jarFile = new JarFile(file);
+		final Enumeration<JarEntry> jarEntries = jarFile.entries();
 
 		while (jarEntries.hasMoreElements()) {
 			JarEntry jarEntry = jarEntries.nextElement();

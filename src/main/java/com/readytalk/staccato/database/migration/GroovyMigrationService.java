@@ -16,10 +16,10 @@ import com.readytalk.staccato.database.migration.workflow.MigrationWorkflowServi
 
 public class GroovyMigrationService implements MigrationService<GroovyScript> {
 
-	public static final Logger logger = Logger.getLogger(GroovyMigrationService.class);
+	private static final Logger logger = Logger.getLogger(GroovyMigrationService.class);
 
-	private MigrationWorkflowService migrationWorkflowService;
-	private MigrationAnnotationParser annotationParser;
+	private final MigrationWorkflowService migrationWorkflowService;
+	private final MigrationAnnotationParser annotationParser;
 
 	@Inject
 	public GroovyMigrationService(
