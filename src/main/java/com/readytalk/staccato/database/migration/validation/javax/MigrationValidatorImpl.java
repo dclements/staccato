@@ -15,9 +15,7 @@ import com.readytalk.staccato.database.migration.validation.MigrationValidationE
 import com.readytalk.staccato.database.migration.validation.MigrationValidator;
 
 /**
- * An implementation using javax.validation (JSR 303)
- *
- * @author jhumphrey
+ * An implementation using javax.validation (JSR 303).
  */
 public class MigrationValidatorImpl implements MigrationValidator {
 

@@ -11,14 +11,12 @@ import java.util.Map;
  * IMPORTANT NOTE:  Currently, method return values are not used by the system.  This design
  * is implemented for future use only and, therefore, script methods are not required to
  * return non-void values.
- *
- * @author jhumphrey
  */
 public class MigrationResult {
 
-  Map<Class<? extends Annotation>, Object> resultMap = new HashMap<Class<? extends Annotation>, Object>();
+	Map<Class<? extends Annotation>, Object> resultMap = new HashMap<Class<? extends Annotation>, Object>();
 
-  public Map<Class<? extends Annotation>, Object> getResultMap() {
-    return resultMap;
-  }
+	public Map<Class<? extends Annotation>, Object> getResultMap() {
+		return resultMap;
+	}
 }

@@ -13,60 +13,57 @@ import com.readytalk.staccato.database.migration.script.ScriptService;
 import com.readytalk.staccato.utils.Resource;
 import com.readytalk.staccato.utils.ResourceLoader;
 
-/**
- * @author jhumphrey
- */
 @Singleton
 public class SQLScriptService implements ScriptService<SQLScript> {
 
-  public static final Logger logger = Logger.getLogger(SQLScriptService.class);
+	public static final Logger logger = Logger.getLogger(SQLScriptService.class);
 
-  private ResourceLoader loader;
+	private ResourceLoader loader;
 
-  @Inject
-  public SQLScriptService(ResourceLoader loader) {
-    this.loader = loader;
-  }
+	@Inject
+	public SQLScriptService(ResourceLoader loader) {
+		this.loader = loader;
+	}
 
-  @Override
-  public List<SQLScript> load(String migrationDir, ClassLoader classLoader) {
+	@Override
+	public List<SQLScript> load(String migrationDir, ClassLoader classLoader) {
 
-    logger.debug("Loading sql scripts from migration directory: " + migrationDir);
+		logger.debug("Loading sql scripts from migration directory: " + migrationDir);
 
-    Set<Resource> resources = loader.loadRecursively(migrationDir, getScriptFileExtension(), classLoader);
+		Set<Resource> resources = loader.loadRecursively(migrationDir, getScriptFileExtension(), classLoader);
 
-    List<SQLScript> scripts = new ArrayList<SQLScript>();
+		List<SQLScript> scripts = new ArrayList<SQLScript>();
 
-    for (Resource resource : resources) {
-      SQLScript script = new SQLScript();
-      script.setFilename(resource.getFilename());
-      script.setUrl(resource.getUrl());
+		for (Resource resource : resources) {
+			SQLScript script = new SQLScript();
+			script.setFilename(resource.getFilename());
+			script.setUrl(resource.getUrl());
 
-      if (scripts.contains(script)) {
+			if (scripts.contains(script)) {
 
-        if (scripts.contains(script)) {
-          SQLScript collisionScript = null;
-          for (SQLScript sqlScript : scripts) {
-            if (sqlScript.equals(collisionScript)) {
-              collisionScript = sqlScript;
-            }
-          }
-          throw new MigrationException("Unique script violation.  SQL script [" + script.getUrl() + "] violates" +
-            " unique filename constraint.  Script [" + collisionScript.getUrl().toExternalForm() + "] already contains the same filename");
-        }
+				if (scripts.contains(script)) {
+					SQLScript collisionScript = null;
+					for (SQLScript sqlScript : scripts) {
+						if (sqlScript.equals(collisionScript)) {
+							collisionScript = sqlScript;
+						}
+					}
+					throw new MigrationException("Unique script violation.  SQL script [" + script.getUrl() + "] violates" +
+							" unique filename constraint.  Script [" + collisionScript.getUrl().toExternalForm() + "] already contains the same filename");
+				}
 
-        throw new MigrationException("Unique script violation.  SQL script [" + script.getUrl() + "] filename violates" +
-          " unique filename constraint.  Another sql file already contains the same name");
-      }
+				throw new MigrationException("Unique script violation.  SQL script [" + script.getUrl() + "] filename violates" +
+				" unique filename constraint.  Another sql file already contains the same name");
+			}
 
-      scripts.add(script);
-    }
+			scripts.add(script);
+		}
 
-    return scripts;
-  }
+		return scripts;
+	}
 
-  @Override
-  public String getScriptFileExtension() {
-    return "sql";
-  }
+	@Override
+	public String getScriptFileExtension() {
+		return "sql";
+	}
 }

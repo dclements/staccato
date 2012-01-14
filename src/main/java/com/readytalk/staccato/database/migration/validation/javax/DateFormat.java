@@ -9,9 +9,7 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Constraint for validating DateRange objects
- *
- * @author jhumphrey
+ * Constraint for validating DateRange objects.
  */
 
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
@@ -20,13 +18,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 public @interface DateFormat {
 
-  public static final String ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZZ";
+	public static final String ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZZ";
 
-  String message() default "date must conform to the ISO8601 format: {dateFormat}";
+	String message() default "date must conform to the ISO8601 format: {dateFormat}";
 
-  String dateFormat() default ISO_DATE_FORMAT;
+	String dateFormat() default ISO_DATE_FORMAT;
 
-  Class[] groups() default {};
+	Class<?>[] groups() default {};
 
-  Class[] payload() default {};
+	Class<?>[] payload() default {};
 }

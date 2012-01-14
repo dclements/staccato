@@ -5,52 +5,50 @@ import java.net.URL;
 import com.readytalk.staccato.database.migration.script.Script;
 
 /**
- * Models a sql script.  SQL Scripts currently don't have a comparable implementation
- *
- * @author jhumphrey
+ * Models a sql script.  SQL Scripts currently don't have a comparable implementation.
  */
 public class SQLScript implements Script<SQLScript> {
 
-  private String filename;
-  private URL url;
+	private String filename;
+	private URL url;
 
-  @Override
-  public String getFilename() {
-    return filename;
-  }
+	@Override
+	public String getFilename() {
+		return filename;
+	}
 
-  @Override
-  public URL getUrl() {
-    return url;
-  }
+	@Override
+	public URL getUrl() {
+		return url;
+	}
 
-  public void setFilename(String filename) {
-    this.filename = filename;
-  }
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
 
-  public void setUrl(URL url) {
-    this.url = url;
-  }
+	public void setUrl(URL url) {
+		this.url = url;
+	}
 
-  @Override
-  public int compareTo(SQLScript sqlScript) {
-    return 0;
-  }
+	@Override
+	public int compareTo(SQLScript sqlScript) {
+		return 0;
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof SQLScript)) return false;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof SQLScript)) return false;
 
-    SQLScript sqlScript = (SQLScript) o;
+		SQLScript sqlScript = (SQLScript) o;
 
-    if (!filename.equals(sqlScript.filename)) return false;
+		if (!filename.equals(sqlScript.filename)) return false;
 
-    return true;
-  }
+		return true;
+	}
 
-  @Override
-  public int hashCode() {
-    return filename.hashCode();
-  }
+	@Override
+	public int hashCode() {
+		return filename.hashCode();
+	}
 }

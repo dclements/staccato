@@ -8,9 +8,6 @@ import com.readytalk.staccato.database.migration.annotation.TestWorkflowStepTwo
 import com.readytalk.staccato.database.migration.MigrationRuntime
 import com.readytalk.staccato.database.migration.annotation.Create
 
-/**
- * @author jhumphrey
- */
 @Migration(
 scriptDate = "2010-08-15T07:00:00-06:00",
 databaseVersion = "1.0",

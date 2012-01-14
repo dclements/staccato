@@ -10,14 +10,12 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Test workflow step used in unit testing
- *
- * @author jhumphrey
+ * Test workflow step used in unit testing.
  */
 @Target({METHOD})
 @Retention(RUNTIME)
 @Documented
 @WorkflowStep(executedBy = WorkflowStepExecutorImpl.class)
 public @interface TestWorkflowStepOne {
-  String value() default "";
+	String value() default "";
 }

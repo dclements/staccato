@@ -23,9 +23,6 @@ import com.readytalk.staccato.database.migration.script.sql.SQLScript;
 import com.readytalk.staccato.database.migration.script.sql.SQLScriptService;
 import com.readytalk.staccato.utils.SQLUtils;
 
-/**
- * @author jhumphrey
- */
 public class GroovyMigrationIntegrationTest extends BaseTest {
 
   public static final String migrationDir = "groovy/migration";

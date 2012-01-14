@@ -4,24 +4,22 @@ import com.readytalk.staccato.database.migration.MigrationRuntime;
 import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationParser;
 
 /**
- * Context for a given workflow
- *
- * @author jhumphrey
+ * Context for a given workflow.
  */
 public class WorkflowContext {
-  private MigrationAnnotationParser annotationParser;
-  private MigrationRuntime migrationRuntime;
+	private MigrationAnnotationParser annotationParser;
+	private MigrationRuntime migrationRuntime;
 
-  public WorkflowContext(MigrationAnnotationParser annotationParser, MigrationRuntime migrationRuntime) {
-    this.annotationParser = annotationParser;
-    this.migrationRuntime = migrationRuntime;
-  }
+	public WorkflowContext(MigrationAnnotationParser annotationParser, MigrationRuntime migrationRuntime) {
+		this.annotationParser = annotationParser;
+		this.migrationRuntime = migrationRuntime;
+	}
 
-  public MigrationAnnotationParser getAnnotationParser() {
-    return annotationParser;
-  }
+	public MigrationAnnotationParser getAnnotationParser() {
+		return annotationParser;
+	}
 
-  public MigrationRuntime getMigrationRuntime() {
-    return migrationRuntime;
-  }
+	public MigrationRuntime getMigrationRuntime() {
+		return migrationRuntime;
+	}
 }

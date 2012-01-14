@@ -9,9 +9,7 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Constraint for validating DateRange objects
- *
- * @author jhumphrey
+ * Constraint for validating DateRange objects.
  */
 
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
@@ -20,11 +18,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 public @interface Version {
 
-  boolean strictMode() default false;
+	boolean strictMode() default false;
 
-  String message() default "Version must conform to format X.Y.Z";
+	String message() default "Version must conform to format X.Y.Z";
 
-  Class[] groups() default {};
+	Class<?>[] groups() default {};
 
-  Class[] payload() default {};
+	Class<?>[] payload() default {};
 }

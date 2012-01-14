@@ -3,59 +3,57 @@ package com.readytalk.staccato.utils;
 import java.net.URL;
 
 /**
- * Represents a system resource
- *
- * @author jhumphrey
+ * Represents a system resource.
  */
 public class Resource {
 
-  private String filename;
+	private String filename;
 
-  private URL url;
+	private URL url;
 
-  private ResourceType type;
+	private ResourceType type;
 
-  public String getFilename() {
-    return filename;
-  }
+	public String getFilename() {
+		return filename;
+	}
 
-  public void setFilename(String filename) {
-    this.filename = filename;
-  }
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
 
-  public URL getUrl() {
-    return url;
-  }
+	public URL getUrl() {
+		return url;
+	}
 
-  public void setUrl(URL url) {
-    this.url = url;
-  }
+	public void setUrl(URL url) {
+		this.url = url;
+	}
 
-  public ResourceType getType() {
-    return type;
-  }
+	public ResourceType getType() {
+		return type;
+	}
 
-  public void setType(ResourceType type) {
-    this.type = type;
-  }
+	public void setType(ResourceType type) {
+		this.type = type;
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof Resource)) return false;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Resource)) return false;
 
-    Resource resource = (Resource) o;
+		Resource resource = (Resource) o;
 
-    if (!filename.equals(resource.filename)) return false;
-    if (!url.equals(resource.url)) return false;
+		if (!filename.equals(resource.filename)) return false;
+		if (!url.equals(resource.url)) return false;
 
-    return true;
-  }
+		return true;
+	}
 
-  @Override
-  public int hashCode() {
-    int result = filename.hashCode();
-    result = 31 * result + url.hashCode();
-    return result;
-  }
+	@Override
+	public int hashCode() {
+		int result = filename.hashCode();
+		result = 31 * result + url.hashCode();
+		return result;
+	}
 }

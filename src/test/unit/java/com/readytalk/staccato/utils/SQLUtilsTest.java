@@ -11,30 +11,27 @@ import org.testng.annotations.Test;
 
 import com.readytalk.staccato.database.BaseTest;
 
-/**
- * @author jhumphrey
- */
 public class SQLUtilsTest extends BaseTest {
 
-  @Test(dataProvider = "fullyQualifiedJdbcProvider")
-  public void testExecute(URI jdbcUri) throws SQLException {
+	@Test(dataProvider = "fullyQualifiedJdbcProvider")
+	public void testExecute(URI jdbcUri) throws SQLException {
 
-    ResultSet rs = SQLUtils.execute(makeConnection(jdbcUri), "select * from foo");
+		ResultSet rs = SQLUtils.execute(makeConnection(jdbcUri), "select * from foo");
 
-    while (rs.next()) {
-      Assert.assertEquals(rs.getInt(1), 1);
-      Assert.assertEquals(rs.getString(2), "baz");
-    }
-  }
+		while (rs.next()) {
+			Assert.assertEquals(rs.getInt(1), 1);
+			Assert.assertEquals(rs.getString(2), "baz");
+		}
+	}
 
-  @Test(dataProvider = "fullyQualifiedJdbcProvider")
-  public void testExecuteFile(URI jdbcUri) throws MalformedURLException, SQLException {
-    File file = new File("src/test/unit/resources/test.sql");
-    ResultSet rs = SQLUtils.executeSQLFile(makeConnection(jdbcUri), file.toURI().toURL());
+	@Test(dataProvider = "fullyQualifiedJdbcProvider")
+	public void testExecuteFile(URI jdbcUri) throws MalformedURLException, SQLException {
+		File file = new File("src/test/unit/resources/test.sql");
+		ResultSet rs = SQLUtils.executeSQLFile(makeConnection(jdbcUri), file.toURI().toURL());
 
-    while (rs.next()) {
-      Assert.assertEquals(rs.getInt(1), 1);
-      Assert.assertEquals(rs.getString(2), "baz");
-    }
-  }
+		while (rs.next()) {
+			Assert.assertEquals(rs.getInt(1), 1);
+			Assert.assertEquals(rs.getString(2), "baz");
+		}
+	}
 }

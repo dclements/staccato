@@ -14,110 +14,107 @@ import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationP
 import com.readytalk.staccato.database.migration.script.groovy.GroovyScript;
 import com.readytalk.staccato.database.migration.workflow.MigrationWorkflowService;
 
-/**
- * @author jhumphrey
- */
 public class GroovyMigrationService implements MigrationService<GroovyScript> {
 
-  public static final Logger logger = Logger.getLogger(GroovyMigrationService.class);
+	public static final Logger logger = Logger.getLogger(GroovyMigrationService.class);
 
-  private MigrationWorkflowService migrationWorkflowService;
-  private MigrationAnnotationParser annotationParser;
+	private MigrationWorkflowService migrationWorkflowService;
+	private MigrationAnnotationParser annotationParser;
 
-  @Inject
-  public GroovyMigrationService(
-    MigrationWorkflowService migrationWorkflowService,
-    MigrationAnnotationParser annotationParser) {
+	@Inject
+	public GroovyMigrationService(
+			MigrationWorkflowService migrationWorkflowService,
+			MigrationAnnotationParser annotationParser) {
 
-    this.migrationWorkflowService = migrationWorkflowService;
-    this.annotationParser = annotationParser;
-  }
+		this.migrationWorkflowService = migrationWorkflowService;
+		this.annotationParser = annotationParser;
+	}
 
-  @Override
-  public void run(List<GroovyScript> migrationScripts, MigrationRuntime migrationRuntime) {
+	@Override
+	public void run(List<GroovyScript> migrationScripts, MigrationRuntime migrationRuntime) {
 
-    if (migrationScripts.size() > 0) {
-      DatabaseContext databaseContext = migrationRuntime.getDatabaseContext();
+		if (migrationScripts.size() > 0) {
+			DatabaseContext databaseContext = migrationRuntime.getDatabaseContext();
 
-      MigrationType migrationType = migrationRuntime.getMigrationType();
+			MigrationType migrationType = migrationRuntime.getMigrationType();
 
-      String workflowOutput = "workflow: ";
-      for (Class<? extends Annotation> aClass : migrationType.getWorkflowSteps()) {
-        workflowOutput += aClass.getSimpleName() + " ";
-      }
+			String workflowOutput = "workflow: ";
+			for (Class<? extends Annotation> aClass : migrationType.getWorkflowSteps()) {
+				workflowOutput += aClass.getSimpleName() + " ";
+			}
 
-      logger.info("Running " + databaseContext.getDatabaseType() + " migration: " + migrationType.name() + ", " + workflowOutput + ", for database: " +
-        databaseContext.getFullyQualifiedJdbcUri());
+			logger.info("Running " + databaseContext.getDatabaseType() + " migration: " + migrationType.name() + ", " + workflowOutput + ", for database: " +
+					databaseContext.getFullyQualifiedJdbcUri());
 
-      // iterate through the groovy scripts for invocation
-      for (GroovyScript script : migrationScripts) {
+			// iterate through the groovy scripts for invocation
+			for (GroovyScript script : migrationScripts) {
 
-        Migration migrationAnnotation = annotationParser.getMigrationAnnotation(script.getScriptInstance());
+				Migration migrationAnnotation = annotationParser.getMigrationAnnotation(script.getScriptInstance());
 
-        // validate database type
-        if (!isValidDatabaseType(script, migrationAnnotation, databaseContext)) {
-          continue;
-        }
+				// validate database type
+				if (!isValidDatabaseType(script, migrationAnnotation, databaseContext)) {
+					continue;
+				}
 
-        // todo: Figure out transactions
-        // i'd like to create a transaction prior to each individual script execution so that if
-        // there are errors, I can rollback anything that was done.
-        // I spent a ton of time trying to get transactions to work without luck.
-        // databaseService.startTransaction(databaseContext, script);
+				// todo: Figure out transactions
+				// i'd like to create a transaction prior to each individual script execution so that if
+				// there are errors, I can rollback anything that was done.
+				// I spent a ton of time trying to get transactions to work without luck.
+				// databaseService.startTransaction(databaseContext, script);
 
-        if (annotationParser.containsWorkflowSteps(script.getScriptInstance(), migrationType.getWorkflowSteps())) {
-          logger.info("Executing script: " + script.getFilename());
+				if (annotationParser.containsWorkflowSteps(script.getScriptInstance(), migrationType.getWorkflowSteps())) {
+					logger.info("Executing script: " + script.getFilename());
 
-          // print the description to the logs if it's not null
-          String description = getDescription(migrationAnnotation);
-          if (getDescription(migrationAnnotation) != null) {
-            logger.info("Description: " + description);
-          }
+					// print the description to the logs if it's not null
+					String description = getDescription(migrationAnnotation);
+					if (getDescription(migrationAnnotation) != null) {
+						logger.info("Description: " + description);
+					}
 
-          migrationWorkflowService.executeWorkflow(script, migrationType.getWorkflowSteps(), migrationRuntime);
-        }
+					migrationWorkflowService.executeWorkflow(script, migrationType.getWorkflowSteps(), migrationRuntime);
+				}
 
-        // todo: add this back in once transactions are figured out
-        //databaseService.endTransaction(databaseContext, script);
-      }
-    }
-  }
+				// todo: add this back in once transactions are figured out
+				//databaseService.endTransaction(databaseContext, script);
+			}
+		}
+	}
 
-  /**
-   * Helper method to get the description from the migration annotation
-   *
-   * @param migrationAnnotation the migration annotation
-   * @return the description
-   */
-  String getDescription(Migration migrationAnnotation) {
-    try {
-      return migrationAnnotation.description();
-    } catch (IncompleteAnnotationException e) {
-      return null;
-    }
-  }
+	/**
+	 * Helper method to get the description from the migration annotation
+	 *
+	 * @param migrationAnnotation the migration annotation
+	 * @return the description
+	 */
+	String getDescription(Migration migrationAnnotation) {
+		try {
+			return migrationAnnotation.description();
+		} catch (IncompleteAnnotationException e) {
+			return null;
+		}
+	}
 
-  /**
-   * Helper method to validate that the script we're executing belongs to this database migration.
-   * If the Migration annotation database type is not equal to the
-   * {@link com.readytalk.staccato.database.DatabaseContext} database type then do not execute
-   * this script
-   *
-   * @param script the script
-   * @param migrationAnnotation the migration annotation
-   * @param databaseContext the database context
-   * @return true if valid, false otherwise
-   */
-  boolean isValidDatabaseType(GroovyScript script, Migration migrationAnnotation, DatabaseContext databaseContext) {
-    try {
-      DatabaseType scriptDatabaseType = migrationAnnotation.databaseType();
-      if (scriptDatabaseType != null && scriptDatabaseType != databaseContext.getDatabaseType()) {
-        logger.debug("Excluding " + scriptDatabaseType + " script from execution: " + script.getFilename());
-        return false;
-      }
-      return true;
-    } catch (Exception e) {
-      return true;
-    }
-  }
+	/**
+	 * Helper method to validate that the script we're executing belongs to this database migration.
+	 * If the Migration annotation database type is not equal to the
+	 * {@link com.readytalk.staccato.database.DatabaseContext} database type then do not execute
+	 * this script
+	 *
+	 * @param script the script
+	 * @param migrationAnnotation the migration annotation
+	 * @param databaseContext the database context
+	 * @return true if valid, false otherwise
+	 */
+	boolean isValidDatabaseType(GroovyScript script, Migration migrationAnnotation, DatabaseContext databaseContext) {
+		try {
+			DatabaseType scriptDatabaseType = migrationAnnotation.databaseType();
+			if (scriptDatabaseType != null && scriptDatabaseType != databaseContext.getDatabaseType()) {
+				logger.debug("Excluding " + scriptDatabaseType + " script from execution: " + script.getFilename());
+				return false;
+			}
+			return true;
+		} catch (Exception e) {
+			return true;
+		}
+	}
 }

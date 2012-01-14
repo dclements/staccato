@@ -11,12 +11,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Used for annotating methods that should be executed when performing the DataUp step of a migration
- *
- * @author jhumphrey
  */
 @Target({METHOD})
 @Retention(RUNTIME)
 @Documented
 @WorkflowStep(executedBy = WorkflowStepExecutorImpl.class)
 public @interface DataUp {
+
 }
