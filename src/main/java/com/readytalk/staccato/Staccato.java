@@ -50,7 +50,7 @@ public class Staccato {
 	}
 
 	/**
-	 * Executes Staccato via the {@link com.readytalk.staccato.StaccatoOptions} provided
+	 * Executes Staccato via the {@link com.readytalk.staccato.StaccatoOptions} provided.
 	 *
 	 * @param options
 	 */

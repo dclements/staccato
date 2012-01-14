@@ -56,7 +56,7 @@ public class GroovyMigrationService implements MigrationService<GroovyScript> {
 					continue;
 				}
 
-				// todo: Figure out transactions
+				//TODO: Figure out transactions
 				// i'd like to create a transaction prior to each individual script execution so that if
 				// there are errors, I can rollback anything that was done.
 				// I spent a ton of time trying to get transactions to work without luck.
@@ -74,7 +74,7 @@ public class GroovyMigrationService implements MigrationService<GroovyScript> {
 					migrationWorkflowService.executeWorkflow(script, migrationType.getWorkflowSteps(), migrationRuntime);
 				}
 
-				// todo: add this back in once transactions are figured out
+				//TODO: add this back in once transactions are figured out
 				//databaseService.endTransaction(databaseContext, script);
 			}
 		}

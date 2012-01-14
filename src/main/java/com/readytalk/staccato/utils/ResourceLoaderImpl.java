@@ -20,7 +20,7 @@ import com.readytalk.staccato.database.migration.MigrationException;
 public class ResourceLoaderImpl implements ResourceLoader {
 
 	private static final Logger logger = Logger.getLogger(ResourceLoaderImpl.class);
-
+	
 	@Override
 	public Set<Resource> loadRecursively(String directory, String fileExtension, ClassLoader classLoader) {
 

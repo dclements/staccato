@@ -37,7 +37,7 @@ public class MigrationValidationException extends RuntimeException {
 	@Override
 	public String getMessage() {
 		StringBuilder builder = new StringBuilder();
-		builder.append(String.valueOf(this.getMessage())).append("\n");
+		builder.append(String.valueOf(super.getMessage())).append("\n");
 		for (Violation violation : violations) {
 			builder.append("Property: ").append(violation.propertyName).append("\n");
 			builder.append("Value: ").append(violation.propertyValue).append("\n");
