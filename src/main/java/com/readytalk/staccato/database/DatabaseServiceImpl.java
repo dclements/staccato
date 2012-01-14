@@ -12,7 +12,7 @@ import com.readytalk.staccato.database.migration.script.Script;
 
 public class DatabaseServiceImpl implements DatabaseService {
 
-	public static final Logger logger = Logger.getLogger(DatabaseServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(DatabaseServiceImpl.class);
 
 	@Override
 	public DatabaseContextBuilder getDatabaseContextBuilder() {
@@ -107,7 +107,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 	 * @param script the script
 	 * @return the savepoint name
 	 */
-	String buildSavepointName(Script<?> script) {
+	private String buildSavepointName(Script<?> script) {
 		return "transaction_savepoint_" + script.getFilename();
 	}
 

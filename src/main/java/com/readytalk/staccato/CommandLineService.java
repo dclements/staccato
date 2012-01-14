@@ -4,7 +4,7 @@ import com.google.inject.ImplementedBy;
 import com.readytalk.staccato.database.migration.validation.MigrationValidationException;
 
 /**
- * Interface for Staccato command line
+ * Interface for Staccato command line.
  */
 @ImplementedBy(CommandLineServiceImpl.class)
 public interface CommandLineService {
@@ -16,5 +16,5 @@ public interface CommandLineService {
 	 * @throws MigrationValidationException if there are errors when parsing the command line arguments
 	 * @return staccato options
 	 */
-	public StaccatoOptions parse(String... args) throws MigrationValidationException;
+	StaccatoOptions parse(String... args) throws MigrationValidationException;
 }

@@ -13,11 +13,11 @@ import com.readytalk.staccato.database.migration.validation.MigrationValidationE
 
 public class CommandLineServiceImpl implements CommandLineService {
 
-	private CommandLineParser parser;
+	final private CommandLineParser parser;
 
-	private HelpFormatter helpFormatter;
+	final private HelpFormatter helpFormatter;
 
-	Options options = new Options();
+	final Options options = new Options();
 
 	@Inject
 	public CommandLineServiceImpl(CommandLineParser parser, HelpFormatter helpFormatter) {

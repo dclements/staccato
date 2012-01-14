@@ -8,7 +8,7 @@ import java.io.Serializable;
  * 
  * @since 1.0
  */
-public class Pair<T, U> implements Serializable {
+class Pair<T, U> implements Serializable {
   private static final long serialVersionUID = 1;
   public final T first;
   public final U second;

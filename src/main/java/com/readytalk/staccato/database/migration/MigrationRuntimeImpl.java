@@ -13,12 +13,13 @@ import com.readytalk.staccato.utils.SQLUtils;
 
 public class MigrationRuntimeImpl implements MigrationRuntime {
 
-	public static final Logger logger = Logger.getLogger(MigrationRuntimeImpl.class);
+	@SuppressWarnings("unused")
+	private static final Logger logger = Logger.getLogger(MigrationRuntimeImpl.class);
 
-	private DatabaseContext databaseContext;
-	private List<SQLScript> sqlScripts;
-	private MigrationType migrationType;
-	private boolean loggingEnabled;
+	private final DatabaseContext databaseContext;
+	private final List<SQLScript> sqlScripts;
+	private final MigrationType migrationType;
+	private final boolean loggingEnabled;
 
 	public MigrationRuntimeImpl(DatabaseContext databaseContext, List<SQLScript> sqlScripts,
 			MigrationType migrationType, boolean loggingEnabled) {

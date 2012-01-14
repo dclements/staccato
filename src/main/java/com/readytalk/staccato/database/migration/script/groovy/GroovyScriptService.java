@@ -13,6 +13,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -36,14 +37,14 @@ import groovy.lang.GroovyClassLoader;
 @Singleton
 public class GroovyScriptService implements DynamicLanguageScriptService<GroovyScript> {
 
-	public static final Logger logger = Logger.getLogger(GroovyScriptService.class);
+	private static final Logger logger = Logger.getLogger(GroovyScriptService.class);
 
 	private String scriptTemplateRawContents;
 	private Version scriptTemplateVersion;
 
-	private ResourceLoader loader;
-	private MigrationValidator validator;
-	private MigrationAnnotationParser annotationParser;
+	private final ResourceLoader loader;
+	private final MigrationValidator validator;
+	private final MigrationAnnotationParser annotationParser;
 
 	@Inject
 	public GroovyScriptService(ResourceLoader loader, MigrationValidator validator, MigrationAnnotationParser annotationParser) {
@@ -156,16 +157,17 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 		try {
 			StringBuilder sb = new StringBuilder();
 			String line;
-
+			
+			final InputStream is = url.openStream();
 			try {
-				BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
+				BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 				while ((line = reader.readLine()) != null) {
 					sb.append(line).append("\n");
 				}
 			} catch (Exception e) {
 				throw new MigrationException("unable to parse groovy script: " + url.toExternalForm(), e);
 			} finally {
-				url.openStream().close();
+				IOUtils.closeQuietly(is);
 			}
 
 			return gcl.parseClass(sb.toString());

@@ -18,8 +18,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface Migration {
 
-	public static final boolean scriptVersionStrictMode = true;
-	public static final boolean databaseVersionStrictMode = true;
+	static final boolean scriptVersionStrictMode = true;
+	static final boolean databaseVersionStrictMode = true;
 
 	/**
 	 * The script date

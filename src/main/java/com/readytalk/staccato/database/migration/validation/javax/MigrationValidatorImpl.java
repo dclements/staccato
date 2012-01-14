@@ -19,107 +19,107 @@ import com.readytalk.staccato.database.migration.validation.MigrationValidator;
  */
 public class MigrationValidatorImpl implements MigrationValidator {
 
-  Validator validator;
+	private final Validator validator;
 
-  @Inject
-  public MigrationValidatorImpl(Validator validator) {
-    this.validator = validator;
-  }
+	@Inject
+	public MigrationValidatorImpl(Validator validator) {
+		this.validator = validator;
+	}
 
-  @Override
-  public void validate(StaccatoOptions options) {
-    List<MigrationValidationException.Violation> violations = processConstraintViolations(options);
-    if (violations.size() > 0) {
-      throw new MigrationValidationException("One or more Staccato options are invalid", violations);
-    }
-  }
+	@Override
+	public void validate(StaccatoOptions options) {
+		final List<MigrationValidationException.Violation> violations = processConstraintViolations(options);
+		if (violations.size() > 0) {
+			throw new MigrationValidationException("One or more Staccato options are invalid", violations);
+		}
+	}
 
-  @Override
-  public void validate(Migration migrationAnnotation, String scriptFilename) throws MigrationValidationException {
+	@Override
+	public void validate(Migration migrationAnnotation, String scriptFilename) throws MigrationValidationException {
 
-    MigrationAnnotationStruct struct = new MigrationAnnotationStruct();
+		final MigrationAnnotationStruct struct = new MigrationAnnotationStruct();
 
-    List<MigrationValidationException.Violation> violations = new ArrayList<MigrationValidationException.Violation>();
+		final List<MigrationValidationException.Violation> violations = new ArrayList<MigrationValidationException.Violation>();
 
-    try {
-      struct.databaseVersion = migrationAnnotation.databaseVersion();
-    } catch (IncompleteAnnotationException e) {
-      violations.add(handleIncompleteAnnotationException("databaseVersion"));
-    }
+		try {
+			struct.databaseVersion = migrationAnnotation.databaseVersion();
+		} catch (IncompleteAnnotationException e) {
+			violations.add(handleIncompleteAnnotationException("databaseVersion"));
+		}
 
-    try {
-      struct.scriptDate = migrationAnnotation.scriptDate();
-    } catch (IncompleteAnnotationException e) {
-      violations.add(handleIncompleteAnnotationException("scriptDate"));
-    }
+		try {
+			struct.scriptDate = migrationAnnotation.scriptDate();
+		} catch (IncompleteAnnotationException e) {
+			violations.add(handleIncompleteAnnotationException("scriptDate"));
+		}
 
-    try {
-      struct.scriptVersion = migrationAnnotation.scriptVersion();
-    } catch (IncompleteAnnotationException e) {
-      violations.add(handleIncompleteAnnotationException("scriptVersion"));
-    }
+		try {
+			struct.scriptVersion = migrationAnnotation.scriptVersion();
+		} catch (IncompleteAnnotationException e) {
+			violations.add(handleIncompleteAnnotationException("scriptVersion"));
+		}
 
-    violations.addAll(processConstraintViolations(struct));
+		violations.addAll(processConstraintViolations(struct));
 
-    if (violations.size() > 0) {
-      throw new MigrationValidationException("@Migration annotation invalid for script: " + scriptFilename, violations);
-    }
-  }
+		if (violations.size() > 0) {
+			throw new MigrationValidationException("@Migration annotation invalid for script: " + scriptFilename, violations);
+		}
+	}
 
-  /**
-   * Helper method for handling incomplete annotation exceptions
-   *
-   * @param propertyName the property name
-   * @return a violation
-   */
-  private MigrationValidationException.Violation handleIncompleteAnnotationException(String propertyName) {
-    MigrationValidationException.Violation violation = new MigrationValidationException.Violation();
-    violation.message = propertyName + " is undefined but is a required field.";
-    violation.propertyValue = "undefined";
-    violation.propertyName = propertyName;
-    return violation;
-  }
+	/**
+	 * Helper method for handling incomplete annotation exceptions
+	 *
+	 * @param propertyName the property name
+	 * @return a violation
+	 */
+	private MigrationValidationException.Violation handleIncompleteAnnotationException(String propertyName) {
+		final MigrationValidationException.Violation violation = new MigrationValidationException.Violation();
+		violation.message = propertyName + " is undefined but is a required field.";
+		violation.propertyValue = "undefined";
+		violation.propertyName = propertyName;
+		return violation;
+	}
 
-  /**
-   * Helper method for converting javax constraint violations to a MigrationExceptionValidation.Violation
-   *
-   * @param objectToValidate the object to validate
-   * @return a list of violations
-   */
-  private List<MigrationValidationException.Violation> processConstraintViolations(Object objectToValidate) {
+	/**
+	 * Helper method for converting javax constraint violations to a MigrationExceptionValidation.Violation
+	 *
+	 * @param objectToValidate the object to validate
+	 * @return a list of violations
+	 */
+	private List<MigrationValidationException.Violation> processConstraintViolations(Object objectToValidate) {
 
-    Set<ConstraintViolation<Object>> constraintViolations = validator.validate(objectToValidate);
+		final Set<ConstraintViolation<Object>> constraintViolations = validator.validate(objectToValidate);
 
-    List<MigrationValidationException.Violation> violations = new ArrayList<MigrationValidationException.Violation>();
+		final List<MigrationValidationException.Violation> violations = new ArrayList<MigrationValidationException.Violation>();
 
-    for (ConstraintViolation<Object> constraintViolation : constraintViolations) {
-      MigrationValidationException.Violation violation = new MigrationValidationException.Violation();
-      violation.message = constraintViolation.getMessage();
-      violation.propertyValue = constraintViolation.getInvalidValue();
-      violation.propertyName = constraintViolation.getPropertyPath().toString();
-      violations.add(violation);
-    }
+		for (ConstraintViolation<Object> constraintViolation : constraintViolations) {
+			MigrationValidationException.Violation violation = new MigrationValidationException.Violation();
+			violation.message = constraintViolation.getMessage();
+			violation.propertyValue = constraintViolation.getInvalidValue();
+			violation.propertyName = constraintViolation.getPropertyPath().toString();
+			violations.add(violation);
+		}
 
-    return violations;
-  }
+		return violations;
+	}
 
-  /**
-   * This struct is used to validate the @Migration annotation.  JSR 303 is lame and
-   * can't validate annotations because annotation properties don't follow the JavaBean
-   * method naming conventions (e.g. scriptDate() -vs- getScriptDate())
-   */
-  class MigrationAnnotationStruct {
+	/**
+	 * This struct is used to validate the @Migration annotation.  JSR 303 is lame and
+	 * can't validate annotations because annotation properties don't follow the JavaBean
+	 * method naming conventions (e.g. scriptDate() -vs- getScriptDate())
+	 */
+	private static class MigrationAnnotationStruct {
 
-    @NotNull
-    @DateFormat
-    String scriptDate;
+		@NotNull
+		@DateFormat
+		private String scriptDate;
 
-    @NotNull
-    @Version(strictMode = Migration.scriptVersionStrictMode)
-    String scriptVersion;
+		@NotNull
+		@Version(strictMode = Migration.scriptVersionStrictMode)
+		private String scriptVersion;
 
-    @NotNull
-    @Version(strictMode = Migration.databaseVersionStrictMode)
-    String databaseVersion;
-  }
+		@NotNull
+		@Version(strictMode = Migration.databaseVersionStrictMode)
+		private String databaseVersion;
+	}
 }

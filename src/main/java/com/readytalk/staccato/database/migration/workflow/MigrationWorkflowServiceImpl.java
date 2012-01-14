@@ -20,11 +20,11 @@ import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
  */
 public class MigrationWorkflowServiceImpl<T extends Annotation> implements MigrationWorkflowService {
 
-	public static final Logger logger = Logger.getLogger(MigrationWorkflowServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(MigrationWorkflowServiceImpl.class);
 
-	private MigrationAnnotationParser annotationParser;
+	private final MigrationAnnotationParser annotationParser;
 
-	private MigrationLoggingService migrationLoggingService;
+	private final MigrationLoggingService migrationLoggingService;
 
 	@Inject
 	public MigrationWorkflowServiceImpl(MigrationAnnotationParser annotationParser, MigrationLoggingService migrationLoggingService) {

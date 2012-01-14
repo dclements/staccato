@@ -7,7 +7,7 @@ import com.readytalk.staccato.database.migration.MigrationType;
 
 public class MigrationTypeValidator implements ConstraintValidator<MigrationTypeConstraint, String> {
 
-	MigrationTypeConstraint constraint;
+	private MigrationTypeConstraint constraint;
 
 	@Override
 	public void initialize(MigrationTypeConstraint constraintAnnotation) {

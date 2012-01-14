@@ -7,8 +7,8 @@ import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationP
  * Context for a given workflow.
  */
 public class WorkflowContext {
-	private MigrationAnnotationParser annotationParser;
-	private MigrationRuntime migrationRuntime;
+	private final MigrationAnnotationParser annotationParser;
+	private final MigrationRuntime migrationRuntime;
 
 	public WorkflowContext(MigrationAnnotationParser annotationParser, MigrationRuntime migrationRuntime) {
 		this.annotationParser = annotationParser;

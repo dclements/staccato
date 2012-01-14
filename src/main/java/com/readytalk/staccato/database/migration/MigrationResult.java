@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class MigrationResult {
 
-	Map<Class<? extends Annotation>, Object> resultMap = new HashMap<Class<? extends Annotation>, Object>();
+	private final Map<Class<? extends Annotation>, Object> resultMap = new HashMap<Class<? extends Annotation>, Object>();
 
 	public Map<Class<? extends Annotation>, Object> getResultMap() {
 		return resultMap;

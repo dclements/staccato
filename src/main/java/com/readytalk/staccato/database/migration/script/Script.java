@@ -12,12 +12,12 @@ public interface Script<T> extends Comparable<T> {
 	 *
 	 * @return the script filename
 	 */
-	public String getFilename();
+	String getFilename();
 
 	/**
 	 * Returns the url to the script
 	 *
 	 * @return the script url
 	 */
-	public URL getUrl();
+	URL getUrl();
 }

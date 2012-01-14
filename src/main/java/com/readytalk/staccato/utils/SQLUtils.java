@@ -9,11 +9,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 public class SQLUtils {
 
-	public static final Logger logger = Logger.getLogger(SQLUtils.class);
+	private static final Logger logger = Logger.getLogger(SQLUtils.class);
 
 	/**
 	 * Executes sql
@@ -56,21 +57,23 @@ public class SQLUtils {
 		logger.trace("Executing sql file url: " + url.toExternalForm());
 
 		ResultSet rs;
-
+		
+		BufferedReader in = null;
 		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+			in = new BufferedReader(new InputStreamReader(url.openStream()));
 			StringBuilder stringBuilder = new StringBuilder();
 			String inputLine;
 			while ((inputLine = in.readLine()) != null) {
 				stringBuilder.append(inputLine).append("\n");
 			}
-			in.close();
 
 			rs = execute(connection, stringBuilder.toString());
 
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new SQLException("Unable to read script: " + url.toExternalForm(), e);
+		} finally {
+			IOUtils.closeQuietly(in);
 		}
 
 		return rs;

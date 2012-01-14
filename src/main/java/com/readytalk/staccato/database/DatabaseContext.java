@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Simple struct for modeling database meta-data
+ * Simple struct for modeling database meta-data.
  */
 public class DatabaseContext {
 
@@ -21,7 +21,7 @@ public class DatabaseContext {
 	private String superUser;
 	private String superUserPwd;
 	private DatabaseType databaseType;
-	private Map<String, Savepoint> txnSavepoints = new HashMap<String, Savepoint>();
+	private final Map<String, Savepoint> txnSavepoints = new HashMap<String, Savepoint>();
 
 	public Connection getConnection() {
 		return connection;

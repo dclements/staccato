@@ -10,7 +10,7 @@ import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationP
 
 public class WorkflowStepExecutorImpl<T extends Annotation> implements WorkflowStepExecutor<T> {
 
-	public static final Logger logger = Logger.getLogger(WorkflowStepExecutorImpl.class);
+	private static final Logger logger = Logger.getLogger(WorkflowStepExecutorImpl.class);
 
 	private T workflowStep;
 
@@ -30,7 +30,7 @@ public class WorkflowStepExecutorImpl<T extends Annotation> implements WorkflowS
 			logger.debug("Invoking workflow step @" + workflowStep.annotationType().getSimpleName() + " on method: " + method.getName());
 			// first try invoking without runtime argument
 			result = method.invoke(scriptInstance);
-		} catch (IllegalArgumentException e) {
+		} catch(final IllegalArgumentException e) {
 			// if exception is thrown then send the runtime
 			result = method.invoke(scriptInstance, context.getMigrationRuntime());
 		}

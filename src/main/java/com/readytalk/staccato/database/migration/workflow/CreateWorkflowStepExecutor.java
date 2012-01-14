@@ -15,9 +15,9 @@ import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationP
 
 public class CreateWorkflowStepExecutor implements WorkflowStepExecutor<Create> {
 
-	public static final Logger logger = Logger.getLogger(WorkflowStepExecutorImpl.class);
+	private static final Logger logger = Logger.getLogger(WorkflowStepExecutorImpl.class);
 
-	Create workflowStep;
+	private Create workflowStep;
 
 	@Override
 	public void initialize(Create workflowStep) {

@@ -24,7 +24,7 @@ public interface DatabaseService {
 	 * @param databaseType the database type
 	 * @return returns a connection
 	 */
-	public Connection connect(URI jdbcUri, String username, String password, DatabaseType databaseType);
+	Connection connect(URI jdbcUri, String username, String password, DatabaseType databaseType);
 
 	/**
 	 * Disconnects from the database using the context specified

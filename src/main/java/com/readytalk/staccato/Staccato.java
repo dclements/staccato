@@ -31,13 +31,13 @@ import com.readytalk.staccato.utils.Version;
 
 public class Staccato {
 
-	private Logger logger = Logger.getLogger(Staccato.class);
+	private final Logger logger = Logger.getLogger(Staccato.class);
 
-	DynamicLanguageScriptService<GroovyScript> groovyScriptService;
-	ScriptService<SQLScript> sqlScriptService;
-	MigrationValidator validator;
-	DatabaseService databaseService;
-	MigrationService<GroovyScript> migrationService;
+	private final DynamicLanguageScriptService<GroovyScript> groovyScriptService;
+	private final ScriptService<SQLScript> sqlScriptService;
+	private final MigrationValidator validator;
+	private final DatabaseService databaseService;
+	private final MigrationService<GroovyScript> migrationService;
 
 	@Inject
 	public Staccato(DatabaseService databaseService, DynamicLanguageScriptService<GroovyScript> groovyScriptService,

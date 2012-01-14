@@ -1,326 +1,270 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<!--
+  		To deploy, use the following:
 
-  <!--
-  To deploy, use the following:
-
-    mvn clean deploy -Dgpg.passphrase=passphrase
-  -->
-
-  <parent>
-    <groupId>org.sonatype.oss</groupId>
-    <artifactId>oss-parent</artifactId>
-    <version>5</version>
-  </parent>
-
-  <groupId>com.readytalk</groupId>
-  <artifactId>staccato</artifactId>
-  <packaging>jar</packaging>
-
-  <version>1.0.0-SNAPSHOT</version>
-  <name>Staccato</name>
-  <description>Database migration management for Java</description>
-  <url>http://github.com/ReadyTalk/staccato</url>
-  <licenses>
-    <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-
-  <scm>
-    <connection>scm:git:git@github.com:ReadyTalk/staccato.git</connection>
-    <developerConnection>scm:git:git@github.com:ReadyTalk/staccato.git</developerConnection>
-    <url>http://github.com/ReadyTalk/staccato.git</url>
-  </scm>
-
-  <properties>
-    <dbName>staccato</dbName>
-    <dbUser>staccato</dbUser>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-
-  <dependencies>
-
-    <!--compile-->
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.16</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>1.4</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.5</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy-all</artifactId>
-      <version>1.7.2</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-cli</groupId>
-      <artifactId>commons-cli</artifactId>
-      <version>1.2</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-	    <groupId>postgresql</groupId>
-	    <artifactId>postgresql</artifactId>
-	    <version>9.1-901-1.jdbc4</version>
-		<scope>compile</scope>
-	</dependency>
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>5.1.13</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.inject</groupId>
-      <artifactId>guice</artifactId>
-      <version>3.0</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>4.1.0.Beta1</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
-      <version>1.0.0.GA</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-      <version>1.6</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>1.4</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.5.6</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <!--test-->
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>5.11</version>
-      <scope>test</scope>
-      <classifier>jdk15</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>1.9.0</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
-  <build>
-
-    <testSourceDirectory>src/test/unit</testSourceDirectory>
-
-    <testResources>
-      <testResource>
-        <directory>src/test/unit/resources</directory>
-      </testResource>
-      <testResource>
-        <directory>src/test/integration/resources</directory>
-      </testResource>
-    </testResources>
-
-    <plugins>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.6</version>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>2.1.1</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.4</version>
-        <executions>
-
-          <!--
-          this ant script will always run during the generate-test-resources phase
-          so that the migration-jar directory can be made into a migration.jar for unit testing
-          -->
-          <execution>
-            <id>generate-migration-jar</id>
-            <phase>generate-test-resources</phase>
-            <configuration>
-              <tasks>
-
-                <echo>Creating jar migration.jar</echo>
-
-                <jar destfile="${basedir}/target/migration.jar" basedir="${basedir}/src/test/unit/migration-jar"/>
-              </tasks>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-
-          <execution>
-            <id>integration-test</id>
-            <phase>test</phase>
-            <configuration>
-              <tasks>
-                <echo>Running Integration tests</echo>
-                <taskdef resource="testngtasks">
-                  <classpath refid="maven.test.classpath"/>
-                </taskdef>
-
-                <javac srcdir="src/test/integration/java"
-                       destdir="target/test-classes"
-                       classpath="${maven.test.classpath}"
-                       debug="on"
-                       source="1.6"
-                       executable="${env.JAVA_HOME}/bin/javac"
-                       fork="true"
-                       includeantruntime="false">
-                  <classpath>
-                    <path refid="maven.test.classpath"/>
-                    <path location="target/classes"/>
-                    <path>
-                      <fileset dir="target" includes="**/*.jar"/>
-                    </path>
-                    <path location="target/test-classes"/>
-                  </classpath>
-                </javac>
-
-                <testng outputDir="target/integration" verbose="2" haltonfailure="true">
-                  <classpath>
-                    <path refid="maven.test.classpath"/>
-                    <path location="target/classes"/>
-                    <path>
-                      <fileset dir="target" includes="**/*.jar"/>
-                    </path>
-                    <path location="target/test-classes"/>
-                  </classpath>
-                  <classfileset dir="target/test-classes" includes="**/*IntegrationTest.class"/>
-                </testng>
-              </tasks>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2-beta-5</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <phase>package</phase>
-          </execution>
-        </executions>
-        <configuration>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <mainClass>com.readytalk.staccato.Main</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-gpg-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>sign-artifacts</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>sign</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!-- <plugin>
-       <groupId>com.readytalk</groupId>
-       <artifactId>staccato-maven-plugin</artifactId>
-       <version>1.0.0-SNAPSHOT</version>
-       <configuration>
-         <jdbcUrl>jdbc:postgresql://localhost:5432/${dbName}</jdbcUrl>
-         <dbUsername>tomcat</dbUsername>
-         <dbPassword>tomcat</dbPassword>
-         <migrationType>UP</migrationType>
-         <migrationsDir>${basedir}/src/test/integration/resources/groovy</migrationsDir>
-       </configuration>
-       <executions>
-         <execution>
-           <phase/>
-           <goals>
-             <goal>create-script</goal>
-           </goals>
-         </execution>
-       </executions>
-     </plugin> -->
-
-    </plugins>
-  </build>
-
+    	mvn clean deploy -Dgpg.passphrase=passphrase
+  	-->
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>5</version>
+	</parent>
+	<groupId>com.readytalk</groupId>
+	<artifactId>staccato</artifactId>
+	<packaging>jar</packaging>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>Staccato</name>
+	<description>Database migration management for Java</description>
+	<url>http://github.com/ReadyTalk/staccato</url>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:git:git@github.com:ReadyTalk/staccato.git</connection>
+		<developerConnection>scm:git:git@github.com:ReadyTalk/staccato.git</developerConnection>
+		<url>http://github.com/ReadyTalk/staccato.git</url>
+	</scm>
+	<properties>
+		<dbName>staccato</dbName>
+		<dbUser>staccato</dbUser>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencies>
+		<!--compile-->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.6</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.5</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>1.8.5</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-cli</groupId>
+			<artifactId>commons-cli</artifactId>
+			<version>1.2</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.1-901-1.jdbc4</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.18</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+			<version>3.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>4.2.0.Final</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.0.0.GA</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.4</version>
+			<scope>runtime</scope>
+		</dependency>
+		<!--test-->
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.3.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.0</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<testSourceDirectory>src/test/unit/java</testSourceDirectory>
+		<testResources>
+			<testResource>
+				<directory>src/test/unit/resources</directory>
+			</testResource>
+			<testResource>
+				<directory>src/test/integration/resources</directory>
+			</testResource>
+		</testResources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.6</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<!--
+          				This ant script will always run during the generate-test-resources phase
+          				so that the migration-jar directory can be made into a migration.jar for unit testing
+          			-->
+					<execution>
+						<id>generate-migration-jar</id>
+						<phase>generate-test-resources</phase>
+						<configuration>
+							<tasks>
+								<echo>Creating jar migration.jar</echo>
+								<jar destfile="${basedir}/target/migration.jar" basedir="${basedir}/src/test/unit/migration-jar"/>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>integration-test</id>
+						<phase>test</phase>
+						<configuration>
+							<tasks>
+								<echo>Running Integration tests</echo>
+								<taskdef resource="testngtasks">
+									<classpath refid="maven.test.classpath"/>
+								</taskdef>
+								<javac srcdir="src/test/integration/java" destdir="target/test-classes" classpath="${maven.test.classpath}" debug="on" source="1.6" executable="${env.JAVA_HOME}/bin/javac" fork="true" includeantruntime="false">
+									<classpath>
+										<path refid="maven.test.classpath"/>
+										<path location="target/classes"/>
+										<path>
+											<fileset dir="target" includes="**/*.jar"/>
+										</path>
+										<path location="target/test-classes"/>
+									</classpath>
+								</javac>
+								<testng outputDir="target/integration" verbose="2" haltonfailure="true">
+									<classpath>
+										<path refid="maven.test.classpath"/>
+										<path location="target/classes"/>
+										<path>
+											<fileset dir="target" includes="**/*.jar"/>
+										</path>
+										<path location="target/test-classes"/>
+									</classpath>
+									<classfileset dir="target/test-classes" includes="**/*IntegrationTest.class"/>
+								</testng>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<phase>package</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>com.readytalk.staccato.Main</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
