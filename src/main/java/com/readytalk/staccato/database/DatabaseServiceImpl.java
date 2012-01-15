@@ -72,6 +72,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
 			Savepoint savepoint = connection.setSavepoint(savepointName);
 			context.getTxnSavepoints().put(savepointName, savepoint);
+			
 			logger.debug("started transaction with savepoint: " + savepointName);
 		} catch (SQLException e) {
 			throw new DatabaseException("Unable to start transaction", e);

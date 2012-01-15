@@ -6,7 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.apache.log4j.Logger;
 
 import com.google.inject.Inject;
-import com.readytalk.staccato.Main;
+import com.google.inject.Injector;
 import com.readytalk.staccato.database.migration.MigrationException;
 import com.readytalk.staccato.database.migration.MigrationLoggingService;
 import com.readytalk.staccato.database.migration.MigrationResult;
@@ -25,11 +25,14 @@ public class MigrationWorkflowServiceImpl<T extends Annotation> implements Migra
 	private final MigrationAnnotationParser annotationParser;
 
 	private final MigrationLoggingService migrationLoggingService;
+	
+	private final Injector injector;
 
 	@Inject
-	public MigrationWorkflowServiceImpl(MigrationAnnotationParser annotationParser, MigrationLoggingService migrationLoggingService) {
+	public MigrationWorkflowServiceImpl(MigrationAnnotationParser annotationParser, MigrationLoggingService migrationLoggingService, Injector inj) {
 		this.annotationParser = annotationParser;
 		this.migrationLoggingService = migrationLoggingService;
+		this.injector = inj;
 	}
 
 	@Override
@@ -55,9 +58,10 @@ public class MigrationWorkflowServiceImpl<T extends Annotation> implements Migra
 				if (executor != null) {
 					// instantiate and execute the step
 					try {
-						WorkflowStepExecutor<T> stepExecutorInstance = Main.injector.getInstance(executor);
+						WorkflowStepExecutor<T> stepExecutorInstance = injector.getInstance(executor);
 						stepExecutorInstance.initialize((T) annotation);
-						Object executionResult = stepExecutorInstance.execute(script.getScriptInstance(), new WorkflowContext(annotationParser, migrationRuntime));
+						WorkflowContextFactory wcf = injector.getInstance(WorkflowContextFactory.class);
+						Object executionResult = stepExecutorInstance.execute(script.getScriptInstance(), wcf.create(migrationRuntime));
 						migrationResult.getResultMap().put(annotation.annotationType(), executionResult);
 
 						// if enabled, log successful script execution

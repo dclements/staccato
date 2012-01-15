@@ -11,6 +11,8 @@ import java.io.IOException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.readytalk.staccato.database.DatabaseContext;
 import com.readytalk.staccato.database.migration.MigrationLoggingService;
 import com.readytalk.staccato.database.migration.MigrationResult;
@@ -20,9 +22,12 @@ import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationP
 import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationParserImpl;
 import com.readytalk.staccato.database.migration.annotation.TestWorkflowStepOne;
 import com.readytalk.staccato.database.migration.annotation.TestWorkflowStepTwo;
+import com.readytalk.staccato.database.migration.guice.MigrationModule;
 import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
 
 public class MigrationWorkflowServiceImplTest {
+	
+	private final static Injector injector = Guice.createInjector(new MigrationModule());
 
 	// Tests running a migration using a test workflow and step
 
@@ -53,7 +58,7 @@ public class MigrationWorkflowServiceImplTest {
 		migrationLoggingService.log(dbCtx, script, TestWorkflowStepOne.class, migrationAnnotation);
 		migrationLoggingService.log(dbCtx, script, TestWorkflowStepTwo.class, migrationAnnotation);
 
-		MigrationWorkflowServiceImpl<?> workflowService = new MigrationWorkflowServiceImpl(annotationParser, migrationLoggingService);
+		MigrationWorkflowServiceImpl<?> workflowService = new MigrationWorkflowServiceImpl(annotationParser, migrationLoggingService, injector);
 
 		MigrationResult result = workflowService.executeWorkflow(script, new Class[]{TestWorkflowStepOne.class, TestWorkflowStepTwo.class}, runtime);
 

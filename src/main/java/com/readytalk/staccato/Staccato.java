@@ -12,13 +12,14 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.readytalk.staccato.database.DatabaseContext;
 import com.readytalk.staccato.database.DatabaseContextBuilder;
 import com.readytalk.staccato.database.DatabaseException;
 import com.readytalk.staccato.database.DatabaseService;
 import com.readytalk.staccato.database.migration.MigrationException;
 import com.readytalk.staccato.database.migration.MigrationRuntime;
-import com.readytalk.staccato.database.migration.MigrationRuntimeImpl;
+import com.readytalk.staccato.database.migration.MigrationRuntimeFactory;
 import com.readytalk.staccato.database.migration.MigrationService;
 import com.readytalk.staccato.database.migration.MigrationType;
 import com.readytalk.staccato.database.migration.annotation.Migration;
@@ -38,15 +39,17 @@ public class Staccato {
 	private final MigrationValidator validator;
 	private final DatabaseService databaseService;
 	private final MigrationService<GroovyScript> migrationService;
+	private final Injector injector;
 
 	@Inject
 	public Staccato(DatabaseService databaseService, DynamicLanguageScriptService<GroovyScript> groovyScriptService,
-			MigrationService<GroovyScript> migrationService, ScriptService<SQLScript> sqlScriptService, MigrationValidator validator) {
+			MigrationService<GroovyScript> migrationService, ScriptService<SQLScript> sqlScriptService, MigrationValidator validator, Injector inj) {
 		this.databaseService = databaseService;
 		this.groovyScriptService = groovyScriptService;
 		this.migrationService = migrationService;
 		this.sqlScriptService = sqlScriptService;
 		this.validator = validator;
+		this.injector = inj;
 	}
 
 	/**
@@ -54,7 +57,7 @@ public class Staccato {
 	 *
 	 * @param options
 	 */
-	public void execute(StaccatoOptions options) {
+	public void execute(final StaccatoOptions options) {
 
 		// set the migration dir to the default if not defined by user.  This has to
 		// be done prior to validating the staccato option set since it's a required field
@@ -108,11 +111,13 @@ public class Staccato {
 
 		// load sql scripts
 		List<SQLScript> sqlScripts = sqlScriptService.load(options.migrationsDir, cl);
-
+		
+		final MigrationRuntimeFactory factory = injector.getInstance(MigrationRuntimeFactory.class);
+		
+		final MigrationRuntime migrationRuntime = factory.create(dbCtx, sqlScripts, migrationType, options.enableLogging);
+		
 		// initialize the runtime.
 		// This runtime object eventually gets passed to the scripts themselves as a method argument
-		MigrationRuntime migrationRuntime = new MigrationRuntimeImpl(dbCtx, sqlScripts, migrationType, options.enableLogging);
-
 		try {
 			migrationService.run(scriptsToRun, migrationRuntime);
 		} finally {

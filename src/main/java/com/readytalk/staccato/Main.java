@@ -9,14 +9,14 @@ import com.readytalk.staccato.database.migration.guice.MigrationModule;
  */
 public class Main {
 
-	public final static Injector injector = Guice.createInjector(new MigrationModule());
-
 	public static void main(String... args) {
+		final Injector injector = Guice.createInjector(new MigrationModule());
 
-		CommandLineService cls = injector.getInstance(CommandLineService.class);
+		final CommandLineService cls = injector.getInstance(CommandLineService.class);
 
-		StaccatoOptions options = cls.parse(args);
-
+		final StaccatoOptions options = cls.parse(args);
+		
+		//Null return represents the help dialogue.
 		if (options != null) {
 			Staccato staccato = injector.getInstance(Staccato.class);
 			staccato.execute(options);

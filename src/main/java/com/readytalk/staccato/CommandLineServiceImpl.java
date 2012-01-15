@@ -31,8 +31,8 @@ public class CommandLineServiceImpl implements CommandLineService {
 		StaccatoOptions.Arg[] staccatoArgs = StaccatoOptions.Arg.values();
 
 		for (StaccatoOptions.Arg staccatoArg : staccatoArgs) {
-			Option opt = new Option(staccatoArg.opt, staccatoArg.longOpt, true, staccatoArg.desc);
-			opt.setRequired(staccatoArg.required);
+			Option opt = new Option(staccatoArg.getOpt(), staccatoArg.getLongOpt(), true, staccatoArg.getDesc());
+			opt.setRequired(staccatoArg.isRequired());
 			options.addOption(opt);
 		}
 
@@ -49,22 +49,22 @@ public class CommandLineServiceImpl implements CommandLineService {
 				CommandLine cli = parser.parse(options, args);
 
 				// extract options values from the command line
-				String jdbcUrl = cli.getOptionValue(StaccatoOptions.Arg.JDBC_URL.opt);
-				String dbName = cli.getOptionValue(StaccatoOptions.Arg.DB_NAME.opt);
-				String dbUser = cli.getOptionValue(StaccatoOptions.Arg.DB_USER.opt);
-				String dbPwd = cli.getOptionValue(StaccatoOptions.Arg.DB_PWD.opt);
-				String migrationType = cli.getOptionValue(StaccatoOptions.Arg.MIGRATION_TYPE.opt);
-				String migrateFromDate = cli.getOptionValue(StaccatoOptions.Arg.MIGRATE_FROM_DATE.opt);
-				String migrateToDate = cli.getOptionValue(StaccatoOptions.Arg.MIGRATE_TO_DATE.opt);
-				String migrateScript = cli.getOptionValue(StaccatoOptions.Arg.MIGRATE_SCRIPT.opt);
-				String migrationsDir = cli.getOptionValue(StaccatoOptions.Arg.MIGRATIONS_DIR.opt);
-				String dbSuperUser = cli.getOptionValue(StaccatoOptions.Arg.DB_SUPERUSER.opt);
-				String dbSuperUserPwd = cli.getOptionValue(StaccatoOptions.Arg.DB_SUPERUSER_PWD.opt);
-				String migrateFromVer = cli.getOptionValue(StaccatoOptions.Arg.MIGRATE_FROM_VER.opt);
-				String migrateToVer = cli.getOptionValue(StaccatoOptions.Arg.MIGRATE_TO_VER.opt);
-				String rootDb = cli.getOptionValue(StaccatoOptions.Arg.ROOT_DB.opt);
-				String migrationJarPath = cli.getOptionValue(StaccatoOptions.Arg.MIGRATION_JAR_PATH.opt);
-				String logging = cli.getOptionValue(StaccatoOptions.Arg.LOGGING.opt);
+				String jdbcUrl = cli.getOptionValue(StaccatoOptions.Arg.JDBC_URL.getOpt());
+				String dbName = cli.getOptionValue(StaccatoOptions.Arg.DB_NAME.getOpt());
+				String dbUser = cli.getOptionValue(StaccatoOptions.Arg.DB_USER.getOpt());
+				String dbPwd = cli.getOptionValue(StaccatoOptions.Arg.DB_PWD.getOpt());
+				String migrationType = cli.getOptionValue(StaccatoOptions.Arg.MIGRATION_TYPE.getOpt());
+				String migrateFromDate = cli.getOptionValue(StaccatoOptions.Arg.MIGRATE_FROM_DATE.getOpt());
+				String migrateToDate = cli.getOptionValue(StaccatoOptions.Arg.MIGRATE_TO_DATE.getOpt());
+				String migrateScript = cli.getOptionValue(StaccatoOptions.Arg.MIGRATE_SCRIPT.getOpt());
+				String migrationsDir = cli.getOptionValue(StaccatoOptions.Arg.MIGRATIONS_DIR.getOpt());
+				String dbSuperUser = cli.getOptionValue(StaccatoOptions.Arg.DB_SUPERUSER.getOpt());
+				String dbSuperUserPwd = cli.getOptionValue(StaccatoOptions.Arg.DB_SUPERUSER_PWD.getOpt());
+				String migrateFromVer = cli.getOptionValue(StaccatoOptions.Arg.MIGRATE_FROM_VER.getOpt());
+				String migrateToVer = cli.getOptionValue(StaccatoOptions.Arg.MIGRATE_TO_VER.getOpt());
+				String rootDb = cli.getOptionValue(StaccatoOptions.Arg.ROOT_DB.getOpt());
+				String migrationJarPath = cli.getOptionValue(StaccatoOptions.Arg.MIGRATION_JAR_PATH.getOpt());
+				String logging = cli.getOptionValue(StaccatoOptions.Arg.LOGGING.getOpt());
 
 				StaccatoOptions staccatoOptions = new StaccatoOptions();
 				staccatoOptions.jdbcUrl = jdbcUrl;
