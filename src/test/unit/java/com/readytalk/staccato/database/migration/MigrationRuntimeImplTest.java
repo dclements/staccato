@@ -3,13 +3,12 @@ package com.readytalk.staccato.database.migration;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 
-import org.junit.Ignore;
 import org.testng.annotations.Test;
 
 public class MigrationRuntimeImplTest {
 
-	@Ignore
-	@Test
+	
+	@Test(enabled=false)
 	public void testExecuteSQL() throws SQLException {
 
 		//    DatabaseContext dbContext = makeDbContext();
@@ -29,8 +28,7 @@ public class MigrationRuntimeImplTest {
 
 	}
 
-	@Ignore
-	@Test
+	@Test(enabled=false)
 	public void testExecuteSQLFile() throws SQLException, MalformedURLException {
 
 		//    DatabaseContext dbContext = makeDbContext();

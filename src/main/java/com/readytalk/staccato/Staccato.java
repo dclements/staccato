@@ -99,7 +99,7 @@ public class Staccato {
 		// if a CREATE migraiton is not being executed, then initialize the database
 		if (!migrationType.equals(MigrationType.CREATE)) {
 			try {
-				dbCtx.setConnection(databaseService.connect(dbCtx.getFullyQualifiedJdbcUri(), dbCtx.getUsername(), dbCtx.getPassword(), dbCtx.getDatabaseType()));
+				databaseService.connect(dbCtx);
 			} catch (DatabaseException e) {
 				throw new MigrationException("Unable to establish a connection to the database for jdbc uri:" +
 						options.jdbcUrl + ", user: " + options.dbUser + ", pwd: " + options.dbPwd + ".  Please make sure that " +
