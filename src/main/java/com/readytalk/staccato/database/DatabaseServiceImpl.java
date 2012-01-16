@@ -41,6 +41,13 @@ public class DatabaseServiceImpl implements DatabaseService {
 
 		return connection;
 	}
+	
+	@Override
+	public Connection connect(DatabaseContext context) {
+		final Connection retval = this.connect(context.getFullyQualifiedJdbcUri(), context.getUsername(), context.getPassword(), context.getDatabaseType());
+		context.setConnection(retval);
+		return retval;
+	}
 
 	@Override
 	public void disconnect(DatabaseContext context) {

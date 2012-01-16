@@ -26,6 +26,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.junit.Assert.assertEquals;
+
 import com.readytalk.staccato.database.migration.script.Script;
 
 @RunWith(Enclosed.class)
@@ -54,6 +56,21 @@ public class DatabaseServiceTest {
 			DbUtils.loadDriver(eq("org.postgresql.Driver"));
 			PowerMockito.verifyStatic();
 			DriverManagerWrapper.getConnection(eq("jdbc:postgres:localhost"), eq("staccato"), eq("staccato_pass"));
+		}
+		
+		@Test
+		public void testConnectContext() {
+			final DatabaseContext context = mock(DatabaseContext.class);
+			
+			when(context.getFullyQualifiedJdbcUri()).thenReturn(URI.create("jdbc:postgres:localhost"));
+			when(context.getUsername()).thenReturn("staccato");
+			when(context.getPassword()).thenReturn("staccato_pass");
+			when(context.getDatabaseType()).thenReturn(DatabaseType.POSTGRESQL);
+			
+			Connection c = service.connect(context);
+			
+			verify(context, times(1)).setConnection(c);
+			assertEquals(conn, c);
 		}
 	}
 
