@@ -1,5 +1,8 @@
 package com.readytalk.staccato.utils;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * <p>
  * This class models a version range that starts at one version and
@@ -155,27 +158,19 @@ public class VersionRange {
 		}
 
 		final VersionRange version = (VersionRange) other;
-
-		if (!start.equals(version.start)) {
-			return false;
-		}
-		if (end != null && !end.equals(version.end)) {
-			return false;
-		}
-
-		return true;
+		
+		return new EqualsBuilder().append(start, version.start)
+			.append(end, version.end).isEquals();
 	}
 
 	/**
 	 * @return A valid hashcode for the Version.
 	 */
 	public int hashCode() {
-		int result;
-		result = start.hashCode();
-		if (end != null) {
-			result = 29 * result + end.hashCode();
-		}
-		return result;
+		
+		return new HashCodeBuilder(17,29)
+			.append(start)
+			.append(end).toHashCode();
 	}
 
 	/**

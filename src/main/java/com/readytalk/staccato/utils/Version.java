@@ -5,6 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.tuple.Pair;
+
 /**
  * <p>
  * This class models a simple three number version as well as any
@@ -381,14 +385,12 @@ public class Version implements Comparable<Version> {
 		if (other == null || getClass() != other.getClass()) return false;
 
 		Version version = (Version) other;
-
-		if (major != version.major) return false;
-		if (minor != version.minor) return false;
-		if (patch != version.patch) return false;
-		if (additional != null ? !additional.equals(version.additional) : version.additional != null)
-			return false;
-
-		return true;
+		
+		return new EqualsBuilder()
+			.append(major, version.major)
+			.append(minor, version.minor)
+			.append(patch, version.patch)
+			.append(additional, version.additional).isEquals();
 	}
 
 	/**
@@ -396,12 +398,11 @@ public class Version implements Comparable<Version> {
 	 */
 
 	public int hashCode() {
-		int result;
-		result = major;
-		result = 31 * result + minor;
-		result = 31 * result + patch;
-		result = 31 * result + (additional != null ? additional.hashCode() : 0);
-		return result;
+		return new HashCodeBuilder(17, 31)
+			.append(major)
+			.append(minor)
+			.append(patch)
+			.append(additional).toHashCode();
 	}
 
 	/**
@@ -443,24 +444,24 @@ public class Version implements Comparable<Version> {
 
 				Pair<String, Long> value = values.get(i);
 				Pair<String, Long> valueOther = valuesOther.get(i);
-				if (value.first.equals(valueOther.first)) {
-					if (value.second != null && valueOther.second != null) {
-						int result = value.second.compareTo(valueOther.second);
+				if (value.getLeft().equals(valueOther.getLeft())) {
+					if (value.getRight() != null && valueOther.getRight() != null) {
+						int result = value.getRight().compareTo(valueOther.getRight());
 						if (result == 0) {
 							continue;
 						}
 
 						return result;
-					} else if (value.second == null && valueOther.second != null) {
+					} else if (value.getRight() == null && valueOther.getRight() != null) {
 						return 1;
-					} else if (value.second != null && valueOther.second == null) {
+					} else if (value.getRight() != null && valueOther.getRight() == null) {
 						return -1;
 					}
 				} else {
 					// Mis-matched versions, tough decision, but I think the ordering goes alpha, beta,
 					// M, RC
-					int rank = ADDITIONAL_RANKING.indexOf(value.first);
-					int rankOther = ADDITIONAL_RANKING.indexOf(valueOther.first);
+					int rank = ADDITIONAL_RANKING.indexOf(value.getLeft());
+					int rankOther = ADDITIONAL_RANKING.indexOf(valueOther.getLeft());
 
 					if (rank == -1 || rankOther == -1) {
 						// Now we really have no option but to compare the additional strings lexically
@@ -502,8 +503,7 @@ public class Version implements Comparable<Version> {
 					if (num.length() > 0) {
 						l = Long.valueOf(num.toString());
 					}
-
-					list.add(new Pair<String, Long>(str.toString(), l));
+					list.add(Pair.of(str.toString(), l));
 
 					num = new StringBuilder();
 					str = new StringBuilder();
@@ -523,7 +523,7 @@ public class Version implements Comparable<Version> {
 				l = Long.valueOf(num.toString());
 			}
 
-			list.add(new Pair<String, Long>(str.toString(), l));
+			list.add(Pair.of(str.toString(), l));
 		}
 
 		return list;
