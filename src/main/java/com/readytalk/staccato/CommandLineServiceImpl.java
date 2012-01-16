@@ -40,8 +40,7 @@ public class CommandLineServiceImpl implements CommandLineService {
 
 	@Override
 	public StaccatoOptions parse(String... args) throws MigrationValidationException {
-
-		if (args.length == 0 || args[0].equals("help")) {
+		if (args.length == 0 || args[0].contains("help") || args[0].equals("-h")) {
 			helpFormatter.printHelp("java -jar staccato.jar [options]", options);
 			return null;
 		} else {

@@ -1,9 +1,18 @@
 package com.readytalk.staccato.database;
 
+import static org.mockito.Mockito.*;
+
 import java.net.URI;
+import java.util.Map;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Savepoint;
+
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.readytalk.staccato.database.migration.script.Script;
 
 public class DatabaseServiceImplTest extends BaseTest {
 
@@ -31,49 +40,48 @@ public class DatabaseServiceImplTest extends BaseTest {
 		}
 	}
 
-//	@Test(dataProvider="jdbcProvider")
-//	public void testStartAndEndTransactionWithPostgresql(URI baseJdbcUri) {
-//
-//		try {
-//			DatabaseService service = new DatabaseServiceImpl();
-//			DatabaseContextBuilder dbCtxBuilder = service.getDatabaseContextBuilder();
-//			dbCtxBuilder.setContext(baseJdbcUri.toString(), dbName, dbUser, dbPwd, dbSuperUser, dbSuperUserPwd, rootDbName);
-//			
-//			DatabaseContext context = dbCtxBuilder.build();
-//			
-//			service.connect(context.getFullyQualifiedJdbcUri(), context.getUsername(), context.getPassword(), context.getDatabaseType());
-//
-//			String expectedFilename = "foo";
-//			Script<?> script = mock(Script.class);
-//			when(script.getFilename()).thenReturn(expectedFilename);
-//			service.startTransaction(context, script);
-//			
-//			//String expectedSavepointName = service.buildSavepointName(script);
-//
-//			Map<String, Savepoint> savepoints = context.getTxnSavepoints();
-//			Assert.assertEquals(savepoints.size(), 1);
-//			System.out.println(savepoints);
-//			//Savepoint savepoint = context.getTxnSavepoints().get(expectedSavepointName);
-//			//Assert.assertNotNull(savepoint);
-//
-////			try {
-////				Assert.assertEquals(savepoint.getSavepointName(), expectedSavepointName);
-////			} catch (SQLException e) {
-////				Assert.fail("savepoint should exist", e);
-////			}
-//
-//			service.endTransaction(context, script);
-//
-//			Assert.assertEquals(savepoints.size(), 0);
-//			
-//			service.disconnect(context);
-//
-//		} catch (DatabaseException e) {
-//			Assert.fail(getDatabaseErrorMessage(postgresqlJdbcUri));
-//		}
-//		
-//		
-//	}
+	@Test(dataProvider="jdbcProvider")
+	public void testStartAndEndTransactionWithPostgresql(URI baseJdbcUri) {
+
+		try {
+			DatabaseService service = new DatabaseServiceImpl();
+			DatabaseContextBuilder dbCtxBuilder = service.getDatabaseContextBuilder();
+			dbCtxBuilder.setContext(baseJdbcUri.toString(), dbName, dbUser, dbPwd, dbSuperUser, dbSuperUserPwd, rootDbName);
+			
+			DatabaseContext context = dbCtxBuilder.build();
+			
+			Connection conn = service.connect(context.getFullyQualifiedJdbcUri(), context.getUsername(), context.getPassword(), context.getDatabaseType());
+			context.setConnection(conn);
+
+			String expectedFilename = "foo";
+			Script<?> script = mock(Script.class);
+			when(script.getFilename()).thenReturn(expectedFilename);
+			service.startTransaction(context, script);
+			
+			String expectedSavepointName = "transaction_savepoint_" + script.getFilename();
+
+			Map<String, Savepoint> savepoints = context.getTxnSavepoints();
+			Assert.assertEquals(savepoints.size(), 1);
+			System.out.println(savepoints);
+			Savepoint savepoint = context.getTxnSavepoints().get(expectedSavepointName);
+			Assert.assertNotNull(savepoint);
+
+			try {
+				Assert.assertEquals(savepoint.getSavepointName(), expectedSavepointName);
+			} catch (SQLException e) {
+				Assert.fail("Savepoint should exist.", e);
+			}
+
+			service.endTransaction(context, script);
+
+			Assert.assertEquals(savepoints.size(), 0);
+			
+			service.disconnect(context);
+
+		} catch (DatabaseException e) {
+			Assert.fail(getDatabaseErrorMessage(postgresqlJdbcUri));
+		}
+	}
 
 	//	  @Test()
 	//	  public void testStartAndRollbackTransactionWithPostgresql() {

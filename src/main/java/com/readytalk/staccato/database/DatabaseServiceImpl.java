@@ -2,7 +2,6 @@ package com.readytalk.staccato.database;
 
 import java.net.URI;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 
@@ -34,7 +33,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 		try {
 			logger.info("Connecting to database: " + jdbcUri.toString());
 
-			connection = DriverManager.getConnection(jdbcUri.toString(), username, password);
+			connection = DriverManagerWrapper.getConnection(jdbcUri.toString(), username, password);
 			
 		} catch (SQLException e) {
 			throw new DatabaseException("SQL exception occurred when establishing connection to database: " + jdbcUri, e);
@@ -46,7 +45,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 	@Override
 	public void disconnect(DatabaseContext context) {
 
-		logger.info("Disconnecting database connection: " + context.getFullyQualifiedJdbcUri().toString());
+		logger.info("Disconnecting database connection: " + String.valueOf(context.getFullyQualifiedJdbcUri()));
 
 		final Connection connection = context.getConnection();
 		try {
@@ -59,7 +58,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 					DbUtils.close(connection);
 				}
 			} catch (SQLException e2) {
-				logger.warn("Unable to close database connection to: " + context.getFullyQualifiedJdbcUri());
+				logger.warn("Unable to close database connection to: " + String.valueOf(context.getFullyQualifiedJdbcUri()));
 			}
 		}
 	}
