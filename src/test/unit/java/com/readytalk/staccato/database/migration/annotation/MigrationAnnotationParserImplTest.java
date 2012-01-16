@@ -20,7 +20,7 @@ public class MigrationAnnotationParserImplTest {
 
 		GroovyClassLoader gcl = new GroovyClassLoader(this.getClass().getClassLoader());
 		@SuppressWarnings("unchecked")
-		Class<? extends DynamicLanguageScript> scriptClass = gcl.parseClass(new File("src/test/unit/groovy/TestScript.groovy"));
+		Class<? extends DynamicLanguageScript<?>> scriptClass = gcl.parseClass(new File("src/test/unit/groovy/TestScript.groovy"));
 
 		MigrationAnnotationParserImpl parser = new MigrationAnnotationParserImpl();
 		Assert.assertTrue(parser.isMigrationScript(scriptClass));
@@ -31,7 +31,7 @@ public class MigrationAnnotationParserImplTest {
 
 		GroovyClassLoader gcl = new GroovyClassLoader(this.getClass().getClassLoader());
 		@SuppressWarnings("unchecked")
-		Class<? extends DynamicLanguageScript> scriptClass = gcl.parseClass(new File("src/test/unit/groovy/BadTestScript.groovy"));
+		Class<? extends DynamicLanguageScript<?>> scriptClass = gcl.parseClass(new File("src/test/unit/groovy/BadTestScript.groovy"));
 
 		MigrationAnnotationParserImpl parser = new MigrationAnnotationParserImpl();
 		Assert.assertFalse(parser.isMigrationScript(scriptClass));
@@ -41,7 +41,7 @@ public class MigrationAnnotationParserImplTest {
 	public void testGetAnnotationSuccess() throws IOException, IllegalAccessException, InstantiationException {
 
 		GroovyClassLoader gcl = new GroovyClassLoader(this.getClass().getClassLoader());
-		Class scriptClass = gcl.parseClass(new File("src/test/unit/groovy/TestScript.groovy"));
+		Class<?> scriptClass = gcl.parseClass(new File("src/test/unit/groovy/TestScript.groovy"));
 
 		Object scriptInstance = scriptClass.newInstance();
 
@@ -62,7 +62,7 @@ public class MigrationAnnotationParserImplTest {
 	public void testGetAnnotationFailure() throws IOException, IllegalAccessException, InstantiationException {
 
 		GroovyClassLoader gcl = new GroovyClassLoader(this.getClass().getClassLoader());
-		Class scriptClass = gcl.parseClass(new File("src/test/unit/groovy/BadTestScript.groovy"));
+		Class<?> scriptClass = gcl.parseClass(new File("src/test/unit/groovy/BadTestScript.groovy"));
 
 		Object scriptInstance = scriptClass.newInstance();
 
@@ -82,7 +82,7 @@ public class MigrationAnnotationParserImplTest {
 	public void testGetAnnotatedMethodSuccess() throws IOException, IllegalAccessException, InstantiationException {
 
 		GroovyClassLoader gcl = new GroovyClassLoader(this.getClass().getClassLoader());
-		Class scriptClass = gcl.parseClass(new File("src/test/unit/groovy/TestScript.groovy"));
+		Class<?> scriptClass = gcl.parseClass(new File("src/test/unit/groovy/TestScript.groovy"));
 
 		Object scriptInstance = scriptClass.newInstance();
 
@@ -103,7 +103,7 @@ public class MigrationAnnotationParserImplTest {
 	public void testGetAnnotatedMethodNonExist() throws IOException, IllegalAccessException, InstantiationException {
 
 		GroovyClassLoader gcl = new GroovyClassLoader(this.getClass().getClassLoader());
-		Class scriptClass = gcl.parseClass(new File("src/test/unit/groovy/BadTestScript.groovy"));
+		Class<?> scriptClass = gcl.parseClass(new File("src/test/unit/groovy/BadTestScript.groovy"));
 
 		Object scriptInstance = scriptClass.newInstance();
 
@@ -123,7 +123,7 @@ public class MigrationAnnotationParserImplTest {
 	public void testGetAnnotatedMethodNonUnique() throws IOException, IllegalAccessException, InstantiationException {
 
 		GroovyClassLoader gcl = new GroovyClassLoader(this.getClass().getClassLoader());
-		Class scriptClass = gcl.parseClass(new File("src/test/unit/groovy/BadTestScript.groovy"));
+		Class<?> scriptClass = gcl.parseClass(new File("src/test/unit/groovy/BadTestScript.groovy"));
 
 		Object scriptInstance = scriptClass.newInstance();
 
