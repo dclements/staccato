@@ -65,7 +65,7 @@ public class CreateWorkflowStepExecutorTest extends BaseTest {
 		when(runtime.getDatabaseContext()).thenReturn(context, context);
 
 		try {
-			executor.execute(scriptInstance, new WorkflowContext(annotationParser, runtime));
+			executor.execute(scriptInstance, new WorkflowContextImpl(annotationParser, runtime));
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
@@ -111,7 +111,7 @@ public class CreateWorkflowStepExecutorTest extends BaseTest {
 		when(runtime.getDatabaseContext()).thenReturn(context, context);
 
 		try {
-			executor.execute(scriptInstance, new WorkflowContext(annotationParser, runtime));
+			executor.execute(scriptInstance, new WorkflowContextImpl(annotationParser, runtime));
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}

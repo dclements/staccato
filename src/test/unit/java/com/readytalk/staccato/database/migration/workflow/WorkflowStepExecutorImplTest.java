@@ -51,7 +51,7 @@ public class WorkflowStepExecutorImplTest {
 		MigrationRuntime runtime = mock(MigrationRuntime.class);
 
 		try {
-			Object result = executor.execute(scriptInstance, new WorkflowContext(annotationParser, runtime));
+			Object result = executor.execute(scriptInstance, new WorkflowContextImpl(annotationParser, runtime));
 
 			Assert.assertEquals(result, "bar");
 		} catch (InvocationTargetException e) {

@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import com.readytalk.staccato.database.DatabaseContext;
 import com.readytalk.staccato.database.migration.script.sql.SQLScript;
 import com.readytalk.staccato.utils.SQLUtils;
@@ -21,8 +23,9 @@ public class MigrationRuntimeImpl implements MigrationRuntime {
 	private final MigrationType migrationType;
 	private final boolean loggingEnabled;
 
-	public MigrationRuntimeImpl(DatabaseContext databaseContext, List<SQLScript> sqlScripts,
-			MigrationType migrationType, boolean loggingEnabled) {
+	@Inject
+	public MigrationRuntimeImpl(@Assisted DatabaseContext databaseContext, @Assisted List<SQLScript> sqlScripts,
+			@Assisted MigrationType migrationType, @Assisted boolean loggingEnabled) {
 
 		this.databaseContext = databaseContext;
 		this.sqlScripts = sqlScripts;

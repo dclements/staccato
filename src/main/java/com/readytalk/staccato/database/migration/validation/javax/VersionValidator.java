@@ -3,7 +3,7 @@ package com.readytalk.staccato.database.migration.validation.javax;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Validates that a date meets the date format criteria specified by the DateFormat constraint.

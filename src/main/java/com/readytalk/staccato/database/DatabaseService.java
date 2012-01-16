@@ -25,6 +25,14 @@ public interface DatabaseService {
 	 * @return returns a connection
 	 */
 	Connection connect(URI jdbcUri, String username, String password, DatabaseType databaseType);
+	
+	/**
+	 * Connects to the database, returning the jdbc connection
+	 * and adding it to the supplied context.
+	 * @param context The database context.
+	 * @return A JDBC connection to a database.
+	 */
+	Connection connect(DatabaseContext context);
 
 	/**
 	 * Disconnects from the database using the context specified

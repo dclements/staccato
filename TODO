@@ -13,8 +13,9 @@ Future:
 - Support for Jython, JRuby, and Scala.
 - Add maintenance support.
 - Simplify integration test setup.
+- Restructure for easier unit testing (e.g., taking streams directly instead of objects that we simply get streams from.)
 
-Under Consideration:
+Under Consideration (major undertakings and probably not worth it):
 
 - Porting from maven to ant, mostly because our growing tools for CI are largely written to facilitate ant+ivy.
 - Moving testing framework from TestNG to JUnit, possibly only for unit testing.  We aren't taking advantage of a lot of TestNG's features, and the two have moved closer together in the features we are using. 

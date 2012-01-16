@@ -2,10 +2,10 @@ package com.readytalk.staccato.database;
 
 import java.net.URI;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 
+import org.apache.commons.dbutils.DbUtils;
 import org.apache.log4j.Logger;
 
 import com.readytalk.staccato.database.migration.script.Script;
@@ -23,41 +23,49 @@ public class DatabaseServiceImpl implements DatabaseService {
 	public Connection connect(URI jdbcUri, String username, String password, DatabaseType databaseType) {
 
 		Connection connection;
+		
+		boolean loaded = DbUtils.loadDriver(databaseType.getDriver());
+		
+		if(!loaded) {
+			throw new DatabaseException("SQL driver not found: " + String.valueOf(databaseType.getDriver()));
+		}
 
 		try {
-
-			Class.forName(databaseType.getDriver());
-
 			logger.info("Connecting to database: " + jdbcUri.toString());
 
-			connection = DriverManager.getConnection(jdbcUri.toString(), username, password);
-
-		} catch (ClassNotFoundException e) {
-			throw new DatabaseException("SQL driver not found", e);
+			connection = DriverManagerWrapper.getConnection(jdbcUri.toString(), username, password);
+			
 		} catch (SQLException e) {
 			throw new DatabaseException("SQL exception occurred when establishing connection to database: " + jdbcUri, e);
 		}
 
 		return connection;
 	}
+	
+	@Override
+	public Connection connect(DatabaseContext context) {
+		final Connection retval = this.connect(context.getFullyQualifiedJdbcUri(), context.getUsername(), context.getPassword(), context.getDatabaseType());
+		context.setConnection(retval);
+		return retval;
+	}
 
 	@Override
 	public void disconnect(DatabaseContext context) {
 
-		logger.info("Disconnecting database connection: " + context.getFullyQualifiedJdbcUri().toString());
+		logger.info("Disconnecting database connection: " + String.valueOf(context.getFullyQualifiedJdbcUri()));
 
-		Connection connection = context.getConnection();
+		final Connection connection = context.getConnection();
 		try {
 			if (connection != null && connection.isValid(30)) {
-				connection.close();
+				DbUtils.close(connection);
 			}
 		} catch (SQLException e1) {
 			try {
-				if (!connection.isClosed()) {
-					connection.close();
+				if (connection != null && !connection.isClosed()) {
+					DbUtils.close(connection);
 				}
 			} catch (SQLException e2) {
-				logger.warn("Unable to close database connection to: " + context.getFullyQualifiedJdbcUri());
+				logger.warn("Unable to close database connection to: " + String.valueOf(context.getFullyQualifiedJdbcUri()));
 			}
 		}
 	}
@@ -72,6 +80,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
 			Savepoint savepoint = connection.setSavepoint(savepointName);
 			context.getTxnSavepoints().put(savepointName, savepoint);
+			
 			logger.debug("started transaction with savepoint: " + savepointName);
 		} catch (SQLException e) {
 			throw new DatabaseException("Unable to start transaction", e);
@@ -102,7 +111,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 	}
 
 	/**
-	 * Helper method for building a transaction savepoint name
+	 * Helper method for building a transaction savepoint name.
 	 *
 	 * @param script the script
 	 * @return the savepoint name
@@ -122,6 +131,8 @@ public class DatabaseServiceImpl implements DatabaseService {
 				logger.debug("rolling back transaction to savepoint: " + savepointName);
 				connection.rollback(context.getTxnSavepoints().get(savepointName));
 				context.getTxnSavepoints().remove(savepointName);
+			} else {
+				logger.warn("Attempted to rollback while autoCommit was set to true.");
 			}
 		} catch (SQLException e) {
 			throw new DatabaseException("Unable to rollback database", e);

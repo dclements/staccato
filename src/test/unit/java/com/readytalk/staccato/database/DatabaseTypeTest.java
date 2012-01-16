@@ -27,7 +27,7 @@ public class DatabaseTypeTest {
 		URI uri = URI.create("jdbc:oracle:thin:@localhost:1521:orcl");
 
 		try {
-			DatabaseType type = DatabaseType.getTypeFromJDBCUri(uri);
+			DatabaseType.getTypeFromJDBCUri(uri);
 			Assert.fail("should have thrown, no support for: " + uri);
 		} catch (MigrationException e) {
 			// no-op, test successful

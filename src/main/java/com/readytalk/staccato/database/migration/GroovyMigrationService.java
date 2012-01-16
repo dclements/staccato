@@ -60,7 +60,7 @@ public class GroovyMigrationService implements MigrationService<GroovyScript> {
 				// i'd like to create a transaction prior to each individual script execution so that if
 				// there are errors, I can rollback anything that was done.
 				// I spent a ton of time trying to get transactions to work without luck.
-				// databaseService.startTransaction(databaseContext, script);
+				//databaseService.startTransaction(databaseContext, script);
 
 				if (annotationParser.containsWorkflowSteps(script.getScriptInstance(), migrationType.getWorkflowSteps())) {
 					logger.info("Executing script: " + script.getFilename());

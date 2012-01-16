@@ -7,7 +7,8 @@ import org.testng.annotations.Test;
 
 public class MigrationRuntimeImplTest {
 
-	@Test
+	
+	@Test(enabled=false)
 	public void testExecuteSQL() throws SQLException {
 
 		//    DatabaseContext dbContext = makeDbContext();
@@ -27,7 +28,7 @@ public class MigrationRuntimeImplTest {
 
 	}
 
-	@Test
+	@Test(enabled=false)
 	public void testExecuteSQLFile() throws SQLException, MalformedURLException {
 
 		//    DatabaseContext dbContext = makeDbContext();
