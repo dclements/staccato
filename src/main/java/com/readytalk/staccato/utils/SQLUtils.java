@@ -17,7 +17,7 @@ public class SQLUtils {
 	private static final Logger logger = Logger.getLogger(SQLUtils.class);
 
 	/**
-	 * Executes sql
+	 * Executes sql.
 	 *
 	 * @param connection the connection
 	 * @param sql the sql
@@ -45,7 +45,7 @@ public class SQLUtils {
 	}
 
 	/**
-	 * Executes sql file
+	 * Executes sql file.
 	 *
 	 * @param connection the sql connection
 	 * @param url the url
