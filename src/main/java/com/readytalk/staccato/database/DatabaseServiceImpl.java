@@ -130,6 +130,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 			if (!connection.getAutoCommit()) {
 				logger.debug("rolling back transaction to savepoint: " + savepointName);
 				connection.rollback(context.getTxnSavepoints().get(savepointName));
+				//As of JDBC4 the savepoint is no longer valid, so we can remove it.
 				context.getTxnSavepoints().remove(savepointName);
 			} else {
 				logger.warn("Attempted to rollback while autoCommit was set to true.");
