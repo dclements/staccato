@@ -14,11 +14,11 @@ Refactoring, Cleanup, and Bug Fixes
 run are actually failing or if they are simply not valid.</dd>
 <dt>Integration tests should work consistently when run back-to-back.</dt>
 <dd>Sometimes running the current unit tests without a `clean` step results in one or more of the tests failing.</dd>
-<dt>Take better advantage of [guice](http://code.google.com/p/google-guice/), especially for unit tests.</dt>
-<dd>While the current setup takes heavy advantage of [guice](http://code.google.com/p/google-guice/), it is a little cumbersome to work with for unit testing.</dd>
+<dt>Take better advantage of <a href="http://code.google.com/p/google-guice/">guice</a>, especially for unit tests.</dt>
+<dd>While the current setup takes heavy advantage of <a href="http://code.google.com/p/google-guice/">guice</a>, it is a little cumbersome to work with for unit testing.</dd>
 <dt>Restructuring for easier testing</dt>
 <dd>There are a few places where a little refactoring could make the bulk of the code easier to unit test.</dd>
-<dt>Better command-line Javadocs/[Findbugs](http://findbugs.sourceforge.net/)/[Checkstyle](http://checkstyle.sourceforge.net/) support</dt>
+<dt>Better command-line Javadocs/<a href="http://findbugs.sourceforge.net/">Findbugs</a>/<a href="http://checkstyle.sourceforge.net/">Checkstyle</a> support</dt>
 <dd>Currently not generating reports for these, could be useful for future development.</dd>
 </dl>
 
@@ -36,7 +36,7 @@ Features
 <dd>
 Working on a database frequently involves occasional maintenance operations such as reindexing. There's a request to put these into a separate table.
 </dd>
-<dt>[HSQLDB](http://hsqldb.org/) Support</dt>
+<dt><a href="http://hsqldb.org/">HSQLDB</a> Support</dt>
 <dd>This could be particularly useful for integration testing and prototyping on machines that don't have postgres/mysql installed.</dd>
 </dl>
 
