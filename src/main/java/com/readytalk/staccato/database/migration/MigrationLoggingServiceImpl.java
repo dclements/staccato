@@ -40,6 +40,12 @@ public class MigrationLoggingServiceImpl implements MigrationLoggingService {
 				sqlFile = "postgresql-staccato-migrations.sql";
 				url = this.getClass().getClassLoader().getResource(sqlFile);
 				break;
+			case HSQLDB:
+				sqlFile = "hsqldb-staccato-migrations.sql";
+				url = this.getClass().getClassLoader().getResource(sqlFile);
+				break;
+			default:
+				throw new DatabaseException("No SQL migrations file for type: " + String.valueOf(context.getDatabaseType()));
 			}
 
 			if (url == null) {
@@ -99,6 +105,7 @@ public class MigrationLoggingServiceImpl implements MigrationLoggingService {
 			String date;
 
 			switch (databaseContext.getDatabaseType()) {
+			case HSQLDB:
 			case MYSQL:
 				date = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(script.getScriptDate());
 				break;

@@ -62,7 +62,6 @@ public class DatabaseServiceImplTest extends BaseTest {
 
 			Map<String, Savepoint> savepoints = context.getTxnSavepoints();
 			Assert.assertEquals(savepoints.size(), 1);
-			System.out.println(savepoints);
 			Savepoint savepoint = context.getTxnSavepoints().get(expectedSavepointName);
 			Assert.assertNotNull(savepoint);
 
