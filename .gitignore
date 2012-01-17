@@ -4,3 +4,7 @@ target
 .settings
 .project
 .DS_Store
+staccato.log
+staccato_root.log
+staccato.properties
+staccato_root.properties

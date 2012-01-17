@@ -9,7 +9,8 @@ import com.readytalk.staccato.database.migration.MigrationException;
  */
 public enum DatabaseType {
 	MYSQL("mysql", "com.mysql.jdbc.Driver", "mysql"),
-	POSTGRESQL("postgresql", "org.postgresql.Driver", "postgres");
+	POSTGRESQL("postgresql", "org.postgresql.Driver", "postgres"),
+	HSQLDB("hsqldb", "org.hsqldb.jdbcDriver", "hsqldb");
 
 	private String type;
 	private String driver;

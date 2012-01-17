@@ -25,6 +25,7 @@ public class BaseTest {
 
 	public final URI mysqlJdbcUri = URI.create("jdbc:mysql://localhost:3306/");
 	public final URI postgresqlJdbcUri = URI.create("jdbc:postgresql://localhost:5432/");
+	public final URI hsqlJdbcUri = URI.create("jdbc:hsqldb:src/test/unit/resources/hsqldb/");
 	public final String rootDbName = "staccato_root";
 	public final String dbName = "staccato";
 	public final String dbUser = "staccato";
@@ -105,13 +106,15 @@ public class BaseTest {
 	@DataProvider(name = "jdbcProvider")
 	public Object[][] jdbcProvider() {
 		return new Object[][]{
-				{postgresqlJdbcUri}
+				{postgresqlJdbcUri},
+				{hsqlJdbcUri}
 		};
 	}
 
 	@DataProvider(name = "fullyQualifiedJdbcProvider")
 	public Object[][] fullyQualifedJdbcProvider() {
 		return new Object[][]{
+				{URI.create(hsqlJdbcUri.toString() + dbName)},
 				{URI.create(postgresqlJdbcUri.toString() + dbName)}
 		};
 	}
