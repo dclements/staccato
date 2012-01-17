@@ -36,7 +36,5 @@ Features
 <dd>
 Working on a database frequently involves occasional maintenance operations such as reindexing. There's a request to put these into a separate table.
 </dd>
-<dt><a href="http://hsqldb.org/">HSQLDB</a> Support</dt>
-<dd>This could be particularly useful for integration testing and prototyping on machines that don't have postgres/mysql installed.</dd>
 </dl>
 
