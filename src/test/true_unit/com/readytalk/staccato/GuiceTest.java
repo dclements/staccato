@@ -16,7 +16,7 @@ public class GuiceTest {
 	}
 	
 	/**
-	 * XXX: This is a bit of a hack to allow the easy injection of spies. Eventually will
+	 * FIXME: This is a bit of a hack to allow the easy injection of spies. Eventually will
 	 * want to build or find a more convenient framework for these things. 
 	 * @param overrides
 	 * @return

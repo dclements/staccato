@@ -1,5 +1,6 @@
 package com.readytalk.staccato.utils;
 
+import java.net.URL;
 import java.util.Set;
 
 import com.google.inject.ImplementedBy;
@@ -19,4 +20,12 @@ public interface ResourceLoader {
 	 * @return a set of resource objects
 	 */
 	Set<Resource> loadRecursively(String directory, String fileExtension, ClassLoader classLoader);
+	
+	/**
+	 * Finds the URI for a given resource within a given classloader.
+	 * @param loader The classloader.
+	 * @param name The name of the resource.
+	 * @return A URI connecting to the named resource.
+	 */
+	URL retrieveURI(ClassLoader loader, String name);
 }

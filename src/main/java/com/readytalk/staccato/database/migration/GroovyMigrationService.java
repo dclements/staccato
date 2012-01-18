@@ -52,7 +52,10 @@ public class GroovyMigrationService implements MigrationService<GroovyScript> {
 				Migration migrationAnnotation = annotationParser.getMigrationAnnotation(script.getScriptInstance());
 
 				// validate database type
-				if (!isValidDatabaseType(script, migrationAnnotation, databaseContext)) {
+
+
+				if (!isValidDatabaseType(migrationAnnotation, databaseContext)) {
+					logger.debug("Excluding " + String.valueOf(migrationAnnotation.databaseType()) + " script from execution: " + String.valueOf(script.getFilename()));
 					continue;
 				}
 
@@ -101,20 +104,21 @@ public class GroovyMigrationService implements MigrationService<GroovyScript> {
 	 * this script
 	 *
 	 * @param script the script
-	 * @param migrationAnnotation the migration annotation
+	 * @param scriptDatabaseType The database type from a migrationAnnotation.
 	 * @param databaseContext the database context
 	 * @return true if valid, false otherwise
 	 */
-	boolean isValidDatabaseType(GroovyScript script, Migration migrationAnnotation, DatabaseContext databaseContext) {
+	boolean isValidDatabaseType(Migration migration, DatabaseContext databaseContext) {
+		DatabaseType scriptDatabaseType;
 		try {
-			DatabaseType scriptDatabaseType = migrationAnnotation.databaseType();
-			if (scriptDatabaseType != null && scriptDatabaseType != databaseContext.getDatabaseType()) {
-				logger.debug("Excluding " + scriptDatabaseType + " script from execution: " + script.getFilename());
-				return false;
-			}
-			return true;
-		} catch (Exception e) {
+			scriptDatabaseType = migration.databaseType();
+		} catch(IncompleteAnnotationException iae) {
 			return true;
 		}
+
+		if (scriptDatabaseType != null && scriptDatabaseType != databaseContext.getDatabaseType()) {
+			return false;
+		}
+		return true;
 	}
 }

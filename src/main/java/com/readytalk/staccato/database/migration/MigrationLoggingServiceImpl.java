@@ -10,15 +10,29 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.joda.time.format.DateTimeFormat;
 
+import com.google.inject.Inject;
 import com.readytalk.staccato.database.DatabaseContext;
 import com.readytalk.staccato.database.DatabaseException;
 import com.readytalk.staccato.database.migration.annotation.Migration;
 import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
+import com.readytalk.staccato.utils.ResourceLoader;
+import com.readytalk.staccato.utils.ResourceLoaderImpl;
 import com.readytalk.staccato.utils.SQLUtils;
 
 public class MigrationLoggingServiceImpl implements MigrationLoggingService {
 
 	private static final Logger logger = Logger.getLogger(MigrationLoggingServiceImpl.class);
+	
+	private final ResourceLoader resourceLoader;
+	
+	public MigrationLoggingServiceImpl() {
+		resourceLoader = new ResourceLoaderImpl();
+	}
+	
+	@Inject
+	public MigrationLoggingServiceImpl(ResourceLoader loader) {
+		this.resourceLoader = loader;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -27,26 +41,23 @@ public class MigrationLoggingServiceImpl implements MigrationLoggingService {
 	public void createVersionsTable(DatabaseContext context) {
 
 		if (!versionTableExists(context)) {
-
-			URL url = null;
 			String sqlFile = null;
 
 			switch (context.getDatabaseType()) {
 			case MYSQL:
 				sqlFile = "mysql-staccato-migrations.sql";
-				url = this.getClass().getClassLoader().getResource(sqlFile);
 				break;
 			case POSTGRESQL:
 				sqlFile = "postgresql-staccato-migrations.sql";
-				url = this.getClass().getClassLoader().getResource(sqlFile);
 				break;
 			case HSQLDB:
 				sqlFile = "hsqldb-staccato-migrations.sql";
-				url = this.getClass().getClassLoader().getResource(sqlFile);
 				break;
 			default:
 				throw new DatabaseException("No SQL migrations file for type: " + String.valueOf(context.getDatabaseType()));
 			}
+			
+			final URL url = resourceLoader.retrieveURI(this.getClass().getClassLoader(), sqlFile);
 
 			if (url == null) {
 				throw new DatabaseException("Unable to create the " + MIGRATION_VERSIONS_TABLE + ".  Cannot locate the sql file: " + sqlFile);
