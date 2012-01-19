@@ -2,6 +2,8 @@ package com.readytalk.staccato;
 
 
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -23,7 +25,6 @@ import org.junit.runner.RunWith;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
-
 
 @RunWith(Theories.class)
 public class CommandLineServiceTest extends GuiceTest {
@@ -78,12 +79,14 @@ public class CommandLineServiceTest extends GuiceTest {
 				"--dbName", "staccato1",
 				"--dbUser", "staccato2",
 				"--dbPwd", "staccato3",
-				"--migration", "migration"
+				"--migration", "migration",
+				"-l", "true"
 		};
-		service.parse(args);
+		final StaccatoOptions so = service.parse(args);
 		
 		verify(parser).parse(any(Options.class), eq(args));
-		
+		assertTrue(so.enableLogging);
+		assertEquals("staccato3", so.dbPwd);
 	}
 	
 	

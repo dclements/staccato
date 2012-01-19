@@ -20,6 +20,11 @@ public class DatabaseTypeTest {
 		type = DatabaseType.getTypeFromJDBCUri(uri);
 
 		Assert.assertEquals(type, DatabaseType.POSTGRESQL);
+		
+		uri = URI.create("jdbc:hsqldb:mem:testing");
+		type = DatabaseType.getTypeFromJDBCUri(uri);
+
+		Assert.assertEquals(type, DatabaseType.HSQLDB);
 	}
 
 	@Test

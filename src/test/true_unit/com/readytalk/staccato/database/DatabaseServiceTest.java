@@ -41,6 +41,7 @@ public class DatabaseServiceTest {
 
 		@Before
 		public void setUp() throws Exception {
+			reset(conn);
 			PowerMockito.mockStatic(DriverManagerWrapper.class);
 			PowerMockito.mockStatic(DbUtils.class);
 			PowerMockito.when(DbUtils.loadDriver(anyString())).thenReturn(true);
@@ -133,8 +134,6 @@ public class DatabaseServiceTest {
 			verify(conn, never()).close();
 			verify(conn, times(1)).releaseSavepoint(eq(svp));
 			verify(savepoints).remove(eq("transaction_savepoint_testname"));
-			
-			
 		}
 
 		@Test

@@ -2,6 +2,8 @@ package com.readytalk.staccato.database.migration.script.groovy;
 
 import java.net.URL;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.joda.time.DateTime;
 
 import com.readytalk.staccato.database.DatabaseType;
@@ -129,19 +131,17 @@ public class GroovyScript implements DynamicLanguageScript<GroovyScript> {
 		if (!(o instanceof GroovyScript)) return false;
 
 		GroovyScript that = (GroovyScript) o;
-
-		if (databaseType == that.databaseType && scriptDate.equals(that.scriptDate)) {
-			return true;
-		} else {
-			return false;
-		}
+		
+		return new EqualsBuilder()
+			.append(databaseType, that.databaseType).append(scriptDate, that.scriptDate).isEquals();
 	}
 
 	@Override
 	public int hashCode() {
-		int result = scriptDate.hashCode();
-		result = 31 * result + databaseType.hashCode();
-		return result;
+		
+		return new HashCodeBuilder(31, 37)
+				.append(scriptDate)
+				.append(databaseType).hashCode();
 	}
 
 	@Override

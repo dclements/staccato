@@ -125,4 +125,11 @@ public class ResourceLoaderImpl implements ResourceLoader {
 
 		return resources;
 	}
+
+	@Override
+	public URL retrieveURI(ClassLoader loader, String name) {
+		return loader.getResource(name);
+	}
+	
+	
 }
