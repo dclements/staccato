@@ -26,6 +26,8 @@ Features
 --------
 
 <dl>
+<dt>Allow for Arbitrary Script Files</dt>
+<dd>Currently it only allows for script files that are in the classpath.</dd>
 <dt>Execute In Transactions</dt>
 <dd>When scripts run, either in part or in whole, they should be run in a transaction to enable easy rollback if something goes wrong.</dd>
 <dt>Alternative Language Support</dt>
