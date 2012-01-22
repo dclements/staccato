@@ -3,6 +3,14 @@ Staccato
 
 Staccato is an imperative database versioning tool written in Java.
 
+Goals
+-----
+
+1. Self-contained.  External dependencies are things that you should already have installed (e.g., a database of the same type that you are versioning).
+2. Provide a framework. Database migrations happen in stages, the tools should reflect those steps. 
+3. Just versioning.  There are a lot of good ORM-based migration tools out there. Staccato is designed to work with whatever you happen to be using for migration (including just SQL scripts) rather than requiring any specific tools that abstract from the database itself.
+
+
 Compiling, Testing, and Installing Staccato
 -------------------------------------------
 
