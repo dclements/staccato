@@ -2,6 +2,9 @@ package com.readytalk.staccato.database.migration.script.sql;
 
 import java.net.URL;
 
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import com.readytalk.staccato.database.migration.script.Script;
 
 /**
@@ -32,7 +35,7 @@ public class SQLScript implements Script<SQLScript> {
 
 	@Override
 	public int compareTo(SQLScript sqlScript) {
-		return 0;
+		return new CompareToBuilder().append(filename, sqlScript.getFilename()).build();
 	}
 
 	@Override
@@ -49,6 +52,6 @@ public class SQLScript implements Script<SQLScript> {
 
 	@Override
 	public int hashCode() {
-		return filename.hashCode();
+		return new HashCodeBuilder().append(filename).build();
 	}
 }
