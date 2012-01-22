@@ -39,8 +39,8 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 
 	private static final Logger logger = Logger.getLogger(GroovyScriptService.class);
 
-	private String scriptTemplateRawContents;
-	private Version scriptTemplateVersion;
+	private String scriptTemplateRawContents = null;
+	private Version scriptTemplateVersion = null;
 
 	private final ResourceLoader loader;
 	private final MigrationValidator validator;
@@ -51,8 +51,6 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 		this.loader = loader;
 		this.validator = validator;
 		this.annotationParser = annotationParser;
-
-		loadScriptTemplate();
 	}
 
 	/**
@@ -102,9 +100,9 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 				}
 
 				// validate that the script version is equal to the version in the script template
-				if (!thisScript.getScriptVersion().equals(scriptTemplateVersion)) {
+				if (!thisScript.getScriptVersion().equals(getScriptTemplateVersion())) {
 					throw new MigrationException("Cannot load script: " + thisScript.getFilename() + ". Script version '" + migrationAnnotation.scriptVersion() +
-							"' is incompatible with the current script template version '" + scriptTemplateVersion + "'.  Please update your groovy script to " +
+							"' is incompatible with the current script template version '" + getScriptTemplateVersion() + "'.  Please update your groovy script to " +
 					"the latest version of the template");
 				}
 
@@ -178,9 +176,9 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 		}
 	}
 
-	private void loadScriptTemplate() {
+	protected void loadScriptTemplate() {
 		try {
-			URL url = this.getClass().getClassLoader().getResource(TEMPLATE_NAME + "." + getScriptFileExtension());
+			URL url = loader.retrieveURI(this.getClass().getClassLoader(), TEMPLATE_NAME + "." + getScriptFileExtension());
 
 			InputStream inputStream = url.openStream();
 
@@ -220,11 +218,11 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 		String classnameDate = DateTimeFormat.forPattern(TEMPLATE_CLASSNAME_DATE_FORMAT).print(date);
 		String classname = TEMPLATE_CLASSNAME_PREFIX + "_" + classnameDate;
 
-		String contents = scriptTemplateRawContents.toString().replace("USER", user).replace(TEMPLATE_NAME, classname).
+		String contents = getScriptTemplateRawContents().replace("USER", user).replace(TEMPLATE_NAME, classname).
 		replace("DATABASE_VERSION", databaseVersion).replace("DATE", scriptDate).trim();
 
 		ScriptTemplate scriptTemplate = new ScriptTemplate();
-		scriptTemplate.setVersion(scriptTemplateVersion);
+		scriptTemplate.setVersion(getScriptTemplateVersion());
 		scriptTemplate.setClassname(classname);
 		scriptTemplate.setContents(contents);
 
@@ -233,11 +231,17 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 
 	@Override
 	public Version getScriptTemplateVersion() {
+		if(scriptTemplateVersion == null) {
+			this.loadScriptTemplate();
+		}
 		return scriptTemplateVersion;
 	}
 
 	@Override
 	public String getScriptTemplateRawContents() {
+		if(scriptTemplateRawContents == null) {
+			this.loadScriptTemplate();
+		}
 		return scriptTemplateRawContents;
 	}
 

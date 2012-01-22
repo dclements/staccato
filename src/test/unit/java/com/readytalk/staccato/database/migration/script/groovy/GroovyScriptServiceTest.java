@@ -4,11 +4,14 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,6 +24,8 @@ import java.util.TimeZone;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -33,14 +38,17 @@ import com.readytalk.staccato.database.migration.script.ScriptTemplate;
 import com.readytalk.staccato.database.migration.validation.MigrationValidator;
 import com.readytalk.staccato.utils.Resource;
 import com.readytalk.staccato.utils.ResourceLoader;
+import com.readytalk.staccato.utils.ResourceLoaderImpl;
 import com.readytalk.staccato.utils.Version;
 
 public class GroovyScriptServiceTest {
-
+	
+	
+	
 	@Test
 	public void testToClass() throws MalformedURLException {
 
-		ResourceLoader loader = mock(ResourceLoader.class);
+		ResourceLoader loader = spy(new ResourceLoaderImpl());
 
 		GroovyScriptService service = new GroovyScriptService(loader, null, new MigrationAnnotationParserImpl());
 
@@ -75,7 +83,19 @@ public class GroovyScriptServiceTest {
 
 		ResourceLoader loader = mock(ResourceLoader.class);
 		when(loader.loadRecursively(eq(MigrationService.DEFAULT_MIGRATIONS_DIR), eq("groovy"), eq(this.getClass().getClassLoader()))).thenReturn(resources);
+		when(loader.retrieveURI(any(ClassLoader.class), anyString())).thenAnswer(new Answer<URL>() {
 
+			@Override
+			public URL answer(InvocationOnMock invocation) throws Throwable {
+				Object [] args = invocation.getArguments();
+				ClassLoader l = (ClassLoader)args[0];
+				String resource = (String)args[1];
+				
+				return l.getResource(resource);
+			}
+		});
+		
+		
 		// don't care about validation so create a nice mock
 		MigrationValidator validator = mock(MigrationValidator.class);
 
@@ -123,9 +143,19 @@ public class GroovyScriptServiceTest {
 		resources.add(resourceTwo);
 
 		ResourceLoader loader = mock(ResourceLoader.class);
-		when(loader.loadRecursively(eq(MigrationService.DEFAULT_MIGRATIONS_DIR), eq("groovy"), eq(this.getClass().getClassLoader()))).thenReturn(resources);
+		when(loader.loadRecursively(eq(MigrationService.DEFAULT_MIGRATIONS_DIR), eq("groovy"), any(this.getClass().getClassLoader().getClass()))).thenReturn(resources);
+		when(loader.retrieveURI(any(ClassLoader.class), anyString())).thenAnswer(new Answer<URL>() {
 
-		// don't care about validation so create a nice mock
+			@Override
+			public URL answer(InvocationOnMock invocation) throws Throwable {
+				Object [] args = invocation.getArguments();
+				ClassLoader l = (ClassLoader)args[0];
+				String resource = (String)args[1];
+				
+				return l.getResource(resource);
+			}
+		});
+		
 		MigrationValidator validator = mock(MigrationValidator.class);
 
 		MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
@@ -151,7 +181,7 @@ public class GroovyScriptServiceTest {
 		String expectedUser = System.getenv("USER");
 		String expectedDatabaseVersion = "1.0";
 
-		ResourceLoader loader = mock(ResourceLoader.class);
+		ResourceLoader loader = spy(new ResourceLoaderImpl());
 		MigrationValidator validator = mock(MigrationValidator.class);
 		MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
 		GroovyScriptService service = new GroovyScriptService(loader, validator, annotationParser);
@@ -181,7 +211,7 @@ public class GroovyScriptServiceTest {
 	@Test
 	public void testTemplateVersion() throws IOException {
 
-		ResourceLoader loader = mock(ResourceLoader.class);
+		ResourceLoader loader = spy(new ResourceLoaderImpl());
 		MigrationValidator validator = mock(MigrationValidator.class);
 		MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
 
@@ -250,7 +280,7 @@ public class GroovyScriptServiceTest {
 		}
 
 		// mock the service
-		ResourceLoader loader = mock(ResourceLoader.class);
+		ResourceLoader loader = spy(new ResourceLoaderImpl());
 		MigrationValidator validator = mock(MigrationValidator.class);
 		MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
 		GroovyScriptService service = new GroovyScriptService(loader, validator, annotationParser);
@@ -363,7 +393,7 @@ public class GroovyScriptServiceTest {
 		}
 
 		// mock the service
-		ResourceLoader loader = mock(ResourceLoader.class);
+		ResourceLoader loader = spy(new ResourceLoaderImpl());
 		MigrationValidator validator = mock(MigrationValidator.class);
 		MigrationAnnotationParser annotationParser = new MigrationAnnotationParserImpl();
 		GroovyScriptService service = new GroovyScriptService(loader, validator, annotationParser);
