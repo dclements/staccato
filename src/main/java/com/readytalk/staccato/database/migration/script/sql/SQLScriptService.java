@@ -40,22 +40,15 @@ public class SQLScriptService implements ScriptService<SQLScript> {
 			script.setUrl(resource.getUrl());
 
 			if (scripts.contains(script)) {
-
-				if (scripts.contains(script)) {
-					SQLScript collisionScript = null;
-					for (SQLScript sqlScript : scripts) {
-						if (sqlScript.equals(collisionScript)) {
-							collisionScript = sqlScript;
-						}
+				SQLScript collisionScript = null;
+				for (SQLScript sqlScript : scripts) {
+					if (sqlScript.equals(collisionScript)) {
+						collisionScript = sqlScript;
 					}
-					throw new MigrationException("Unique script violation.  SQL script [" + script.getUrl() + "] violates" +
-							" unique filename constraint.  Script [" + collisionScript.getUrl().toExternalForm() + "] already contains the same filename");
 				}
-
-				throw new MigrationException("Unique script violation.  SQL script [" + script.getUrl() + "] filename violates" +
-				" unique filename constraint.  Another sql file already contains the same name");
+				throw new MigrationException("Unique script violation.  SQL script [" + String.valueOf(script.getUrl()) + "] filename violates" +
+				" unique filename constraint.  Another sql file already contains the same filename.");
 			}
-
 			scripts.add(script);
 		}
 
