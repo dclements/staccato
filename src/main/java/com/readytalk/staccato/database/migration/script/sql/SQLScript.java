@@ -3,6 +3,7 @@ package com.readytalk.staccato.database.migration.script.sql;
 import java.net.URL;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import com.readytalk.staccato.database.migration.script.Script;
@@ -40,14 +41,17 @@ public class SQLScript implements Script<SQLScript> {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof SQLScript)) return false;
+		if (this == o) {
+			return true;
+		}
+		
+		if (!(o instanceof SQLScript)) {
+			return false;
+		}
 
-		SQLScript sqlScript = (SQLScript) o;
-
-		if (!filename.equals(sqlScript.filename)) return false;
-
-		return true;
+		final SQLScript sqlScript = (SQLScript) o;
+		
+		return new EqualsBuilder().append(filename, sqlScript.getFilename()).build();
 	}
 
 	@Override
