@@ -17,13 +17,12 @@ public class MigrationTypeValidator implements ConstraintValidator<MigrationType
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
-
 		try {
 			MigrationType.valueOf(value);
 			return true;
 		} catch (Exception e) {
 			context.disableDefaultConstraintViolation();
-			context.buildConstraintViolationWithTemplate("Invalid migrationType: " + value + ".  The list of valid migration types are:\n" + MigrationType.description()).addConstraintViolation();
+			context.buildConstraintViolationWithTemplate("Invalid migrationType: " + String.valueOf(value) + ".  The list of valid migration types are:\n" + MigrationType.description()).addConstraintViolation();
 			return false;
 		}
 	}
