@@ -2,6 +2,9 @@ package com.readytalk.staccato.utils;
 
 import java.net.URL;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Represents a system resource.
  */
@@ -43,17 +46,14 @@ public class Resource {
 		if (!(o instanceof Resource)) return false;
 
 		Resource resource = (Resource) o;
-
-		if (!filename.equals(resource.filename)) return false;
-		if (!url.equals(resource.url)) return false;
-
-		return true;
+		
+		return new EqualsBuilder()
+			.append(filename, resource.getFilename())
+			.append(url, resource.getUrl()).build();
 	}
 
 	@Override
 	public int hashCode() {
-		int result = filename.hashCode();
-		result = 31 * result + url.hashCode();
-		return result;
+		return new HashCodeBuilder(29, 31).append(filename).append(url).build();
 	}
 }
