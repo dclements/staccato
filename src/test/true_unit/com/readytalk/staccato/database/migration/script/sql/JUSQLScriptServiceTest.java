@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -30,7 +30,7 @@ public class JUSQLScriptServiceTest {
 	private final ResourceLoader loader = mock(ResourceLoader.class);
 	private final Resource resource1 = mock(Resource.class);
 	private final Resource resource2 = mock(Resource.class);
-	private final Set<Resource> resources = new HashSet<Resource>(Arrays.asList(new Resource [] {resource1, resource2})); 
+	private final Set<Resource> resources = new LinkedHashSet<Resource>(Arrays.asList(new Resource [] {resource1, resource2})); 
 	
 	private SQLScript ss1;
 	private SQLScript ss2;

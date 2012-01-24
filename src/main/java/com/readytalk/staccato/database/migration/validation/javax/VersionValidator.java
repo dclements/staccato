@@ -28,8 +28,7 @@ public class VersionValidator implements ConstraintValidator<Version, String> {
 		if (StringUtils.isEmpty(version)) {
 			return true;
 		}
-
-		// attempt to parse the iso date to the format defined in the DateFormat constraint.
+		
 		// if exception throws, then it's malformed so return invalid
 		try {
 			new com.readytalk.staccato.utils.Version(version, this.version.strictMode());
