@@ -96,7 +96,7 @@ public class MigrationValidatorImpl implements MigrationValidator {
 			MigrationValidationException.Violation violation = new MigrationValidationException.Violation();
 			violation.message = constraintViolation.getMessage();
 			violation.propertyValue = constraintViolation.getInvalidValue();
-			violation.propertyName = constraintViolation.getPropertyPath().toString();
+			violation.propertyName = String.valueOf(constraintViolation.getPropertyPath());
 			violations.add(violation);
 		}
 
@@ -110,14 +110,17 @@ public class MigrationValidatorImpl implements MigrationValidator {
 	 */
 	private static class MigrationAnnotationStruct {
 
+		@SuppressWarnings("unused")
 		@NotNull
 		@DateFormat
 		private String scriptDate;
 
+		@SuppressWarnings("unused")
 		@NotNull
 		@Version(strictMode = Migration.scriptVersionStrictMode)
 		private String scriptVersion;
 
+		@SuppressWarnings("unused")
 		@NotNull
 		@Version(strictMode = Migration.databaseVersionStrictMode)
 		private String databaseVersion;
