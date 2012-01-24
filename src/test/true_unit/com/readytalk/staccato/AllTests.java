@@ -17,6 +17,7 @@ import com.readytalk.staccato.database.migration.validation.javax.JUDateFormatVa
 import com.readytalk.staccato.database.migration.validation.javax.JUVersionValidatorTest;
 import com.readytalk.staccato.database.migration.validation.javax.MigrationTypeValidatorTest;
 import com.readytalk.staccato.database.migration.validation.javax.MigrationValidatorTest;
+import com.readytalk.staccato.utils.JUSQLUtilsTest;
 import com.readytalk.staccato.utils.ResourceLoaderTest;
 import com.readytalk.staccato.utils.ResourceTest;
 
@@ -24,7 +25,8 @@ import com.readytalk.staccato.utils.ResourceTest;
 @SuiteClasses({CommandLineServiceTest.class, DatabaseServiceTest.class, JUDatabaseTypeTest.class, GroovyMigrationServiceTest.class,
 	MigrationLoggingServiceTest.class, MigrationRuntimeTest.class, JUGroovyScriptServiceTest.class, JUGroovyScriptTest.class,
 	JUSQLScriptServiceTest.class, JUSQLScriptTest.class, JUDateFormatValidatorTest.class, MigrationTypeValidatorTest.class,
-	MigrationValidatorTest.class, JUVersionValidatorTest.class, ResourceTest.class, ResourceLoaderTest.class})
+	MigrationValidatorTest.class, JUVersionValidatorTest.class, ResourceTest.class, ResourceLoaderTest.class,
+	JUSQLUtilsTest.class})
 public class AllTests {
 
 }
