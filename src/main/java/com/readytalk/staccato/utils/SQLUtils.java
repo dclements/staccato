@@ -1,8 +1,7 @@
 package com.readytalk.staccato.utils;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -58,22 +57,16 @@ public class SQLUtils {
 
 		ResultSet rs;
 		
-		BufferedReader in = null;
+		InputStream is = null;
 		try {
-			in = new BufferedReader(new InputStreamReader(url.openStream()));
-			StringBuilder stringBuilder = new StringBuilder();
-			String inputLine;
-			while ((inputLine = in.readLine()) != null) {
-				stringBuilder.append(inputLine).append("\n");
-			}
+			is = url.openStream();
+			String sql = IOUtils.toString(is);
 
-			rs = execute(connection, stringBuilder.toString());
-
+			rs = execute(connection, sql);
 		} catch (IOException e) {
-			e.printStackTrace();
 			throw new SQLException("Unable to read script: " + url.toExternalForm(), e);
 		} finally {
-			IOUtils.closeQuietly(in);
+			IOUtils.closeQuietly(is);
 		}
 
 		return rs;
