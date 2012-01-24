@@ -18,6 +18,7 @@ import com.readytalk.staccato.database.migration.validation.javax.JUVersionValid
 import com.readytalk.staccato.database.migration.validation.javax.MigrationTypeValidatorTest;
 import com.readytalk.staccato.database.migration.validation.javax.MigrationValidatorTest;
 import com.readytalk.staccato.utils.JUSQLUtilsTest;
+import com.readytalk.staccato.utils.JUVersionTest;
 import com.readytalk.staccato.utils.ResourceLoaderTest;
 import com.readytalk.staccato.utils.ResourceTest;
 
@@ -26,7 +27,7 @@ import com.readytalk.staccato.utils.ResourceTest;
 	MigrationLoggingServiceTest.class, MigrationRuntimeTest.class, JUGroovyScriptServiceTest.class, JUGroovyScriptTest.class,
 	JUSQLScriptServiceTest.class, JUSQLScriptTest.class, JUDateFormatValidatorTest.class, MigrationTypeValidatorTest.class,
 	MigrationValidatorTest.class, JUVersionValidatorTest.class, ResourceTest.class, ResourceLoaderTest.class,
-	JUSQLUtilsTest.class})
+	JUSQLUtilsTest.class, JUVersionTest.class})
 public class AllTests {
 
 }
