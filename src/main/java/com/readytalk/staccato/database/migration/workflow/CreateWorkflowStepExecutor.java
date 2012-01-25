@@ -21,13 +21,14 @@ public class CreateWorkflowStepExecutor implements WorkflowStepExecutor<Create> 
 	private Create workflowStep;
 
 	@Override
-	public void initialize(Create workflowStep) {
-		this.workflowStep = workflowStep;
+	public void initialize(final Create _workflowStep) {
+		this.workflowStep = _workflowStep;
 	}
 
 	@Override
-	public Object execute(Object scriptInstance, WorkflowContext context) throws InvocationTargetException, IllegalAccessException {
-		DatabaseContext dbCtx = context.getMigrationRuntime().getDatabaseContext();
+	public Object execute(final Object scriptInstance, final WorkflowContext context)
+			throws InvocationTargetException, IllegalAccessException {
+		final DatabaseContext dbCtx = context.getMigrationRuntime().getDatabaseContext();
 
 		// grab the java.sql.Connection
 		Connection connection = dbCtx.getConnection();
@@ -38,7 +39,8 @@ public class CreateWorkflowStepExecutor implements WorkflowStepExecutor<Create> 
 				connection.close();
 			}
 		} catch (SQLException e) {
-			throw new MigrationException("An exception occurred while closing the connection to database: " + dbCtx.getFullyQualifiedJdbcUri());
+			throw new MigrationException("An exception occurred while closing the connection to database: "
+					+ dbCtx.getFullyQualifiedJdbcUri());
 		}
 
 		String baseJdbc = dbCtx.getBaseJdbcUri().toString();
@@ -69,7 +71,8 @@ public class CreateWorkflowStepExecutor implements WorkflowStepExecutor<Create> 
 		Object result;
 
 		try {
-			logger.debug("Invoking workflow step @" + workflowStep.annotationType().getSimpleName() + " on method: " + method.getName());
+			logger.debug("Invoking workflow step @" + workflowStep.annotationType().getSimpleName() 
+					+ " on method: " + method.getName());
 			// first try invoking without runtime argument
 			result = method.invoke(scriptInstance);
 		} catch (IllegalArgumentException e) {
@@ -80,7 +83,8 @@ public class CreateWorkflowStepExecutor implements WorkflowStepExecutor<Create> 
 		// reconnect to the original db
 		// connect to root db as root user
 		try {
-			connection = DriverManagerWrapper.getConnection(dbCtx.getFullyQualifiedJdbcUri().toString(), dbCtx.getUsername(), dbCtx.getPassword());
+			connection = DriverManagerWrapper.getConnection(dbCtx.getFullyQualifiedJdbcUri().toString(),
+					dbCtx.getUsername(), dbCtx.getPassword());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

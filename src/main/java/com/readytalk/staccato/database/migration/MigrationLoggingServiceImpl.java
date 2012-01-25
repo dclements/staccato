@@ -30,7 +30,7 @@ public class MigrationLoggingServiceImpl implements MigrationLoggingService {
 	}
 	
 	@Inject
-	public MigrationLoggingServiceImpl(ResourceLoader loader) {
+	public MigrationLoggingServiceImpl(final ResourceLoader loader) {
 		this.resourceLoader = loader;
 	}
 
@@ -38,7 +38,7 @@ public class MigrationLoggingServiceImpl implements MigrationLoggingService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void createVersionsTable(DatabaseContext context) {
+	public void createVersionsTable(final DatabaseContext context) {
 
 		if (!versionTableExists(context)) {
 			String sqlFile = null;
@@ -57,7 +57,7 @@ public class MigrationLoggingServiceImpl implements MigrationLoggingService {
 				throw new DatabaseException("No SQL migrations file for type: " + String.valueOf(context.getDatabaseType()));
 			}
 			
-			final URL url = resourceLoader.retrieveURI(this.getClass().getClassLoader(), sqlFile);
+			final URL url = resourceLoader.retrieveURL(this.getClass().getClassLoader(), sqlFile);
 
 			if (url == null) {
 				throw new DatabaseException("Unable to create the " + MIGRATION_VERSIONS_TABLE + ".  Cannot locate the sql file: " + sqlFile);
@@ -105,7 +105,8 @@ public class MigrationLoggingServiceImpl implements MigrationLoggingService {
 	}
 
 	@Override
-	public void log(DatabaseContext databaseContext, DynamicLanguageScript<?> script, Class<? extends Annotation> workflowStep, Migration migrationAnnotation) {
+	public void log(final DatabaseContext databaseContext, final DynamicLanguageScript<?> script,
+			final Class<? extends Annotation> workflowStep, final Migration migrationAnnotation) {
 
 		// create the migration versions table
 		createVersionsTable(databaseContext);

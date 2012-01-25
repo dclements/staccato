@@ -21,12 +21,12 @@ public class SQLScriptService implements ScriptService<SQLScript> {
 	private final ResourceLoader loader;
 
 	@Inject
-	public SQLScriptService(ResourceLoader loader) {
+	public SQLScriptService(final ResourceLoader loader) {
 		this.loader = loader;
 	}
 
 	@Override
-	public List<SQLScript> load(String migrationDir, ClassLoader classLoader) {
+	public List<SQLScript> load(final String migrationDir, final ClassLoader classLoader) {
 
 		logger.debug("Loading sql scripts from migration directory: " + migrationDir);
 
@@ -46,8 +46,9 @@ public class SQLScriptService implements ScriptService<SQLScript> {
 						collisionScript = sqlScript;
 					}
 				}
-				throw new MigrationException("Unique script violation.  SQL script [" + String.valueOf(script.getUrl()) + "] filename violates" +
-				" unique filename constraint.  Another sql file already contains the same filename.");
+				throw new MigrationException("Unique script violation.  SQL script [" 
+						+ String.valueOf(script.getUrl()) + "] filename violates" 
+						+ " unique filename constraint.  Another sql file already contains the same filename.");
 			}
 			scripts.add(script);
 		}

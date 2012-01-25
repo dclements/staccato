@@ -10,7 +10,12 @@ import java.sql.SQLException;
  * XXX: Long term solution here is handle this wrapper via dependency injection.
  */
 public class DriverManagerWrapper {
-	public static Connection getConnection(String url, String user, String password) throws SQLException {
+	
+	private DriverManagerWrapper() {
+		
+	}
+	public static Connection getConnection(final String url, final String user, final String password) 
+			throws SQLException {
 		return DriverManager.getConnection(url, user, password);
 	}
 }

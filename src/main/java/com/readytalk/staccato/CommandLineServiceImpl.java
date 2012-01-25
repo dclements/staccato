@@ -1,5 +1,7 @@
 package com.readytalk.staccato;
 
+import java.util.IllegalFormatException;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -9,20 +11,19 @@ import org.apache.commons.cli.ParseException;
 
 import com.google.inject.Inject;
 import com.readytalk.staccato.database.migration.MigrationException;
-import com.readytalk.staccato.database.migration.validation.MigrationValidationException;
 
 public class CommandLineServiceImpl implements CommandLineService {
 
-	final private CommandLineParser parser;
+	private final CommandLineParser parser;
 
-	final private HelpFormatter helpFormatter;
+	private final HelpFormatter helpFormatter;
 
-	final Options options = new Options();
+	private final Options options = new Options();
 
 	@Inject
-	public CommandLineServiceImpl(CommandLineParser parser, HelpFormatter helpFormatter) {
-		this.parser = parser;
-		this.helpFormatter = helpFormatter;
+	public CommandLineServiceImpl(final CommandLineParser _parser, final HelpFormatter _helpFormatter) {
+		this.parser = _parser;
+		this.helpFormatter = _helpFormatter;
 		init();
 	}
 
@@ -39,8 +40,8 @@ public class CommandLineServiceImpl implements CommandLineService {
 	}
 
 	@Override
-	public StaccatoOptions parse(String... args) throws MigrationValidationException {
-		if (args.length == 0 || args[0].contains("help") || args[0].equals("-h")) {
+	public StaccatoOptions parse(final String... args) {
+		if (args.length == 0 || args[0].contains("help") || "-h".equals(args[0])) {
 			helpFormatter.printHelp("java -jar staccato.jar [options]", options);
 			return null;
 		} else {
@@ -81,11 +82,12 @@ public class CommandLineServiceImpl implements CommandLineService {
 				staccatoOptions.migrateToVer = migrateToVer;
 				staccatoOptions.rootDb = rootDb;
 				staccatoOptions.migrationJarPath = migrationJarPath;
-
+				
+				//TODO: Check exception path.
 				try {
-					Boolean loggingEnabled = new Boolean(logging);
+					final Boolean loggingEnabled = Boolean.valueOf(logging);
 					staccatoOptions.enableLogging = loggingEnabled;
-				} catch (Exception e) {
+				} catch (final IllegalFormatException ife) {
 					staccatoOptions.enableLogging = true;
 				}
 

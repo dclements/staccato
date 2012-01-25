@@ -23,7 +23,7 @@ public class SQLUtils {
 	 * @return result set
 	 * @throws SQLException if error during sql execution
 	 */
-	public static ResultSet execute(Connection connection, String sql) throws SQLException {
+	public static ResultSet execute(final Connection connection, final String sql) throws SQLException {
 
 		logger.trace("Executing sql: \n" + sql + "\n");
 
@@ -36,7 +36,7 @@ public class SQLUtils {
 				rs = st.getResultSet();
 			}
 
-		} catch (Exception e) {
+		} catch (final SQLException e) {
 			throw new SQLException("Error occurred while executing sql: " + sql, e);
 		}
 
@@ -51,7 +51,7 @@ public class SQLUtils {
 	 * @return the result set
 	 * @throws SQLException if errors during execution
 	 */
-	public static ResultSet executeSQLFile(Connection connection, URL url) throws SQLException {
+	public static ResultSet executeSQLFile(final Connection connection, final URL url) throws SQLException {
 
 		logger.trace("Executing sql file url: " + url.toExternalForm());
 

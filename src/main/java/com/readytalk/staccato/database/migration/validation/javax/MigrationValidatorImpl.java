@@ -22,12 +22,12 @@ public class MigrationValidatorImpl implements MigrationValidator {
 	private final Validator validator;
 
 	@Inject
-	public MigrationValidatorImpl(Validator validator) {
-		this.validator = validator;
+	public MigrationValidatorImpl(final Validator _validator) {
+		this.validator = _validator;
 	}
 
 	@Override
-	public void validate(StaccatoOptions options) {
+	public void validate(final StaccatoOptions options) {
 		final List<MigrationValidationException.Violation> violations = processConstraintViolations(options);
 		if (violations.size() > 0) {
 			throw new MigrationValidationException("One or more Staccato options are invalid", violations);
@@ -35,11 +35,13 @@ public class MigrationValidatorImpl implements MigrationValidator {
 	}
 
 	@Override
-	public void validate(Migration migrationAnnotation, String scriptFilename) throws MigrationValidationException {
+	public void validate(final Migration migrationAnnotation, final String scriptFilename)
+			throws MigrationValidationException {
 
 		final MigrationAnnotationStruct struct = new MigrationAnnotationStruct();
 
-		final List<MigrationValidationException.Violation> violations = new ArrayList<MigrationValidationException.Violation>();
+		final List<MigrationValidationException.Violation> violations =
+			new ArrayList<MigrationValidationException.Violation>();
 
 		try {
 			struct.databaseVersion = migrationAnnotation.databaseVersion();
@@ -62,7 +64,8 @@ public class MigrationValidatorImpl implements MigrationValidator {
 		violations.addAll(processConstraintViolations(struct));
 
 		if (violations.size() > 0) {
-			throw new MigrationValidationException("@Migration annotation invalid for script: " + scriptFilename, violations);
+			throw new MigrationValidationException("@Migration annotation invalid for script: "
+					+ scriptFilename, violations);
 		}
 	}
 
@@ -72,7 +75,7 @@ public class MigrationValidatorImpl implements MigrationValidator {
 	 * @param propertyName the property name
 	 * @return a violation
 	 */
-	private MigrationValidationException.Violation handleIncompleteAnnotationException(String propertyName) {
+	private MigrationValidationException.Violation handleIncompleteAnnotationException(final String propertyName) {
 		final MigrationValidationException.Violation violation = new MigrationValidationException.Violation();
 		violation.message = propertyName + " is undefined but is a required field.";
 		violation.propertyValue = "undefined";
@@ -86,11 +89,12 @@ public class MigrationValidatorImpl implements MigrationValidator {
 	 * @param objectToValidate the object to validate
 	 * @return a list of violations
 	 */
-	private List<MigrationValidationException.Violation> processConstraintViolations(Object objectToValidate) {
+	private List<MigrationValidationException.Violation> processConstraintViolations(final Object objectToValidate) {
 
 		final Set<ConstraintViolation<Object>> constraintViolations = validator.validate(objectToValidate);
 
-		final List<MigrationValidationException.Violation> violations = new ArrayList<MigrationValidationException.Violation>();
+		final List<MigrationValidationException.Violation> violations =
+			new ArrayList<MigrationValidationException.Violation>();
 
 		for (ConstraintViolation<Object> constraintViolation : constraintViolations) {
 			MigrationValidationException.Violation violation = new MigrationValidationException.Violation();

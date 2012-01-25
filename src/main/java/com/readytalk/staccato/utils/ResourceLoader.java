@@ -27,5 +27,5 @@ public interface ResourceLoader {
 	 * @param name The name of the resource.
 	 * @return A URI connecting to the named resource.
 	 */
-	URL retrieveURI(ClassLoader loader, String name);
+	URL retrieveURL(ClassLoader loader, String name);
 }

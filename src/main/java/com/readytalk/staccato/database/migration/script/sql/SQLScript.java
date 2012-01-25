@@ -26,12 +26,12 @@ public class SQLScript implements Script<SQLScript> {
 		return url;
 	}
 
-	public void setFilename(String filename) {
-		this.filename = filename;
+	public void setFilename(final String _filename) {
+		this.filename = _filename;
 	}
 
-	public void setUrl(URL url) {
-		this.url = url;
+	public void setUrl(final URL _url) {
+		this.url = _url;
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class SQLScript implements Script<SQLScript> {
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		if (this == o) {
 			return true;
 		}

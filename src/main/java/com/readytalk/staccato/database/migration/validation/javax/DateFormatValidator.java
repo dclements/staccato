@@ -13,7 +13,7 @@ public class DateFormatValidator implements ConstraintValidator<DateFormat, Stri
 
 	private String dateFormat;
 
-	public void initialize(DateFormat constraint) {
+	public void initialize(final DateFormat constraint) {
 		dateFormat = constraint.dateFormat();
 	}
 
@@ -31,7 +31,7 @@ public class DateFormatValidator implements ConstraintValidator<DateFormat, Stri
 	 * @param context constraint context
 	 * @return true if valid, false otherwise
 	 */
-	public boolean isValid(String isoDate, ConstraintValidatorContext context) {
+	public boolean isValid(final String isoDate, final ConstraintValidatorContext context) {
 
 		if (StringUtils.isEmpty(isoDate)) {
 			return true;

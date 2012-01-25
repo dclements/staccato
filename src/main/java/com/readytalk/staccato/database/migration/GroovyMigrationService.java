@@ -23,8 +23,8 @@ public class GroovyMigrationService implements MigrationService<GroovyScript> {
 
 	@Inject
 	public GroovyMigrationService(
-			MigrationWorkflowService migrationWorkflowService,
-			MigrationAnnotationParser annotationParser) {
+			final MigrationWorkflowService migrationWorkflowService,
+			final MigrationAnnotationParser annotationParser) {
 
 		this.migrationWorkflowService = migrationWorkflowService;
 		this.annotationParser = annotationParser;
@@ -89,7 +89,7 @@ public class GroovyMigrationService implements MigrationService<GroovyScript> {
 	 * @param migrationAnnotation the migration annotation
 	 * @return the description
 	 */
-	String getDescription(Migration migrationAnnotation) {
+	String getDescription(final Migration migrationAnnotation) {
 		try {
 			return migrationAnnotation.description();
 		} catch (IncompleteAnnotationException e) {
@@ -108,7 +108,7 @@ public class GroovyMigrationService implements MigrationService<GroovyScript> {
 	 * @param databaseContext the database context
 	 * @return true if valid, false otherwise
 	 */
-	boolean isValidDatabaseType(Migration migration, DatabaseContext databaseContext) {
+	boolean isValidDatabaseType(final Migration migration, final DatabaseContext databaseContext) {
 		DatabaseType scriptDatabaseType;
 		try {
 			scriptDatabaseType = migration.databaseType();

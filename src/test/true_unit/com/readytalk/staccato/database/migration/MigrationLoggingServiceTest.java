@@ -82,26 +82,26 @@ public class MigrationLoggingServiceTest {
 		URL url = new URL("file:/var/");
 		doReturn(false).when(mls).versionTableExists(eq(context));
 		when(context.getDatabaseType()).thenReturn(type);
-		when(resourceLoader.retrieveURI(any(ClassLoader.class), anyString())).thenReturn(url);
+		when(resourceLoader.retrieveURL(any(ClassLoader.class), anyString())).thenReturn(url);
 		
 		mls.createVersionsTable(context);
 		
 		PowerMockito.verifyStatic();
 		SQLUtils.executeSQLFile(eq(conn), eq(url));
-		verify(resourceLoader).retrieveURI(any(ClassLoader.class), Matchers.contains(type.getType()));
+		verify(resourceLoader).retrieveURL(any(ClassLoader.class), Matchers.contains(type.getType()));
 	}
 	
 	@Theory
 	public void testCreateVersionsTableNoResource(DatabaseType type) throws Exception {
 		doReturn(false).when(mls).versionTableExists(eq(context));
 		when(context.getDatabaseType()).thenReturn(type);
-		when(resourceLoader.retrieveURI(any(ClassLoader.class), anyString())).thenReturn(null);
+		when(resourceLoader.retrieveURL(any(ClassLoader.class), anyString())).thenReturn(null);
 		
 		try {
 			mls.createVersionsTable(context);
 			fail("Succeeded when resource did not exist.");
 		} catch(final DatabaseException de) {
-			verify(resourceLoader).retrieveURI(any(ClassLoader.class), Matchers.contains(type.getType()));
+			verify(resourceLoader).retrieveURL(any(ClassLoader.class), Matchers.contains(type.getType()));
 			PowerMockito.verifyZeroInteractions(SQLUtils.class);
 		}
 	}
@@ -113,7 +113,7 @@ public class MigrationLoggingServiceTest {
 		mls.createVersionsTable(context);
 
 		PowerMockito.verifyZeroInteractions(SQLUtils.class);
-		verify(resourceLoader, never()).retrieveURI(any(ClassLoader.class), anyString());
+		verify(resourceLoader, never()).retrieveURL(any(ClassLoader.class), anyString());
 	}
 
 	@Test

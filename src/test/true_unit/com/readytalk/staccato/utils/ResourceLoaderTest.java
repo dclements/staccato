@@ -113,7 +113,7 @@ public class ResourceLoaderTest {
 		
 		when(l.getResource(str)).thenReturn(url);
 		
-		assertEquals(url, loader.retrieveURI(l, str));
+		assertEquals(url, loader.retrieveURL(l, str));
 	}
 
 }

@@ -13,9 +13,10 @@ public class WorkflowContextImpl implements WorkflowContext {
 	private final MigrationRuntime migrationRuntime;
 
 	@Inject
-	public WorkflowContextImpl(MigrationAnnotationParser annotationParser, @Assisted MigrationRuntime migrationRuntime) {
-		this.annotationParser = annotationParser;
-		this.migrationRuntime = migrationRuntime;
+	public WorkflowContextImpl(final MigrationAnnotationParser _annotationParser,
+			@Assisted final MigrationRuntime _migrationRuntime) {
+		this.annotationParser = _annotationParser;
+		this.migrationRuntime = _migrationRuntime;
 	}
 
 	/* (non-Javadoc)

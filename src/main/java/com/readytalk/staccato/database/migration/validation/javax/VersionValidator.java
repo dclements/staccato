@@ -23,7 +23,7 @@ public class VersionValidator implements ConstraintValidator<Version, String> {
 	 * @param context constraint context
 	 * @return true if valid, false otherwise
 	 */
-	public boolean isValid(String version, ConstraintValidatorContext context) {
+	public boolean isValid(final String version, final ConstraintValidatorContext context) {
 
 		if (StringUtils.isEmpty(version)) {
 			return true;

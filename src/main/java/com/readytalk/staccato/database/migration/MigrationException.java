@@ -6,15 +6,15 @@ public class MigrationException extends RuntimeException {
 		super();
 	}
 
-	public MigrationException(Throwable cause) {
+	public MigrationException(final Throwable cause) {
 		super(cause);
 	}
 
-	public MigrationException(String message) {
+	public MigrationException(final String message) {
 		super(message);
 	}
 
-	public MigrationException(String message, Throwable cause) {
+	public MigrationException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 }

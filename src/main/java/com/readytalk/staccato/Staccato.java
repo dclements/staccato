@@ -42,13 +42,13 @@ public class Staccato {
 	private final Injector injector;
 
 	@Inject
-	public Staccato(DatabaseService databaseService, DynamicLanguageScriptService<GroovyScript> groovyScriptService,
-			MigrationService<GroovyScript> migrationService, ScriptService<SQLScript> sqlScriptService, MigrationValidator validator, Injector inj) {
-		this.databaseService = databaseService;
-		this.groovyScriptService = groovyScriptService;
-		this.migrationService = migrationService;
-		this.sqlScriptService = sqlScriptService;
-		this.validator = validator;
+	public Staccato(final DatabaseService _databaseService, final DynamicLanguageScriptService<GroovyScript> _groovyScriptService,
+			final MigrationService<GroovyScript> _migrationService, final ScriptService<SQLScript> _sqlScriptService, final MigrationValidator _validator, final Injector inj) {
+		this.databaseService = _databaseService;
+		this.groovyScriptService = _groovyScriptService;
+		this.migrationService = _migrationService;
+		this.sqlScriptService = _sqlScriptService;
+		this.validator = _validator;
 		this.injector = inj;
 	}
 
@@ -101,12 +101,14 @@ public class Staccato {
 			try {
 				databaseService.connect(dbCtx);
 			} catch (DatabaseException e) {
-				throw new MigrationException("Unable to establish a connection to the database for jdbc uri:" +
-						options.jdbcUrl + ", user: " + options.dbUser + ", pwd: " + options.dbPwd + ".  Please make sure that " +
-						"the database exists and that that the user permissions are set appropriately.", e);
+				throw new MigrationException("Unable to establish a connection to the database for jdbc uri:"
+						+ options.jdbcUrl + ", user: " + options.dbUser + ", pwd: " + options.dbPwd 
+						+ ".  Please make sure that "
+						+ "the database exists and that that the user permissions are set appropriately.", e);
 			}
 		} else if (options.dbSuperUserPwd == null) {
-			throw new MigrationException("Database superuser password is required when executing a " + MigrationType.CREATE);
+			throw new MigrationException("Database superuser password is required when executing a " 
+						+ MigrationType.CREATE);
 		}
 
 		// load sql scripts
@@ -126,8 +128,8 @@ public class Staccato {
 		}
 	}
 
-	private List<GroovyScript> determineScriptsToRun(List<GroovyScript> allScripts, StaccatoOptions options) {
-		List<GroovyScript> scriptsToRun = new ArrayList<GroovyScript>();
+	private List<GroovyScript> determineScriptsToRun(final List<GroovyScript> allScripts, final StaccatoOptions options) {
+		final List<GroovyScript> scriptsToRun = new ArrayList<GroovyScript>();
 
 		/**
 		 * The following if-block processes based on the following criteria:
@@ -174,7 +176,7 @@ public class Staccato {
 				logger.info("Running a migration for all scripts in the date range: " + options.migrateFromDate + " - " + options.migrateToDate);
 			}
 
-			scriptsToRun = groovyScriptService.filterByDate(allScripts, fromDate, toDate);
+			scriptsToRun.addAll(groovyScriptService.filterByDate(allScripts, fromDate, toDate));
 		} else if (!StringUtils.isEmpty(options.migrateFromVer) || !StringUtils.isEmpty(options.migrateToVer)) {
 
 			Version fromVer = null;
@@ -195,7 +197,7 @@ public class Staccato {
 				logger.info("Running a migration for all scripts in the version range: " + options.migrateFromVer + " - " + options.migrateToVer);
 			}
 
-			scriptsToRun = groovyScriptService.filterByDatabaseVersion(allScripts, fromVer, toVer);
+			scriptsToRun.addAll(groovyScriptService.filterByDatabaseVersion(allScripts, fromVer, toVer));
 		} else {
 			logger.info("Running a migration on all scripts");
 			scriptsToRun.addAll(allScripts);

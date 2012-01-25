@@ -75,8 +75,8 @@ public class GroovyScript implements DynamicLanguageScript<GroovyScript> {
 		return databaseType;
 	}
 
-	public void setDatabaseVersion(Version databaseVersion) {
-		this.databaseVersion = databaseVersion;
+	public void setDatabaseVersion(final Version _databaseVersion) {
+		this.databaseVersion = _databaseVersion;
 	}
 
 	@Override
@@ -84,41 +84,42 @@ public class GroovyScript implements DynamicLanguageScript<GroovyScript> {
 		return sha1Hash;
 	}
 
-	public void setFilename(String filename) {
-		this.filename = filename;
+	public void setFilename(final String _filename) {
+		this.filename = _filename;
 	}
 
-	public void setScriptClass(Class<?> scriptClass) {
-		this.scriptClass = scriptClass;
+	public void setScriptClass(final Class<?> _scriptClass) {
+		this.scriptClass = _scriptClass;
 	}
 
-	public void setScriptDate(DateTime scriptDate) {
-		this.scriptDate = scriptDate;
+	public void setScriptDate(final DateTime _scriptDate) {
+		this.scriptDate = _scriptDate;
 	}
 
-	public void setScriptInstance(Object scriptInstance) {
-		this.scriptInstance = scriptInstance;
+	public void setScriptInstance(final Object _scriptInstance) {
+		this.scriptInstance = _scriptInstance;
 	}
 
-	public void setUrl(URL url) {
-		this.url = url;
+	public void setUrl(final URL _url) {
+		this.url = _url;
 	}
 
-	public void setScriptVersion(Version scriptVersion) {
-		this.scriptVersion = scriptVersion;
+	public void setScriptVersion(final Version _scriptVersion) {
+		this.scriptVersion = _scriptVersion;
 	}
 
-	public void setSha1Hash(String sha1Hash) {
-		this.sha1Hash = sha1Hash;
+	public void setSha1Hash(final String _sha1Hash) {
+		this.sha1Hash = _sha1Hash;
 	}
 
-	public void setDatabaseType(DatabaseType databaseType) {
-		this.databaseType = databaseType;
+	public void setDatabaseType(final DatabaseType _databaseType) {
+		this.databaseType = _databaseType;
 	}
 
 	@Override
-	public int compareTo(GroovyScript groovyScript) {
-		if (groovyScript.databaseType != null && this.databaseType != null && !groovyScript.databaseType.equals(this.databaseType)) {
+	public int compareTo(final GroovyScript groovyScript) {
+		if (groovyScript.databaseType != null && this.databaseType != null &&
+				!groovyScript.databaseType.equals(this.databaseType)) {
 			return 1;
 		} else {
 			return groovyScript.getScriptDate().compareTo(this.getScriptDate());
@@ -126,9 +127,14 @@ public class GroovyScript implements DynamicLanguageScript<GroovyScript> {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof GroovyScript)) return false;
+	public boolean equals(final Object o) {
+		if (this == o) {
+			return true;
+		}
+		
+		if (!(o instanceof GroovyScript)) {
+			return false;
+		}
 
 		GroovyScript that = (GroovyScript) o;
 		

@@ -24,13 +24,13 @@ public class MigrationRuntimeImpl implements MigrationRuntime {
 	private final boolean loggingEnabled;
 
 	@Inject
-	public MigrationRuntimeImpl(@Assisted DatabaseContext databaseContext, @Assisted List<SQLScript> sqlScripts,
-			@Assisted MigrationType migrationType, @Assisted boolean loggingEnabled) {
+	public MigrationRuntimeImpl(@Assisted final DatabaseContext _databaseContext, @Assisted final List<SQLScript> _sqlScripts,
+			@Assisted final MigrationType _migrationType, @Assisted final boolean _loggingEnabled) {
 
-		this.databaseContext = databaseContext;
-		this.sqlScripts = sqlScripts;
-		this.migrationType = migrationType;
-		this.loggingEnabled = loggingEnabled;
+		this.databaseContext = _databaseContext;
+		this.sqlScripts = _sqlScripts;
+		this.migrationType = _migrationType;
+		this.loggingEnabled = _loggingEnabled;
 	}
 
 	@Override
@@ -54,12 +54,12 @@ public class MigrationRuntimeImpl implements MigrationRuntime {
 	}
 
 	@Override
-	public ResultSet executeSQL(String sql) throws SQLException {
+	public ResultSet executeSQL(final String sql) throws SQLException {
 		return SQLUtils.execute(databaseContext.getConnection(), sql);
 	}
 
 	@Override
-	public ResultSet executeSQLFile(String filename) throws SQLException {
+	public ResultSet executeSQLFile(final String filename) throws SQLException {
 
 		ResultSet rs;
 

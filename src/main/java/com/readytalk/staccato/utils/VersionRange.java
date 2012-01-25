@@ -47,14 +47,14 @@ public class VersionRange {
 	 * @param   end (Optional) The end Version number.
 	 * @throws IllegalArgumentException If start is null or greater than end.
 	 */
-	public VersionRange(Version start, Version end) {
+	public VersionRange(final Version start, final Version end) {
 		if (start == null) {
 			throw new IllegalArgumentException("start version cannot be null");
 		}
 
 		if (end != null && start.compareTo(end) > 0) {
-			throw new IllegalArgumentException("start version must be less than end version. [" +
-					start + "] is not less than [" + end + "]");
+			throw new IllegalArgumentException("start version must be less than end version. ["
+					+ start + "] is not less than [" + end + "]");
 		}
 
 		this.start = start;
@@ -69,7 +69,7 @@ public class VersionRange {
 	 * @throws IllegalArgumentException If the version range String is invalid in the ways shown in
 	 *          the class comment.
 	 */
-	public VersionRange(String versionRange) {
+	public VersionRange(final String versionRange) {
 		if (versionRange == null) {
 			throw new IllegalArgumentException("versionRange string cannot be null");
 		}
@@ -148,7 +148,7 @@ public class VersionRange {
 	 * @param   other The object to compare with this Version for equality.
 	 * @return True if they are both Versions and equal, false otherwise.
 	 */
-	public boolean equals(Object other) {
+	public boolean equals(final Object other) {
 		if (this == other) {
 			return true;
 		}
@@ -168,7 +168,7 @@ public class VersionRange {
 	 */
 	public int hashCode() {
 		
-		return new HashCodeBuilder(17,29)
+		return new HashCodeBuilder()
 			.append(start)
 			.append(end).toHashCode();
 	}
@@ -179,7 +179,7 @@ public class VersionRange {
 	 * @param   v The version to check it is in this range.
 	 * @return True if the version is in the range, false otherwise.
 	 */
-	public boolean isInRange(Version v) {
+	public boolean isInRange(final Version v) {
 		return start.compareTo(v) <= 0 && (end == null || end.compareTo(v) >= 0);
 	}
 
@@ -190,7 +190,7 @@ public class VersionRange {
 	 *          version range.
 	 * @return The highest version in the range or null if none are in the range.
 	 */
-	public Version highestVersion(Version[] va) {
+	public Version highestVersion(final Version[] va) {
 		Version highest = null;
 		for (int i = 0; i < va.length; i++) {
 			Version version = va[i];

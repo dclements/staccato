@@ -3,7 +3,6 @@ package com.readytalk.staccato.database.migration.validation;
 import com.google.inject.ImplementedBy;
 import com.readytalk.staccato.StaccatoOptions;
 import com.readytalk.staccato.database.migration.annotation.Migration;
-import com.readytalk.staccato.database.migration.script.Script;
 import com.readytalk.staccato.database.migration.validation.javax.MigrationValidatorImpl;
 
 /**
@@ -17,7 +16,7 @@ public interface MigrationValidator {
 	 *
 	 * @param options staccato options
 	 */
-	public void validate(StaccatoOptions options);
+	void validate(StaccatoOptions options);
 
 	/**
 	 * Validates a migration annotation
@@ -26,5 +25,5 @@ public interface MigrationValidator {
 	 * @param scriptFilename the script filename
 	 * @throws MigrationValidationException if there's an invalidation
 	 */
-	public void validate(Migration migrationAnnotation, String scriptFilename) throws MigrationValidationException;
+	void validate(Migration migrationAnnotation, String scriptFilename) throws MigrationValidationException;
 }

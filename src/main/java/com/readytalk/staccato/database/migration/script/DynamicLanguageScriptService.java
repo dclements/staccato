@@ -16,10 +16,10 @@ import com.readytalk.staccato.utils.Version;
 @ImplementedBy(GroovyScriptService.class)
 public interface DynamicLanguageScriptService<T extends DynamicLanguageScript<?>> extends ScriptService<T> {
 
-	static final String TEMPLATE_SCRIPT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZZ";
-	static final String TEMPLATE_CLASSNAME_DATE_FORMAT = "yyyyMMdd'T'HHmmss";
-	static final String TEMPLATE_CLASSNAME_PREFIX = "Script";
-	static final String TEMPLATE_NAME = "GroovyScriptTemplate";
+	final String TEMPLATE_SCRIPT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZZ";
+	final String TEMPLATE_CLASSNAME_DATE_FORMAT = "yyyyMMdd'T'HHmmss";
+	final String TEMPLATE_CLASSNAME_PREFIX = "Script";
+	final String TEMPLATE_NAME = "GroovyScriptTemplate";
 
 	/**
 	 * Parses the given url to a java class

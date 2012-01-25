@@ -178,7 +178,7 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 
 	protected void loadScriptTemplate() {
 		try {
-			URL url = loader.retrieveURI(this.getClass().getClassLoader(), TEMPLATE_NAME + "." + getScriptFileExtension());
+			URL url = loader.retrieveURL(this.getClass().getClassLoader(), TEMPLATE_NAME + "." + getScriptFileExtension());
 
 			InputStream inputStream = url.openStream();
 

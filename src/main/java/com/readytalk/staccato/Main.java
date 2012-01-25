@@ -8,6 +8,10 @@ import com.readytalk.staccato.database.migration.guice.MigrationModule;
  * Contains the main for running this application.
  */
 public class Main {
+	
+	private Main() {
+		super();
+	}
 
 	public static void main(String... args) {
 		final Injector injector = Guice.createInjector(new MigrationModule());

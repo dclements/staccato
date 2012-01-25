@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import com.readytalk.staccato.database.migration.script.Script;
 
 public class DatabaseServiceImpl implements DatabaseService {
-
+	private static final Integer CONNECTION_TIMEOUT = 30;
 	private static final Logger logger = Logger.getLogger(DatabaseServiceImpl.class);
 
 	@Override
@@ -20,7 +20,8 @@ public class DatabaseServiceImpl implements DatabaseService {
 	}
 
 	@Override
-	public Connection connect(URI jdbcUri, String username, String password, DatabaseType databaseType) {
+	public Connection connect(final URI jdbcUri, final String username, final String password,
+							  final DatabaseType databaseType) {
 
 		Connection connection;
 		
@@ -43,8 +44,9 @@ public class DatabaseServiceImpl implements DatabaseService {
 	}
 	
 	@Override
-	public Connection connect(DatabaseContext context) {
-		final Connection retval = this.connect(context.getFullyQualifiedJdbcUri(), context.getUsername(), context.getPassword(), context.getDatabaseType());
+	public Connection connect(final DatabaseContext context) {
+		final Connection retval = this.connect(context.getFullyQualifiedJdbcUri(), context.getUsername(),
+				context.getPassword(), context.getDatabaseType());
 		context.setConnection(retval);
 		return retval;
 	}
@@ -56,7 +58,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
 		final Connection connection = context.getConnection();
 		try {
-			if (connection != null && connection.isValid(30)) {
+			if (connection != null && connection.isValid(CONNECTION_TIMEOUT)) {
 				DbUtils.close(connection);
 			}
 		} catch (SQLException e1) {
@@ -65,13 +67,14 @@ public class DatabaseServiceImpl implements DatabaseService {
 					DbUtils.close(connection);
 				}
 			} catch (SQLException e2) {
-				logger.warn("Unable to close database connection to: " + String.valueOf(context.getFullyQualifiedJdbcUri()));
+				logger.warn("Unable to close database connection to: "
+						+ String.valueOf(context.getFullyQualifiedJdbcUri()));
 			}
 		}
 	}
 
 	@Override
-	public void startTransaction(DatabaseContext context, Script<?> script) {
+	public void startTransaction(final DatabaseContext context, final Script<?> script) {
 		try {
 			Connection connection = context.getConnection();
 			connection.setAutoCommit(false);
@@ -88,7 +91,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 	}
 
 	@Override
-	public void endTransaction(DatabaseContext context, Script<?> script) {
+	public void endTransaction(final DatabaseContext context, final Script<?> script) {
 		try {
 			Connection connection = context.getConnection();
 			if (!connection.getAutoCommit()) {
@@ -116,12 +119,12 @@ public class DatabaseServiceImpl implements DatabaseService {
 	 * @param script the script
 	 * @return the savepoint name
 	 */
-	private String buildSavepointName(Script<?> script) {
+	private String buildSavepointName(final Script<?> script) {
 		return "transaction_savepoint_" + script.getFilename();
 	}
 
 	@Override
-	public void rollback(DatabaseContext context, Script<?> script) {
+	public void rollback(final DatabaseContext context, final Script<?> script) {
 		try {
 
 			String savepointName = buildSavepointName(script);

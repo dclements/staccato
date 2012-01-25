@@ -23,7 +23,7 @@ import javax.validation.Constraint;
 @Documented
 public @interface DateFormat {
 
-	static final String ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZZ";
+	final String ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZZ";
 
 	String message() default "date must conform to the ISO8601 format: {dateFormat}";
 

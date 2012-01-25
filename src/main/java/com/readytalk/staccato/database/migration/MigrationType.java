@@ -24,8 +24,8 @@ public enum MigrationType {
 
 	private Class<? extends Annotation>[] workflowSteps;
 
-	MigrationType(Class<? extends Annotation>[] workflowSteps) {
-		this.workflowSteps = workflowSteps;
+	MigrationType(final Class<? extends Annotation>[] _workflowSteps) {
+		this.workflowSteps = _workflowSteps;
 	}
 
 	public Class<? extends Annotation>[] getWorkflowSteps() {
@@ -44,7 +44,8 @@ public enum MigrationType {
 	public static String description() {
 		StringBuilder builder = new StringBuilder();
 		for (MigrationType migrationType : MigrationType.values()) {
-			builder.append(migrationType.name()).append(" - Executes migration workflow: ").append(migrationType.toString()).append("\n");
+			builder.append(migrationType.name()).append(" - Executes migration workflow: ")
+				.append(migrationType.toString()).append("\n");
 		}
 
 		return builder.toString();

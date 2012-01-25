@@ -15,19 +15,21 @@ public class WorkflowStepExecutorImpl<T extends Annotation> implements WorkflowS
 	private T workflowStep;
 
 	@Override
-	public void initialize(T workflowStep) {
+	public void initialize(final T workflowStep) {
 		this.workflowStep = workflowStep;
 	}
 
 	@Override
-	public Object execute(Object scriptInstance, WorkflowContext context) throws InvocationTargetException, IllegalAccessException {
+	public Object execute(final Object scriptInstance, final WorkflowContext context)
+			throws InvocationTargetException, IllegalAccessException {
 		MigrationAnnotationParser annotationParser = context.getAnnotationParser();
 		Method method = annotationParser.getAnnotatedMethod(scriptInstance, workflowStep.annotationType());
 
 		Object result;
 
 		try {
-			logger.debug("Invoking workflow step @" + workflowStep.annotationType().getSimpleName() + " on method: " + method.getName());
+			logger.debug("Invoking workflow step @" + workflowStep.annotationType().getSimpleName()
+					+ " on method: " + method.getName());
 			// first try invoking without runtime argument
 			result = method.invoke(scriptInstance);
 		} catch(final IllegalArgumentException e) {

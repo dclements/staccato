@@ -16,10 +16,10 @@ public enum DatabaseType {
 	private String driver;
 	private String root;
 
-	DatabaseType(String type, String driver, String root) {
-		this.type = type;
-		this.driver = driver;
-		this.root = root;
+	DatabaseType(final String _type, final String _driver, final String _root) {
+		this.type = _type;
+		this.driver = _driver;
+		this.root = _root;
 	}
 
 	/**
@@ -50,7 +50,7 @@ public enum DatabaseType {
 	 * @param uri JDBC URI
 	 * @return a database type
 	 */
-	public static DatabaseType getTypeFromJDBCUri(URI uri) {
+	public static DatabaseType getTypeFromJDBCUri(final URI uri) {
 		try {
 			return DatabaseType.valueOf(uri.getSchemeSpecificPart().split(":")[0].toUpperCase());
 		} catch (IllegalArgumentException e) {

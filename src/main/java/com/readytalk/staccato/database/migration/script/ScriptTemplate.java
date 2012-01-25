@@ -15,24 +15,24 @@ public class ScriptTemplate {
 		return classname;
 	}
 
-	public void setClassname(String classname) {
-		this.classname = classname;
+	public void setClassname(final String _classname) {
+		this.classname = _classname;
 	}
 
 	public String getContents() {
 		return contents;
 	}
 
-	public void setContents(String contents) {
-		this.contents = contents;
+	public void setContents(final String _contents) {
+		this.contents = _contents;
 	}
 
 	public Version getVersion() {
 		return version;
 	}
 
-	public void setVersion(Version version) {
-		this.version = version;
+	public void setVersion(final Version _version) {
+		this.version = _version;
 	}
 
 	@Override

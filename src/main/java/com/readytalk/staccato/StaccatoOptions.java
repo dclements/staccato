@@ -82,11 +82,11 @@ public class StaccatoOptions {
 		private String desc;
 		private boolean required;
 
-		Arg(String opt, String longOpt, String desc, boolean required) {
-			this.opt = opt;
-			this.longOpt = longOpt;
-			this.desc = desc;
-			this.required = required;
+		Arg(final String _opt, final String _longOpt, final String _desc, final boolean _required) {
+			this.opt = _opt;
+			this.longOpt = _longOpt;
+			this.desc = _desc;
+			this.required = _required;
 		}
 
 		public String getOpt() {

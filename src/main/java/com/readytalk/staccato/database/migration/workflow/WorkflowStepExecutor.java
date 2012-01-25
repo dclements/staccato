@@ -25,5 +25,6 @@ public interface WorkflowStepExecutor<T extends Annotation> {
 	 * @throws java.lang.reflect.InvocationTargetException if there are errors during migration method invocation
 	 * @return the return object
 	 */
-	Object execute(Object scriptInstance, WorkflowContext context) throws InvocationTargetException, IllegalAccessException;
+	Object execute(Object scriptInstance, WorkflowContext context)
+		throws InvocationTargetException, IllegalAccessException;
 }

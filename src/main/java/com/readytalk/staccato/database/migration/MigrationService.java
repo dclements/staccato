@@ -8,7 +8,7 @@ import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
 @ImplementedBy(GroovyMigrationService.class)
 public interface MigrationService<T extends DynamicLanguageScript<?>> {
 
-	static final String DEFAULT_MIGRATIONS_DIR = "migrations/";
+	final String DEFAULT_MIGRATIONS_DIR = "migrations/";
 
 	/**
 	 * Runs a migration

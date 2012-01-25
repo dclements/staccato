@@ -28,5 +28,5 @@ public @interface WorkflowStep {
 	 * @return array of WorkflowStepExecutor classes implementing the workflow step
 	 */
 	@SuppressWarnings("rawtypes")
-	public Class<? extends WorkflowStepExecutor> executedBy();
+	Class<? extends WorkflowStepExecutor> executedBy();
 }

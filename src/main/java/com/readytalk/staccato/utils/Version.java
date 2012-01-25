@@ -153,7 +153,8 @@ public class Version implements Comparable<Version> {
 	/**
 	 * Represents a regular expression string that will match against any Version.
 	 */
-	public static final String REGULAR_EXPRESSION_STRING = "[0-9]+(?:\\.[0-9]+)?(?:\\.[0-9]+)?(?:-(?:alpha|ALPHA|beta|BETA|milestone|MILESTONE|rc|RC|snapshot|SNAPSHOT|ib|IB|a|A|b|B|m|M)[0-9]*)*";
+	public static final String REGULAR_EXPRESSION_STRING =
+		"[0-9]+(?:\\.[0-9]+)?(?:\\.[0-9]+)?(?:-(?:alpha|ALPHA|beta|BETA|milestone|MILESTONE|rc|RC|snapshot|SNAPSHOT|ib|IB|a|A|b|B|m|M)[0-9]*)*";
 	public static final Pattern REGULAR_EXPRESSION = Pattern.compile(REGULAR_EXPRESSION_STRING);
 
 	/**
@@ -171,12 +172,14 @@ public class Version implements Comparable<Version> {
 	 * ib = Integration build
 	 * </pre>
 	 */
-	public static final List<String> ADDITIONAL_RANKING = new ArrayList<String>(Arrays.asList("snaphsot", "alpha", "beta", "m", "rc", "ib"));
+	public static final List<String> ADDITIONAL_RANKING =
+		new ArrayList<String>(Arrays.asList("snaphsot", "alpha", "beta", "m", "rc", "ib"));
 
 	/**
 	 * The format of the version string suffix (if specified) when Version is in strict mode.
 	 */
-	public static final Pattern STRICT_FORMAT = Pattern.compile("[0-9]+(?:\\.[0-9]+)?(?:\\.[0-9]+)?(?:-(?:alpha|beta|milestone|rc|snapshot)[0-9]*)?(?:-ib[0-9]*)?");
+	public static final Pattern STRICT_FORMAT =
+		Pattern.compile("[0-9]+(?:\\.[0-9]+)?(?:\\.[0-9]+)?(?:-(?:alpha|beta|milestone|rc|snapshot)[0-9]*)?(?:-ib[0-9]*)?");
 
 	private final int major;
 	private final int minor;
@@ -190,14 +193,14 @@ public class Version implements Comparable<Version> {
 	 * @param   minor The minor version number.
 	 * @param   patch The patch version number.
 	 */
-	public Version(int major, int minor, int patch) {
-		if (major < 0 || minor < 0 || patch < 0) {
+	public Version(final int _major, final int _minor, final int _patch) {
+		if (_major < 0 || _minor < 0 || _patch < 0) {
 			throw new IllegalArgumentException("Majr, minor and patch must be positive integers");
 		}
 
-		this.major = major;
-		this.minor = minor;
-		this.patch = patch;
+		this.major = _major;
+		this.minor = _minor;
+		this.patch = _patch;
 		this.additional = null;
 	}
 
@@ -208,7 +211,7 @@ public class Version implements Comparable<Version> {
 	 * @throws IllegalArgumentException If the string starts or ends with a delimiter (. or -) or
 	 *          contains two delimiters in a row.
 	 */
-	public Version(String version) {
+	public Version(final String version) {
 		this(version, false);
 	}
 
@@ -240,7 +243,7 @@ public class Version implements Comparable<Version> {
 	 *          contains two delimiters in a row. Or the strict mode is turned on and the version
 	 *          doesn't conform to the format above.
 	 */
-	public Version(String version, boolean strict) {
+	public Version(final String version, final boolean strict) {
 		if (strict && !STRICT_FORMAT.matcher(version.toLowerCase()).matches()) {
 			throw new IllegalArgumentException("Invalid strict version string [" + version + "]");
 		}
@@ -248,15 +251,15 @@ public class Version implements Comparable<Version> {
 		char start = version.charAt(0);
 		char end = version.charAt(version.length() - 1);
 		if (start == '.' || start == '-' || end == '.' || end == '-') {
-			throw new IllegalArgumentException("Version strings should not begin or end with . or - [" +
-					version + "] is invalid.");
+			throw new IllegalArgumentException("Version strings should not begin or end with . or - [" 
+					+ version + "] is invalid.");
 		}
 
 		StringBuilder word = new StringBuilder();
 		StringBuilder num = new StringBuilder();
-		Integer major = null;
-		Integer minor = null;
-		Integer patch = null;
+		Integer _major = null;
+		Integer _minor = null;
+		Integer _patch = null;
 		String additional = null;
 		boolean doneNumbers = false;
 		for (int i = 0; i < version.length(); i++) {
@@ -266,17 +269,17 @@ public class Version implements Comparable<Version> {
 			} else {
 				if (c == '.' || c == '-') {
 					if (version.charAt(i - 1) == '.' || version.charAt(i - 1) == '-') {
-						throw new IllegalArgumentException("Version strings should not have two" +
-								" delimiters next to each other. [" + version + "] is invalid.");
+						throw new IllegalArgumentException("Version strings should not have two" 
+								+ " delimiters next to each other. [" + version + "] is invalid.");
 					}
 
 					if (num.length() > 0) {
-						if (major == null) {
-							major = Integer.parseInt(num.toString());
-						} else if (minor == null) {
-							minor = Integer.parseInt(num.toString());
-						} else if (patch == null) {
-							patch = Integer.parseInt(num.toString());
+						if (_major == null) {
+							_major = Integer.parseInt(num.toString());
+						} else if (_minor == null) {
+							_minor = Integer.parseInt(num.toString());
+						} else if (_patch == null) {
+							_patch = Integer.parseInt(num.toString());
 							doneNumbers = true;
 						}
 
@@ -297,12 +300,12 @@ public class Version implements Comparable<Version> {
 		}
 
 		if (!doneNumbers && num.length() > 0) {
-			if (major == null) {
-				major = Integer.parseInt(num.toString());
-			} else if (minor == null) {
-				minor = Integer.parseInt(num.toString());
-			} else if (patch == null) {
-				patch = Integer.parseInt(num.toString());
+			if (_major == null) {
+				_major = Integer.parseInt(num.toString());
+			} else if (_minor == null) {
+				_minor = Integer.parseInt(num.toString());
+			} else if (_patch == null) {
+				_patch = Integer.parseInt(num.toString());
 			}
 		}
 
@@ -310,9 +313,9 @@ public class Version implements Comparable<Version> {
 			additional = word.toString();
 		}
 
-		this.major = major != null ? major : 0;
-		this.minor = minor != null ? minor : 0;
-		this.patch = patch != null ? patch : 0;
+		this.major = _major != null ? _major : 0;
+		this.minor = _minor != null ? _minor : 0;
+		this.patch = _patch != null ? _patch : 0;
 		this.additional = additional;
 	}
 
@@ -381,8 +384,13 @@ public class Version implements Comparable<Version> {
 	 */
 
 	public boolean equals(Object other) {
-		if (this == other) return true;
-		if (other == null || getClass() != other.getClass()) return false;
+		if (this == other) {
+			return true;
+		}
+		
+		if (other == null || getClass() != other.getClass()) {
+			return false;
+		}
 
 		Version version = (Version) other;
 		
@@ -398,7 +406,7 @@ public class Version implements Comparable<Version> {
 	 */
 
 	public int hashCode() {
-		return new HashCodeBuilder(17, 31)
+		return new HashCodeBuilder()
 			.append(major)
 			.append(minor)
 			.append(patch)
@@ -415,7 +423,7 @@ public class Version implements Comparable<Version> {
 	 *          that the given Version.
 	 * @throws IllegalArgumentException If the given Object is not a Version.
 	 */
-	public int compareTo(Version other) {
+	public int compareTo(final Version other) {
 		if (major != other.major) {
 			return major - other.major;
 		}
@@ -486,7 +494,7 @@ public class Version implements Comparable<Version> {
 		return 0;
 	}
 
-	private List<Pair<String, Long>> decodeAdditional(char[] ca) {
+	private List<Pair<String, Long>> decodeAdditional(final char[] ca) {
 		StringBuilder str = new StringBuilder();
 		StringBuilder num = new StringBuilder();
 		List<Pair<String, Long>> list = new ArrayList<Pair<String, Long>>();

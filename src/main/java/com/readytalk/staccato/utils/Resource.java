@@ -20,30 +20,35 @@ public class Resource {
 		return filename;
 	}
 
-	public void setFilename(String filename) {
-		this.filename = filename;
+	public void setFilename(final String _filename) {
+		this.filename = _filename;
 	}
 
 	public URL getUrl() {
 		return url;
 	}
 
-	public void setUrl(URL url) {
-		this.url = url;
+	public void setUrl(final URL _url) {
+		this.url = _url;
 	}
 
 	public ResourceType getType() {
 		return type;
 	}
 
-	public void setType(ResourceType type) {
-		this.type = type;
+	public void setType(final ResourceType _type) {
+		this.type = _type;
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof Resource)) return false;
+	public boolean equals(final Object o) {
+		if (this == o) {
+			return true;
+		}
+		
+		if (!(o instanceof Resource)) {
+			return false;
+		}
 
 		Resource resource = (Resource) o;
 		
@@ -54,6 +59,6 @@ public class Resource {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder(29, 31).append(filename).append(url).build();
+		return new HashCodeBuilder().append(filename).append(url).build();
 	}
 }

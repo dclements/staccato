@@ -106,8 +106,10 @@ public class DatabaseContextBuilder implements Builder<DatabaseContext> {
 	 * @return this builder
 	 */
 
-	public DatabaseContextBuilder setContext(String jdbcUri, String dbName, String username, String password, String superUser, String superUserPwd, String rootDbName) {
+	public DatabaseContextBuilder setContext(final String jdbcUri, final String dbName, final String username,
+				final String password, final String superUser, final String superUserPwd, final String rootDbName) {
 
-		return this.jdbcUri(jdbcUri).dbName(dbName).username(username).password(password).superUser(superUser).superUserPwd(superUserPwd).rootDbName(rootDbName);
+		return this.jdbcUri(jdbcUri).dbName(dbName).username(username).password(password)
+				   .superUser(superUser).superUserPwd(superUserPwd).rootDbName(rootDbName);
 	}
 }

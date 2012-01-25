@@ -12,18 +12,19 @@ public class MigrationAnnotationParserImpl implements MigrationAnnotationParser 
 	private static final Logger logger = Logger.getLogger(MigrationAnnotationParserImpl.class);
 
 	@Override
-	public Migration getMigrationAnnotation(Object scriptInstance) {
+	public Migration getMigrationAnnotation(final Object scriptInstance) {
 		return scriptInstance.getClass().getAnnotation(Migration.class);
 	}
 
 	@Override
-	public boolean isMigrationScript(Class<?> scriptClass) {
+	public boolean isMigrationScript(final Class<?> scriptClass) {
 		return scriptClass.isAnnotationPresent(Migration.class);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Annotation> T getMethodAnnotation(Object scriptInstance, Class<? extends Annotation> workflowStep) {
+	public <T extends Annotation> T getMethodAnnotation(final Object scriptInstance,
+			final Class<? extends Annotation> workflowStep) {
 
 		logger.trace("Getting annotation instance for workflow step: " + workflowStep.getSimpleName());
 
@@ -39,7 +40,7 @@ public class MigrationAnnotationParserImpl implements MigrationAnnotationParser 
 	}
 
 	@Override
-	public Method getAnnotatedMethod(Object scriptInstance, Class<? extends Annotation> annotation) {
+	public Method getAnnotatedMethod(final Object scriptInstance, final Class<? extends Annotation> annotation) {
 
 		logger.trace("Looking for method annotated with: " + annotation.getSimpleName());
 
@@ -62,7 +63,8 @@ public class MigrationAnnotationParserImpl implements MigrationAnnotationParser 
 	}
 
 	@Override
-	public boolean containsWorkflowSteps(Object scriptInstance, Class<? extends Annotation>[] workflowSteps) {
+	public boolean containsWorkflowSteps(final Object scriptInstance,
+			final Class<? extends Annotation>[] workflowSteps) {
 
 		for (Class<? extends Annotation> workflowStep : workflowSteps) {
 			Method[] methods = scriptInstance.getClass().getMethods();

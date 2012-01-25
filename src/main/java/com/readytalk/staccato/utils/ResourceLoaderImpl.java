@@ -22,9 +22,11 @@ public class ResourceLoaderImpl implements ResourceLoader {
 	private static final Logger logger = Logger.getLogger(ResourceLoaderImpl.class);
 	
 	@Override
-	public Set<Resource> loadRecursively(String directory, String fileExtension, ClassLoader classLoader) {
+	public Set<Resource> loadRecursively(final String directory, final String fileExtension,
+			final ClassLoader classLoader) {
 
-		logger.debug("Searching directory [" + directory + "] for resources with file extension [" + fileExtension + "]");
+		logger.debug("Searching directory [" + directory + "] for resources with file extension [" 
+				+ fileExtension + "]");
 
 		final Set<Resource> resources = new HashSet<Resource>();
 
@@ -36,9 +38,9 @@ public class ResourceLoaderImpl implements ResourceLoader {
 				URL resourceUrl = urlResources.nextElement();
 				String protocol = resourceUrl.getProtocol();
 
-				if (protocol.equals("file")) {
+				if ("file".equals(protocol)) {
 					resources.addAll(readFromFileDir(resourceUrl, fileExtension));
-				} else if (protocol.equals("jar")) {
+				} else if ("jar".equals(protocol)) {
 					resources.addAll(readFromJarDir(resourceUrl, directory, fileExtension));
 				}
 			}
@@ -57,14 +59,14 @@ public class ResourceLoaderImpl implements ResourceLoader {
 
 	// helper method for loading file resources
 
-	public Collection<? extends Resource> readFromFileDir(URL resourceUrl, String fileExtension) {
+	public Collection<? extends Resource> readFromFileDir(final URL resourceUrl, final String fileExtension) {
 
 		final Set<Resource> resources = new HashSet<Resource>();
 
 		try {
 			final File dir = new File(resourceUrl.toURI());
 
-			Collection<File> files = FileUtils.listFiles(dir, new String[]{fileExtension}, true);
+			final Collection<File> files = FileUtils.listFiles(dir, new String[]{fileExtension}, true);
 
 			for (File file : files) {
 				Resource resource = new Resource();
@@ -88,7 +90,8 @@ public class ResourceLoaderImpl implements ResourceLoader {
 
 	// helper method for loading jar resources
 
-	public Collection<? extends Resource> readFromJarDir(URL resourceUrl, String directory, String fileExtension) throws IOException {
+	public Collection<? extends Resource> readFromJarDir(final URL resourceUrl, final String directory, 
+			final String fileExtension) throws IOException {
 
 		if (!new JarEntry(resourceUrl.toExternalForm()).isDirectory()) {
 			throw new ResourceLoaderException("jar resource [" + resourceUrl.toExternalForm() + "] is not a directory");
@@ -127,7 +130,7 @@ public class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	@Override
-	public URL retrieveURI(ClassLoader loader, String name) {
+	public URL retrieveURL(final ClassLoader loader, final String name) {
 		return loader.getResource(name);
 	}
 	

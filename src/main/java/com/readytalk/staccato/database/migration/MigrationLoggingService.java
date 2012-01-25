@@ -10,7 +10,7 @@ import com.readytalk.staccato.database.migration.script.DynamicLanguageScript;
 @ImplementedBy(MigrationLoggingServiceImpl.class)
 public interface MigrationLoggingService {
 
-	static final String MIGRATION_VERSIONS_TABLE = "STACCATO_MIGRATIONS";
+	final String MIGRATION_VERSIONS_TABLE = "STACCATO_MIGRATIONS";
 
 	/**
 	 * Creates the migration versions table
@@ -35,5 +35,6 @@ public interface MigrationLoggingService {
 	 * @param workflowStep the workflow step
 	 * @param migrationAnnotation the migration annotation
 	 */
-	void log(DatabaseContext datbaseContext, DynamicLanguageScript<?> script, Class<? extends Annotation> workflowStep, Migration migrationAnnotation);
+	void log(DatabaseContext datbaseContext, DynamicLanguageScript<?> script,
+			Class<? extends Annotation> workflowStep, Migration migrationAnnotation);
 }

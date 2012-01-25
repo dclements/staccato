@@ -13,5 +13,5 @@ import org.junit.runners.Suite.SuiteClasses;
 	com.readytalk.staccato.database.migration.validation.javax.AllUnitTests.class,
 	com.readytalk.staccato.utils.AllUnitTests.class})
 public class AllUnitTests {
-
+	
 }

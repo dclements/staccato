@@ -83,7 +83,7 @@ public class GroovyScriptServiceTest {
 
 		ResourceLoader loader = mock(ResourceLoader.class);
 		when(loader.loadRecursively(eq(MigrationService.DEFAULT_MIGRATIONS_DIR), eq("groovy"), eq(this.getClass().getClassLoader()))).thenReturn(resources);
-		when(loader.retrieveURI(any(ClassLoader.class), anyString())).thenAnswer(new Answer<URL>() {
+		when(loader.retrieveURL(any(ClassLoader.class), anyString())).thenAnswer(new Answer<URL>() {
 
 			@Override
 			public URL answer(InvocationOnMock invocation) throws Throwable {
@@ -144,7 +144,7 @@ public class GroovyScriptServiceTest {
 
 		ResourceLoader loader = mock(ResourceLoader.class);
 		when(loader.loadRecursively(eq(MigrationService.DEFAULT_MIGRATIONS_DIR), eq("groovy"), any(this.getClass().getClassLoader().getClass()))).thenReturn(resources);
-		when(loader.retrieveURI(any(ClassLoader.class), anyString())).thenAnswer(new Answer<URL>() {
+		when(loader.retrieveURL(any(ClassLoader.class), anyString())).thenAnswer(new Answer<URL>() {
 
 			@Override
 			public URL answer(InvocationOnMock invocation) throws Throwable {

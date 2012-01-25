@@ -10,19 +10,21 @@ public class MigrationTypeValidator implements ConstraintValidator<MigrationType
 	private MigrationTypeConstraint constraint;
 
 	@Override
-	public void initialize(MigrationTypeConstraint constraintAnnotation) {
+	public void initialize(final MigrationTypeConstraint constraintAnnotation) {
 		this.constraint = constraintAnnotation;
 
 	}
 
 	@Override
-	public boolean isValid(String value, ConstraintValidatorContext context) {
+	public boolean isValid(final String value, final ConstraintValidatorContext context) {
 		try {
 			MigrationType.valueOf(value);
 			return true;
 		} catch (Exception e) {
 			context.disableDefaultConstraintViolation();
-			context.buildConstraintViolationWithTemplate("Invalid migrationType: " + String.valueOf(value) + ".  The list of valid migration types are:\n" + MigrationType.description()).addConstraintViolation();
+			context.buildConstraintViolationWithTemplate("Invalid migrationType: "
+					+ String.valueOf(value) + ".  The list of valid migration types are:\n"
+					+ MigrationType.description()).addConstraintViolation();
 			return false;
 		}
 	}

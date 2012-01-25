@@ -29,7 +29,8 @@ public class MigrationWorkflowServiceImpl<T extends Annotation> implements Migra
 	private final Injector injector;
 
 	@Inject
-	public MigrationWorkflowServiceImpl(MigrationAnnotationParser annotationParser, MigrationLoggingService migrationLoggingService, Injector inj) {
+	public MigrationWorkflowServiceImpl(final MigrationAnnotationParser annotationParser,
+			final MigrationLoggingService migrationLoggingService, final Injector inj) {
 		this.annotationParser = annotationParser;
 		this.migrationLoggingService = migrationLoggingService;
 		this.injector = inj;
@@ -37,7 +38,8 @@ public class MigrationWorkflowServiceImpl<T extends Annotation> implements Migra
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public MigrationResult executeWorkflow(DynamicLanguageScript<?> script, Class<? extends Annotation>[] migrationWorkflow, MigrationRuntime migrationRuntime) {
+	public MigrationResult executeWorkflow(final DynamicLanguageScript<?> script,
+			final Class<? extends Annotation>[] migrationWorkflow, final MigrationRuntime migrationRuntime) {
 
 		String beginOutput = "Executing migration workflow: ";
 		for (Class<? extends Annotation> aClass : migrationWorkflow) {
@@ -53,7 +55,8 @@ public class MigrationWorkflowServiceImpl<T extends Annotation> implements Migra
 			Annotation annotation = annotationParser.getMethodAnnotation(script.getScriptInstance(), workflowStep);
 
 			if (annotation != null) {
-				Class<? extends WorkflowStepExecutor<T>> executor = (Class<? extends WorkflowStepExecutor<T>>) workflowStep.getAnnotation(WorkflowStep.class).executedBy();
+				final Class<? extends WorkflowStepExecutor<T>> executor =
+					(Class<? extends WorkflowStepExecutor<T>>) workflowStep.getAnnotation(WorkflowStep.class).executedBy();
 
 				if (executor != null) {
 					// instantiate and execute the step
@@ -61,22 +64,27 @@ public class MigrationWorkflowServiceImpl<T extends Annotation> implements Migra
 						WorkflowStepExecutor<T> stepExecutorInstance = injector.getInstance(executor);
 						stepExecutorInstance.initialize((T) annotation);
 						WorkflowContextFactory wcf = injector.getInstance(WorkflowContextFactory.class);
-						Object executionResult = stepExecutorInstance.execute(script.getScriptInstance(), wcf.create(migrationRuntime));
+						Object executionResult = stepExecutorInstance.execute(script.getScriptInstance(),
+								wcf.create(migrationRuntime));
 						migrationResult.getResultMap().put(annotation.annotationType(), executionResult);
 
 						// if enabled, log successful script execution
 						if (migrationRuntime.isLoggingEnabled()) {
-							migrationLoggingService.log(migrationRuntime.getDatabaseContext(), script, workflowStep, annotationParser.getMigrationAnnotation(script.getScriptInstance()));
+							migrationLoggingService.log(migrationRuntime.getDatabaseContext(), script, workflowStep,
+									annotationParser.getMigrationAnnotation(script.getScriptInstance()));
 						}
 
 					} catch (IllegalAccessException e) {
-						throw new MigrationException("Unable to access workflow step class: " + workflowStep.getSimpleName(), e);
+						throw new MigrationException("Unable to access workflow step class: "
+								+ workflowStep.getSimpleName(), e);
 					} catch (InvocationTargetException e) {
-						throw new MigrationException("Error invoking workflow step: " + workflowStep.getSimpleName() + ", in script: " + script.getFilename(), e);
+						throw new MigrationException("Error invoking workflow step: " + workflowStep.getSimpleName() 
+								+ ", in script: " + script.getFilename(), e);
 					}
 				}
 			} else {
-				logger.debug("Skipping workflow step @" + workflowStep.getSimpleName() + ". No annotated methods found in script: " + script.getFilename());
+				logger.debug("Skipping workflow step @" + workflowStep.getSimpleName() 
+						+ ". No annotated methods found in script: " + script.getFilename());
 			}
 		}
 

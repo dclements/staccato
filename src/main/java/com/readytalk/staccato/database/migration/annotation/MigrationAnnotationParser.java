@@ -12,7 +12,8 @@ import com.google.inject.ImplementedBy;
 public interface MigrationAnnotationParser {
 
 	/**
-	 * Returns the {@link com.readytalk.staccato.database.migration.annotation.Migration} annotation for a given script instance
+	 * Returns the {@link com.readytalk.staccato.database.migration.annotation.Migration} annotation
+	 * for a given script instance
 	 *
 	 * @param scriptInstance the script instance
 	 * @return {@link com.readytalk.staccato.database.migration.annotation.Migration}

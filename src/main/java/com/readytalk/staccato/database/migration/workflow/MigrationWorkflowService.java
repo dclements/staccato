@@ -21,5 +21,6 @@ public interface MigrationWorkflowService {
 	 * @param migrationRuntime the migration runtime
 	 * @return the {@link com.readytalk.staccato.database.migration.MigrationResult}
 	 */
-	MigrationResult executeWorkflow(DynamicLanguageScript<?> script, Class<? extends Annotation>[] migrationWorkflow, MigrationRuntime migrationRuntime);
+	MigrationResult executeWorkflow(DynamicLanguageScript<?> script,
+			Class<? extends Annotation>[] migrationWorkflow, MigrationRuntime migrationRuntime);
 }

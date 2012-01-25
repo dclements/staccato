@@ -7,24 +7,24 @@ import java.util.List;
  * Thrown on script invalidation
  */
 public class MigrationValidationException extends RuntimeException {
-	private static final long serialVersionUID=1L;
+	private static final long serialVersionUID = 1L;
 
 	private final List<Violation> violations = new ArrayList<Violation>();
 
-	public MigrationValidationException(String message, List<Violation> violations) {
+	public MigrationValidationException(final String message, final List<Violation> violations) {
 		super(message);
 		this.violations.addAll(violations);
 	}
 
-	public MigrationValidationException(String s) {
+	public MigrationValidationException(final String s) {
 		super(s);
 	}
 
-	public MigrationValidationException(String s, Throwable throwable) {
+	public MigrationValidationException(final String s, final Throwable throwable) {
 		super(s, throwable);
 	}
 
-	public MigrationValidationException(Throwable throwable) {
+	public MigrationValidationException(final Throwable throwable) {
 		super(throwable);
 	}
 
