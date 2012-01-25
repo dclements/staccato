@@ -159,8 +159,8 @@ public class VersionRange {
 
 		final VersionRange version = (VersionRange) other;
 		
-		return new EqualsBuilder().append(start, version.start)
-			.append(end, version.end).isEquals();
+		return new EqualsBuilder().append(start, version.getStart())
+			.append(end, version.getEnd()).isEquals();
 	}
 
 	/**
