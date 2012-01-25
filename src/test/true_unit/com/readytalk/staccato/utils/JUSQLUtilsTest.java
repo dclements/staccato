@@ -11,9 +11,11 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.apache.commons.io.IOUtils;
@@ -101,6 +103,18 @@ public class JUSQLUtilsTest {
 		
 		PowerMockito.verifyStatic();
 		IOUtils.closeQuietly(any(InputStream.class));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test(expected=SQLException.class)
+	public void testExecuteSQLFileBadRead() throws Exception {
+		File f = File.createTempFile("test", ".tmp");
+		f.deleteOnExit();
+		
+		PowerMockito.mockStatic(IOUtils.class);
+		when(IOUtils.toString(any(InputStream.class))).thenThrow(IOException.class);
+		
+		SQLUtils.executeSQLFile(conn, f.toURI().toURL());
 	}
 
 }

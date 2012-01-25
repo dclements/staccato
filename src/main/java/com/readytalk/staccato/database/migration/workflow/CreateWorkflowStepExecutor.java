@@ -3,12 +3,13 @@ package com.readytalk.staccato.database.migration.workflow;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.apache.commons.dbutils.DbUtils;
 import org.apache.log4j.Logger;
 
 import com.readytalk.staccato.database.DatabaseContext;
+import com.readytalk.staccato.database.DriverManagerWrapper;
 import com.readytalk.staccato.database.migration.MigrationException;
 import com.readytalk.staccato.database.migration.annotation.Create;
 import com.readytalk.staccato.database.migration.annotation.MigrationAnnotationParser;
@@ -54,11 +55,9 @@ public class CreateWorkflowStepExecutor implements WorkflowStepExecutor<Create> 
 
 		// connect to root db as root user
 		try {
-			Class.forName(context.getMigrationRuntime().getDatabaseContext().getDatabaseType().getDriver());
-			connection = DriverManager.getConnection(fullyQualifiedRootJdbcUriStr, rootUser, rootPwd);
+			DbUtils.loadDriver(context.getMigrationRuntime().getDatabaseContext().getDatabaseType().getDriver());
+			connection = DriverManagerWrapper.getConnection(fullyQualifiedRootJdbcUriStr, rootUser, rootPwd);
 		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 
@@ -81,7 +80,7 @@ public class CreateWorkflowStepExecutor implements WorkflowStepExecutor<Create> 
 		// reconnect to the original db
 		// connect to root db as root user
 		try {
-			connection = DriverManager.getConnection(dbCtx.getFullyQualifiedJdbcUri().toString(), dbCtx.getUsername(), dbCtx.getPassword());
+			connection = DriverManagerWrapper.getConnection(dbCtx.getFullyQualifiedJdbcUri().toString(), dbCtx.getUsername(), dbCtx.getPassword());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

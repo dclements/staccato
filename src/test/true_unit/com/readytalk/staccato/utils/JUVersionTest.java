@@ -12,15 +12,20 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 
 @RunWith(Theories.class)
 public class JUVersionTest {
+	
+	@Rule
+	public final ExpectedException thrown = ExpectedException.none();
 	
 	/*
 	 * TODO: It is possible to make this more flexible and more comprehensive in testing here.
@@ -60,8 +65,9 @@ public class JUVersionTest {
 	}
 	
 
-	@Test(expected=IllegalArgumentException.class)
+	@Test
 	public void testCreateNegative() {
+		thrown.expect(IllegalArgumentException.class);
 		new Version(-1, 0, 0);
 	}
 
@@ -97,18 +103,21 @@ public class JUVersionTest {
 	}
 	
 	
-	@Test(expected=IllegalArgumentException.class)
+	@Test
 	public void testCreateBadParse() {
+		thrown.expect(IllegalArgumentException.class);
 		new Version("1.0.0quork", true);
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
+	@Test
 	public void testCreateBadParseDelimeters() {
+		thrown.expect(IllegalArgumentException.class);
 		new Version("1.0.-b1", false);
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
+	@Test
 	public void testCreateBadParseEnding() {
+		thrown.expect(IllegalArgumentException.class);
 		new Version("1.0.", false);
 	}
 
