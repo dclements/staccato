@@ -16,7 +16,7 @@ import org.junit.rules.ExpectedException;
  * so that when this gets refactored, none of them get missed.
  *
  */
-public class JUVersionRangeTest {
+public class VersionRangeTest {
 	@Rule
 	public final ExpectedException thrown = ExpectedException.none();
 	

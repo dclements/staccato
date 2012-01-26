@@ -5,6 +5,10 @@ import java.sql.SQLException;
 
 import org.testng.annotations.Test;
 
+/**
+ * TODO: These should be turned into an integration test.
+ *
+ */
 public class MigrationRuntimeImplTest {
 
 	

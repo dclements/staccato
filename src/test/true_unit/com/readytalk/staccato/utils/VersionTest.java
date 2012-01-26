@@ -22,7 +22,7 @@ import org.junit.runner.RunWith;
 
 
 @RunWith(Theories.class)
-public class JUVersionTest {
+public class VersionTest {
 	
 	@Rule
 	public final ExpectedException thrown = ExpectedException.none();

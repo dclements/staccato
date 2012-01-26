@@ -80,8 +80,51 @@ public class CommandLineServiceTest extends GuiceTest {
 				"--dbUser", "staccato2",
 				"--dbPwd", "staccato3",
 				"--migration", "migration",
+				"--logging", "true"
+		};
+		final StaccatoOptions so = service.parse(args);
+		
+		verify(parser).parse(any(Options.class), eq(args));
+		assertTrue(so.enableLogging);
+		assertEquals("staccato3", so.dbPwd);
+	}
+	
+	@Test
+	public void testAllRequiredShortParse() throws Exception {
+		String [] args = new String [] {
+				"-j", "jdbc:postgres:localhost",
+				"-n", "staccato1",
+				"-u", "staccato2",
+				"-p", "staccato3",
+				"-m", "migration",
 				"-l", "true"
 		};
+		final StaccatoOptions so = service.parse(args);
+		
+		verify(parser).parse(any(Options.class), eq(args));
+		assertTrue(so.enableLogging);
+		assertEquals("staccato3", so.dbPwd);
+	}
+	
+	@Test
+	public void testAllShortParse() throws Exception {
+		String[] args = new String[]{"-j", "jdbcUri", "-n", "dbName", "-u", "dbUser", "-p", "staccato3",
+				"-m", "UP", "fd", "fromDate", "td", "toDate", "-s", "test.groovy", "-d", "migrations/",
+				"rn", "rootDbName", "-su", "superuser", "-sup", "superuserPwd", "-fv", "fromVer", "-tv", "toVer", "-l", "true"};
+		final StaccatoOptions so = service.parse(args);
+		
+		verify(parser).parse(any(Options.class), eq(args));
+		assertTrue(so.enableLogging);
+		assertEquals("staccato3", so.dbPwd);
+	}
+	
+	@Test
+	public void testAllLongParse() throws Exception {
+		String[] args = new String[]{"-jdbc", "jdbcUri", "-dbName", "dbName", "-dbUser", "dbUser", "-dbPwd", "staccato3",
+				"-migration", "UP", "fromDate", "fromDate", "toDate", "toDate", "-script", "test.groovy", "-directory", "migrations/",
+				"rootDbName", "rootDbName", "-dbSuperUser", "superuser", "-dbSuperPwd", "superuserPwd", "-fromVersion", "fromVer", "-tv", "toVersion",
+				"-logging", "true"};
+
 		final StaccatoOptions so = service.parse(args);
 		
 		verify(parser).parse(any(Options.class), eq(args));

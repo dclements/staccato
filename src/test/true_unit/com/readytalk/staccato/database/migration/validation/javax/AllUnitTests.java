@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({JUDateFormatValidatorTest.class, JUVersionValidatorTest.class, MigrationTypeValidatorTest.class, MigrationValidatorTest.class})
+@SuiteClasses({DateFormatValidatorTest.class, VersionValidatorTest.class, MigrationTypeValidatorTest.class, MigrationValidatorTest.class})
 public class AllUnitTests {
 	
 }
