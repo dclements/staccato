@@ -1,5 +1,6 @@
 package com.readytalk.staccato.database.migration.annotation;
 
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -14,6 +15,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *
  * This is a class level annotation
  */
+@Inherited
 @Target({TYPE})
 @Retention(RUNTIME)
 public @interface Migration {
