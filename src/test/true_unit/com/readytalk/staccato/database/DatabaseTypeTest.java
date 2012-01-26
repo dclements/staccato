@@ -22,7 +22,7 @@ import org.junit.runners.Parameterized.Parameters;
 import com.readytalk.staccato.database.migration.MigrationException;
 
 @RunWith(Parameterized.class)
-public class JUDatabaseTypeTest {
+public class DatabaseTypeTest {
 	private final URI uri;
 	private final DatabaseType type;
 	
@@ -39,7 +39,7 @@ public class JUDatabaseTypeTest {
 		});
 	}
 	
-	public JUDatabaseTypeTest(String uri, @Null DatabaseType type) {
+	public DatabaseTypeTest(String uri, @Null DatabaseType type) {
 		this.uri = URI.create(uri);
 		this.type = type;
 	}

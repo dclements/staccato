@@ -12,14 +12,14 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 @RunWith(Theories.class)
-public class JUVersionValidatorTest {
+public class VersionValidatorTest {
 	
 	private final Version version = mock(Version.class);
 	
 	private VersionValidator validator;
 	
 	@DataPoints
-	public static final String [] validVersions = new String [] {"1.0.0", "1.0", "1", "1.0.1b10", "1.1a1"};
+	public static final String [] validVersions = new String [] {"1.0.0", "1.0", "1", "1.0.1-beta10", "1.1-alpha1"};
 
 	@Before
 	public void setUp() throws Exception {

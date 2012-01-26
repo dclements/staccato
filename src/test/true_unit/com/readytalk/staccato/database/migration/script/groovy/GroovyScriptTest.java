@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import com.readytalk.staccato.database.DatabaseType;
 
-public class JUGroovyScriptTest {
+public class GroovyScriptTest {
 	private GroovyScript script1;
 	private GroovyScript script2;
 	private final DateTimeFormatter parser = DateTimeFormat.forPattern("DDD-YYYYY HH:mm:ss");
@@ -100,9 +100,28 @@ public class JUGroovyScriptTest {
 	}
 	
 	@Test
-	public void testEqualsFalse() {
+	public void testEqualsTrueDateOnly() {		
+		script1.setScriptDate(parser.parseDateTime("002-2012 13:00:00"));
+		script2.setScriptDate(parser.parseDateTime("002-2012 13:00:00"));
+		
+		assertTrue(script1.equals(script2));
+	}
+	
+	@Test
+	public void testEqualsFalseType() {
 		script1.setDatabaseType(DatabaseType.HSQLDB);
 		script2.setDatabaseType(DatabaseType.POSTGRESQL);
+		
+		assertFalse(script1.equals(script2));
+	}
+	
+	@Test
+	public void testEqualsFalseDate() {
+		script1.setDatabaseType(DatabaseType.HSQLDB);
+		script2.setDatabaseType(DatabaseType.HSQLDB);
+		
+		script1.setScriptDate(parser.parseDateTime("002-2012 14:00:00"));
+		script2.setScriptDate(parser.parseDateTime("002-2012 13:00:00"));
 		
 		assertFalse(script1.equals(script2));
 	}

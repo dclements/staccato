@@ -12,7 +12,7 @@ import org.junit.Test;
 import com.readytalk.staccato.database.migration.validation.javax.DateFormat;
 import com.readytalk.staccato.database.migration.validation.javax.DateFormatValidator;
 
-public class JUDateFormatValidatorTest {
+public class DateFormatValidatorTest {
 
 	private DateFormatValidator dfv;
 	
