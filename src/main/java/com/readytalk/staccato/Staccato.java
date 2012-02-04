@@ -128,7 +128,7 @@ public class Staccato {
 		}
 	}
 
-	private List<GroovyScript> determineScriptsToRun(final List<GroovyScript> allScripts, final StaccatoOptions options) {
+	protected List<GroovyScript> determineScriptsToRun(final List<GroovyScript> allScripts, final StaccatoOptions options) {
 		final List<GroovyScript> scriptsToRun = new ArrayList<GroovyScript>();
 
 		/**
@@ -143,7 +143,7 @@ public class Staccato {
 		 */
 		if (!StringUtils.isEmpty(options.migrateScript)) {
 
-			logger.info("Running a migration for script: " + options.migrateScript);
+			logger.info("Running a migration for script: " + String.valueOf(options.migrateScript));
 
 			for (GroovyScript script : allScripts) {
 				if (script.getFilename().equals(options.migrateScript)) {
