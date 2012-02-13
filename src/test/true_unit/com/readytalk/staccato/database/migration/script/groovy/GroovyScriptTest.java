@@ -22,7 +22,6 @@ public class GroovyScriptTest {
 	public void setUp() throws Exception {
 		script1 = new GroovyScript();
 		script2 = new GroovyScript();
-		
 	}
 
 	@After
