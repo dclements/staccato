@@ -31,7 +31,7 @@ public class VersionTest {
 	 * TODO: It is possible to make this more flexible and more comprehensive in testing here.
 	 * Currently a bit of a hack to iterate over a few of the basic possibilities.
 	 */
-	@DataPoints
+	//@DataPoints
 	public static String [] versions() {
 		final List<String> retval = new LinkedList<String>();
 		
@@ -54,6 +54,31 @@ public class VersionTest {
 		return retval.toArray(new String [] {});
 	}
 	
+	@DataPoints
+	public static Integer [] ints = {-1, 0,1,2,3,4,5,6,7,8,9,10,100,1000};
+	
+	@DataPoints
+	public static String [] alts = {"", "alpha1", "beta2", "rc3", "milestone4"};
+	
+	private String buildVersionString(Integer major, Integer minor, Integer patch) {
+		return buildVersionString(major, minor, patch, null);
+	}
+	
+	private String buildVersionString(Integer major, Integer minor, Integer patch, String extra) {
+		Assume.assumeTrue(major != -1);
+		Assume.assumeTrue(!(patch != -1 && minor == -1));
+		
+		if(minor == -1) {
+			return String.format("%d", major);
+		}
+		
+		if(patch == -1) {
+			return String.format("%d.%d", major, minor);
+		}
+		
+		return String.format("%d.%d.%d", major, minor, patch);
+	}
+	
 	private final Version incVersion = new Version(1,2,4);
 
 	@Before
@@ -72,35 +97,68 @@ public class VersionTest {
 	}
 
 	@Theory
-	public void testGetMajorString(String ver) {
-		Version v = new Version(ver, true);
+	public void testGetMajorString(Integer major, Integer minor, Integer patch) {
+		Version v = new Version(buildVersionString(major, minor, patch), true);
 		
-		assertEquals(Integer.valueOf(ver.substring(0, 1)).intValue(), v.getMajor());
+		assertEquals(major.intValue(), v.getMajor());
 	}
 
 	@Theory
-	public void testGetMinorString(String ver) {
-		Assume.assumeTrue(ver.length() >= 3);
+	public void testGetMinorString(Integer major, Integer minor, Integer patch) {
+		Assume.assumeTrue(minor != -1);
+		Version v = new Version(buildVersionString(major, minor, patch), true);
 		
-		Version v = new Version(ver, true);
-		
-		assertEquals(Integer.valueOf(ver.substring(2, 3)).intValue(), v.getMinor());
-	}
-	
-	@Test
-	public void testGetMinorInteger() {
-		final Version v = new Version(1, 2, 3);
-		
-		assertEquals(3, v.getPatch());
+		assertEquals(minor.intValue(), v.getMinor());
 	}
 	
 	@Theory
-	public void testToString(String ver) {
-		Assume.assumeTrue(ver.length() >= 5);
-		final Version v = new Version(ver, true);
+	public void testGetPatchString(Integer major, Integer minor, Integer patch) {
+		Assume.assumeTrue(major != -1 && minor != -1 && patch != -1);
+		System.out.println(buildVersionString(major, minor, patch));
+		Version v = new Version(buildVersionString(major, minor, patch), true);
 		
-		assertEquals(ver, v.toString());
+		assertEquals(patch.intValue(), v.getPatch());
 	}
+	
+	@Theory
+	public void testGetMajorInteger(Integer major, Integer minor, Integer patch) {
+		Assume.assumeTrue(major != -1 && minor != -1 && patch != -1);
+		Version v = new Version(major, minor, patch);
+		
+		assertEquals(major.intValue(), v.getMajor());
+	}
+	
+	@Theory
+	public void testGetMinorInteger(Integer major, Integer minor, Integer patch) {
+		Assume.assumeTrue(major != -1 && minor != -1 && patch != -1);
+		Version v = new Version(major, minor, patch);
+		
+		assertEquals(minor.intValue(), v.getMinor());
+	}
+	
+	@Theory
+	public void testGetPatchInteger(Integer major, Integer minor, Integer patch) {
+		Assume.assumeTrue(major != -1 && minor != -1 && patch != -1);
+		Version v = new Version(major, minor, patch);
+		
+		assertEquals(patch.intValue(), v.getPatch());
+	}
+	
+	@Theory
+	public void testToString(Integer major, Integer minor, Integer patch) {
+		Assume.assumeTrue(major != -1 && minor != -1 && patch != -1);
+		Version v = new Version(buildVersionString(major, minor, patch), true);
+		
+		assertEquals(buildVersionString(major, minor, patch), v.toString());
+	}
+//	
+//	@Theory
+//	public void testGetAdditional(String ver) {
+//		Assume.assumeTrue(ver.length() >= 7);
+//		Version v = new Version(ver, true);
+//		
+//		assertEquals(ver.substring(6), v.getAdditional());
+//	}
 	
 	
 	@Test
@@ -119,24 +177,6 @@ public class VersionTest {
 	public void testCreateBadParseEnding() {
 		thrown.expect(IllegalArgumentException.class);
 		new Version("1.0.", false);
-	}
-
-	@Theory
-	public void testGetPatchString(String ver) {
-		Assume.assumeTrue(ver.length() >= 5);
-		
-		Version v = new Version(ver, true);
-		
-		assertEquals(Integer.valueOf(ver.substring(4, 5)).intValue(), v.getPatch());
-	}
-
-
-	@Theory
-	public void testGetAdditional(String ver) {
-		Assume.assumeTrue(ver.length() >= 7);
-		Version v = new Version(ver, true);
-		
-		assertEquals(ver.substring(6), v.getAdditional());
 	}
 
 	@Test
