@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -21,6 +23,19 @@ public class ResourceLoaderImpl implements ResourceLoader {
 
 	private static final Logger logger = Logger.getLogger(ResourceLoaderImpl.class);
 	
+	@Override
+	public Set<File> loadRecursively(String directory, String fileExtension) {
+		final Set<File> retval = new LinkedHashSet<File>();
+		final File dir = new File(directory);
+		final Iterator<File> it = FileUtils.iterateFiles(dir, new String [] {fileExtension}, true);
+		
+		while(it.hasNext()) {
+			retval.add(it.next());
+		}
+		
+		return retval;
+	}
+
 	@Override
 	public Set<Resource> loadRecursively(final String directory, final String fileExtension,
 			final ClassLoader classLoader) {

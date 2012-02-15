@@ -1,5 +1,6 @@
 package com.readytalk.staccato.utils;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -48,6 +49,28 @@ public class ResourceLoaderTest {
 
 	@After
 	public void tearDown() throws Exception {
+	}
+	
+	@Test
+	public void testLoadRecursivelyArbitrary() throws Exception {
+		File f= File.createTempFile("tmp", ".groovy");
+		f.deleteOnExit();
+		File d = f.getParentFile();
+		
+		final Set<File> sf = loader.loadRecursively(d.getAbsolutePath(), "groovy");
+		
+		assertTrue(sf.contains(f));
+	}
+	
+	@Test
+	public void testLoadRecursivelyNotPresent() throws Exception {
+		File f= File.createTempFile("tmp", ".groovy2");
+		f.deleteOnExit();
+		File d = f.getParentFile();
+		
+		final Set<File> sf = loader.loadRecursively(d.getAbsolutePath(), "sql");
+		
+		assertEquals(0, sf.size());
 	}
 
 	@Test

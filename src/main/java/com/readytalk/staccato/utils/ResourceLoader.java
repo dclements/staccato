@@ -1,5 +1,6 @@
 package com.readytalk.staccato.utils;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Set;
 
@@ -10,6 +11,8 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(ResourceLoaderImpl.class)
 public interface ResourceLoader {
+	
+	Set<File> loadRecursively(String directory, String fileExtension);
 
 	/**
 	 * Loads resources from the classloader by looking in the directory with file extension

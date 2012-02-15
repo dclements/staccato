@@ -22,7 +22,7 @@ public class Main {
 		
 		//Null return represents the help dialogue.
 		if (options != null) {
-			Staccato staccato = injector.getInstance(Staccato.class);
+			StaccatoExecutor staccato = injector.getInstance(StaccatoExecutor.class);
 			staccato.execute(options);
 		}
 	}

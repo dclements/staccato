@@ -30,7 +30,7 @@ import com.readytalk.staccato.database.migration.script.sql.SQLScript;
 import com.readytalk.staccato.database.migration.validation.MigrationValidator;
 import com.readytalk.staccato.utils.Version;
 
-public class Staccato {
+public class Staccato implements StaccatoExecutor {
 
 	private final Logger logger = Logger.getLogger(Staccato.class);
 
@@ -57,6 +57,7 @@ public class Staccato {
 	 *
 	 * @param options
 	 */
+	@Override
 	public void execute(final StaccatoOptions options) {
 
 		// set the migration dir to the default if not defined by user.  This has to
