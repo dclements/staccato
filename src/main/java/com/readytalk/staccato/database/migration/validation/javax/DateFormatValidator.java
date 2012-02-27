@@ -42,7 +42,7 @@ public class DateFormatValidator implements ConstraintValidator<DateFormat, Stri
 		try {
 			DateTimeFormat.forPattern(dateFormat).parseDateTime(isoDate);
 			return true;
-		} catch (Exception e) {
+		} catch(final IllegalArgumentException e) {
 			return false;
 		}
 	}

@@ -33,7 +33,7 @@ public class VersionValidator implements ConstraintValidator<Version, String> {
 		try {
 			new com.readytalk.staccato.utils.Version(version, this.version.strictMode());
 			return true;
-		} catch (Exception e) {
+		} catch(final IllegalArgumentException e) {
 			return false;
 		}
 	}

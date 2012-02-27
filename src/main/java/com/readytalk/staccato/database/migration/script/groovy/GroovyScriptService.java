@@ -1,9 +1,12 @@
 package com.readytalk.staccato.database.migration.script.groovy;
 
+import groovy.lang.GroovyClassLoader;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.annotation.IncompleteAnnotationException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +18,7 @@ import java.util.TreeSet;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.groovy.control.CompilationFailedException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
@@ -29,7 +33,6 @@ import com.readytalk.staccato.database.migration.validation.MigrationValidator;
 import com.readytalk.staccato.utils.Resource;
 import com.readytalk.staccato.utils.ResourceLoader;
 import com.readytalk.staccato.utils.Version;
-import groovy.lang.GroovyClassLoader;
 
 /**
  * Groovy script service implementation.
@@ -93,10 +96,11 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 				thisScript.setScriptDate(new DateTime(migrationAnnotation.scriptDate()));
 				thisScript.setScriptVersion(new Version(migrationAnnotation.scriptVersion(), Migration.scriptVersionStrictMode));
 				thisScript.setDatabaseVersion(new Version(migrationAnnotation.scriptVersion(), Migration.scriptVersionStrictMode));
+				
 				try {
 					thisScript.setDatabaseType(migrationAnnotation.databaseType());
-				} catch (Exception e) {
-					// no-op, just ignore
+				} catch(IncompleteAnnotationException iae) {
+					//We can ignore this.
 				}
 
 				// validate that the script version is equal to the version in the script template
@@ -153,26 +157,26 @@ public class GroovyScriptService implements DynamicLanguageScriptService<GroovyS
 
 		GroovyClassLoader gcl = new GroovyClassLoader(this.getClass().getClassLoader());
 		try {
-			StringBuilder sb = new StringBuilder();
+			final StringBuilder sb = new StringBuilder();
 			String line;
 			
-			final InputStream is = url.openStream();
+			InputStream is = null;
 			try {
+				is = url.openStream();
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 				while ((line = reader.readLine()) != null) {
 					sb.append(line).append("\n");
 				}
-			} catch (Exception e) {
-				throw new MigrationException("unable to parse groovy script: " + url.toExternalForm(), e);
+			} catch(IOException e) {
+				throw new MigrationException("Could not parse groovy script: " + url.toExternalForm(), e);
 			} finally {
 				IOUtils.closeQuietly(is);
 			}
 
 			return gcl.parseClass(sb.toString());
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new MigrationException("unable to parse groovy script: " + url.toExternalForm(), e);
+		} catch (CompilationFailedException e) {
+			throw new MigrationException("unable to compile groovy script: " + url.toExternalForm(), e);
 		}
 	}
 
