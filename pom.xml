@@ -245,7 +245,7 @@
 								<taskdef resource="testngtasks">
 									<classpath refid="maven.test.classpath"/>
 								</taskdef>
-								<javac srcdir="src/test/integration/java" destdir="target/test-classes" classpath="${maven.test.classpath}" debug="on" source="1.6" executable="${env.JAVA_HOME}/bin/javac" fork="true" includeantruntime="false">
+								<javac srcdir="src/test/integration/java" destdir="target/test-classes" classpath="${maven.test.classpath}" debug="on" source="1.6" fork="true" includeantruntime="false">
 									<classpath>
 										<path refid="maven.test.classpath"/>
 										<path location="target/classes"/>
