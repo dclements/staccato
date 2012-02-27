@@ -45,19 +45,19 @@ public class MigrationValidatorImpl implements MigrationValidator {
 
 		try {
 			struct.databaseVersion = migrationAnnotation.databaseVersion();
-		} catch (IncompleteAnnotationException e) {
+		} catch(final IncompleteAnnotationException e) {
 			violations.add(handleIncompleteAnnotationException("databaseVersion"));
 		}
 
 		try {
 			struct.scriptDate = migrationAnnotation.scriptDate();
-		} catch (IncompleteAnnotationException e) {
+		} catch(final IncompleteAnnotationException e) {
 			violations.add(handleIncompleteAnnotationException("scriptDate"));
 		}
 
 		try {
 			struct.scriptVersion = migrationAnnotation.scriptVersion();
-		} catch (IncompleteAnnotationException e) {
+		} catch(final IncompleteAnnotationException e) {
 			violations.add(handleIncompleteAnnotationException("scriptVersion"));
 		}
 
