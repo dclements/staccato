@@ -80,7 +80,7 @@ public class CommandLineServiceTest extends GuiceTest {
 				"--dbUser", "staccato2",
 				"--dbPwd", "staccato3",
 				"--migration", "migration",
-				"--logging", "true"
+				"--logging"
 		};
 		final StaccatoOptions so = service.parse(args);
 		
@@ -97,7 +97,7 @@ public class CommandLineServiceTest extends GuiceTest {
 				"-u", "staccato2",
 				"-p", "staccato3",
 				"-m", "migration",
-				"-l", "true"
+				"-l"
 		};
 		final StaccatoOptions so = service.parse(args);
 		
@@ -110,7 +110,7 @@ public class CommandLineServiceTest extends GuiceTest {
 	public void testAllShortParse() throws Exception {
 		String[] args = new String[]{"-j", "jdbcUri", "-n", "dbName", "-u", "dbUser", "-p", "staccato3",
 				"-m", "UP", "fd", "fromDate", "td", "toDate", "-s", "test.groovy", "-d", "migrations/",
-				"rn", "rootDbName", "-su", "superuser", "-sup", "superuserPwd", "-fv", "fromVer", "-tv", "toVer", "-l", "true"};
+				"rn", "rootDbName", "-su", "superuser", "-sup", "superuserPwd", "-fv", "fromVer", "-tv", "toVer", "-l"};
 		final StaccatoOptions so = service.parse(args);
 		
 		verify(parser).parse(any(Options.class), eq(args));
@@ -123,7 +123,7 @@ public class CommandLineServiceTest extends GuiceTest {
 		String[] args = new String[]{"-jdbc", "jdbcUri", "-dbName", "dbName", "-dbUser", "dbUser", "-dbPwd", "staccato3",
 				"-migration", "UP", "fromDate", "fromDate", "toDate", "toDate", "-script", "test.groovy", "-directory", "migrations/",
 				"rootDbName", "rootDbName", "-dbSuperUser", "superuser", "-dbSuperPwd", "superuserPwd", "-fromVersion", "fromVer", "-tv", "toVersion",
-				"-logging", "true"};
+				"-logging"};
 
 		final StaccatoOptions so = service.parse(args);
 		
