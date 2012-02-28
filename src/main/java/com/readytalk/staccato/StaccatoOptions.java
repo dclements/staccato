@@ -51,7 +51,7 @@ public class StaccatoOptions {
 	@Version(strictMode = Migration.databaseVersionStrictMode)
 	public String migrateToVer;
 
-	public boolean enableLogging = true;
+	public boolean enableLogging = false;
 
 	public static enum Arg {
 		JDBC_URL("j", "jdbc", "The JDBC URL.  This url should not contain the database name. Please provide the database name via the 'n' option.", true),
@@ -75,18 +75,25 @@ public class StaccatoOptions {
 		MIGRATION_JAR_PATH("mj", "migrationJar", "The path to the migration jar", false),
 		LOGGING("l", "logging", "Toggles the migration logging system, which logs script " +
 			"execution to the 'staccato_migrations' table in the database.  Set to 'false' if you don't " +
-			"want Staccato to create a 'staccato_migrations' table in your database.  Defaults to 'true' if anything other than 'false' is specified.", false);
+			"want Staccato to create a 'staccato_migrations' table in your database.  Defaults to 'true' if anything other than 'false' is specified.", false, false);
 
-		private String opt;
-		private String longOpt;
-		private String desc;
-		private boolean required;
-
-		Arg(final String _opt, final String _longOpt, final String _desc, final boolean _required) {
+		private final String opt;
+		private final String longOpt;
+		private final String desc;
+		private final boolean required;
+		private final boolean hasArg;
+		
+		
+		private Arg(final String _opt, final String _longOpt, final String _desc, final boolean _required, boolean _hasArg) {
 			this.opt = _opt;
 			this.longOpt = _longOpt;
 			this.desc = _desc;
 			this.required = _required;
+			this.hasArg = _hasArg;
+		}
+
+		private Arg(final String _opt, final String _longOpt, final String _desc, final boolean _required) {
+			this(_opt, _longOpt, _desc, _required, true);
 		}
 
 		public String getOpt() {
@@ -103,6 +110,10 @@ public class StaccatoOptions {
 
 		public boolean isRequired() {
 			return required;
+		}
+		
+		public boolean isArgOption() {
+			return hasArg;
 		}
 	}
 }

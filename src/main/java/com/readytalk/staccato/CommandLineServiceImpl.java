@@ -1,11 +1,10 @@
 package com.readytalk.staccato;
 
-import java.util.IllegalFormatException;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
@@ -32,7 +31,15 @@ public class CommandLineServiceImpl implements CommandLineService {
 		StaccatoOptions.Arg[] staccatoArgs = StaccatoOptions.Arg.values();
 
 		for (StaccatoOptions.Arg staccatoArg : staccatoArgs) {
-			Option opt = new Option(staccatoArg.getOpt(), staccatoArg.getLongOpt(), true, staccatoArg.getDesc());
+			
+			@SuppressWarnings("static-access")
+			Option opt = OptionBuilder.withArgName(staccatoArg.getOpt())
+							.withLongOpt(staccatoArg.getLongOpt())
+							.hasArg(staccatoArg.isArgOption())
+							.withDescription(staccatoArg.getDesc())
+							.isRequired(staccatoArg.isRequired()).create(staccatoArg.getOpt());
+			
+			new Option(staccatoArg.getOpt(), staccatoArg.getLongOpt(), true, staccatoArg.getDesc());
 			opt.setRequired(staccatoArg.isRequired());
 			options.addOption(opt);
 		}
@@ -64,7 +71,6 @@ public class CommandLineServiceImpl implements CommandLineService {
 				String migrateToVer = cli.getOptionValue(StaccatoOptions.Arg.MIGRATE_TO_VER.getOpt());
 				String rootDb = cli.getOptionValue(StaccatoOptions.Arg.ROOT_DB.getOpt());
 				String migrationJarPath = cli.getOptionValue(StaccatoOptions.Arg.MIGRATION_JAR_PATH.getOpt());
-				String logging = cli.getOptionValue(StaccatoOptions.Arg.LOGGING.getOpt());
 
 				StaccatoOptions staccatoOptions = new StaccatoOptions();
 				staccatoOptions.jdbcUrl = jdbcUrl;
@@ -82,14 +88,7 @@ public class CommandLineServiceImpl implements CommandLineService {
 				staccatoOptions.migrateToVer = migrateToVer;
 				staccatoOptions.rootDb = rootDb;
 				staccatoOptions.migrationJarPath = migrationJarPath;
-				
-				//TODO: Check exception path.
-				try {
-					final Boolean loggingEnabled = Boolean.valueOf(logging);
-					staccatoOptions.enableLogging = loggingEnabled;
-				} catch (final IllegalFormatException ife) {
-					staccatoOptions.enableLogging = true;
-				}
+				staccatoOptions.enableLogging =  cli.hasOption(StaccatoOptions.Arg.LOGGING.getOpt());
 
 				return staccatoOptions;
 			} catch (ParseException e) {
